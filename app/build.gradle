@@ -4,7 +4,7 @@ android {
     compileSdkVersion 24
     buildToolsVersion "25.0.2"
     defaultConfig {
-        applicationId "com.example.home.heritage"
+        applicationId "in.ac.iiit.cvit.heritage"
         minSdkVersion 16
         targetSdkVersion 24
         versionCode 1
@@ -36,4 +36,5 @@ dependencies {
     })
     compile 'com.android.support:appcompat-v7:24.2.1'
     testCompile 'junit:junit:4.12'
+    compile files('libs/commons-compress-1.12.jar')
 }
