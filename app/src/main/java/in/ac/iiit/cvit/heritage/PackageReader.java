@@ -39,14 +39,14 @@ public class PackageReader {
     ArrayList<InterestPoint> KingsList;
 
 
-    /**
-     * This method is called from ActivityMain
-     * This method gets all the interest points from the download package of particular site
-     *
-     */
 
     private Context context;
 
+    /**
+     * This is the class used to read content of the xml file
+     * @param packageName name of the package name i.e. heritage site
+     * @param _context
+     */
     public PackageReader(String packageName, Context _context){
         context = _context;
         _packageName = packageName;
@@ -63,13 +63,18 @@ public class PackageReader {
     }
 
     /**
-     * This is the method which is accessible from outside
-     * @return Array list of all the InterestPoint which are already calculated when this object is initialised
+     * This is the method  is accessible from outside and gives data on monuments
+     * @return Array list of all the InterestPoints info which is already calculated when this class is initialised
      */
     public ArrayList<InterestPoint> getMonumentsList(){
         return MonumentsList;
     }
 
+    /**
+     *
+     *This is the method  is accessible from outside and gives data on kings
+     * @return Array list of all the KingsList info which is already calculated when this class is initialised
+     */
     public ArrayList<InterestPoint> getKingsList(){
         return KingsList;
     }

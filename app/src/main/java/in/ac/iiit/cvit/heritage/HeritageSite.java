@@ -1,0 +1,88 @@
+package in.ac.iiit.cvit.heritage;
+
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Environment;
+
+import java.io.File;
+import java.util.HashMap;
+
+/**
+ * Created by HOME on 06-03-2017.
+ */
+
+public class HeritageSite {
+
+
+    private HashMap<String, String> heritageSitedetails;
+    private SessionManager sessionManager;
+
+    private static final String dataLocation = "Android/data/in.ac.iiit.cvit.heritage/files/extracted/";
+
+    private static final String imageType = ".JPG";
+    private static final String latitudeTag = "lat";
+    private static final String longitudeTag = "long";
+    private static final String imageTag = "image";
+    private static final String imagesTag = "images";
+
+    private static final String imagesNameSplitter = ",";
+
+
+
+
+    public HeritageSite() {
+        heritageSitedetails = new HashMap<String, String>();
+    }
+
+    /**
+     * This method sets the interest point(monument) details
+     *
+     * @param key   It's the tag name of the particular xml field
+     * @param value It's the value in the relevant tag of the xml file
+     */
+    public void setHeritageSite(String key, String value) {
+        heritageSitedetails.put(key, value);
+    }
+
+    /**
+     * This method gives back the interest point(monument) details
+     * @param key It's the tag name of the particular xml field
+     * @return Value of the selected xml field
+     */
+    public String getHeritageSite(String key) {
+        return heritageSitedetails.get(key);
+    }
+
+
+
+    public Bitmap getHeritageSiteImage(String packageName, String interestPointName) {
+
+        packageName = packageName.toLowerCase();
+
+        String imageName = heritageSitedetails.get(imageTag);
+        //       Log.v("getImage","reached getImage");
+
+
+        String image_path =  dataLocation + packageName + "/" + imageName + imageType;
+
+        File imageFile = new File(Environment.getExternalStorageDirectory(),image_path);
+//        Log.v("getImage", Environment.getExternalStorageDirectory()+image_path);
+        if(imageFile.exists()) {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+            Bitmap bitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath(), options);
+            //            bitmap = bitmap.createScaledBitmap(bitmap, 627, 353, false);
+            //             Log.v("getImage", imageName + ".JPG");
+
+            return bitmap;
+        }
+
+        return null;
+    }
+
+
+
+
+
+
+}

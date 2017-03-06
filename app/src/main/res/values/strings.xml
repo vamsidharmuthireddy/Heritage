@@ -4,6 +4,9 @@
     <string name="heritage_caps">HERITAGE</string>
     <string name="powered_by" translatable="false">Powered By</string>
 
+    <!--Main Activity Screen-->
+    <string name="heritage_site_introduction">Introduction</string>
+
     <!--for the splashIntro screen-->
     <string name="next">Next</string>
     <string name="skip">Skip</string>
@@ -82,6 +85,9 @@
     <string name="user_session" translatable="false">UserSession</string>
     <string name="package_name" translatable="false">package_name</string>
     <string name="default_package_value" translatable="false"></string>
+    <string name="heritage_site" translatable="false">heritage_site</string>
+    <string name="default_heritage_site" translatable="false"></string>
+
 
 
     <!--MainActivity-->
@@ -129,6 +135,7 @@
     <string name="interest_point_image" translatable="false">image</string>
     <string name="interest_point_images" translatable="false">images</string>
     <string name="interest_point_info" translatable="false">info</string>
+    <string name="interest_point_short_info" translatable="false">shortinfo</string>
 
     <!--Others-->
     <string name="images_name_splitter" translatable="false">,</string>
