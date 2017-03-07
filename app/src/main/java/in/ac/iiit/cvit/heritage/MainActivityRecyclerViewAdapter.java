@@ -78,7 +78,7 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
 //settings the card contents for the recycler view
         title.setText(heritageSites.get(position).getHeritageSite(context.getString(R.string.interest_point_title)));
         titleImage.setImageBitmap(heritageSites.get(position).getHeritageSiteImage(packageName,context.getString(R.string.interest_point_title)));
-        infoHeader.setText(heritageSites.get(position).getHeritageSite(context.getString(R.string.heritage_site_introduction)));
+        infoHeader.setText(context.getString(R.string.heritage_site_introduction));
         downloadSwitch.setChecked(false);
         shortInfo.setText(heritageSites.get(position).getHeritageSite(context.getString(R.string.interest_point_short_info)));
 

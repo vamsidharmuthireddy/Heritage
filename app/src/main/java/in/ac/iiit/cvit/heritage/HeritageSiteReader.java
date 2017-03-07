@@ -26,70 +26,64 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 /**
- * Created by HOME on 03-03-2017.
+ * Created by HOME on 07-03-2017.
  */
 
-public class PackageReader {
+public class HeritageSiteReader {
     /**
-     * This method reads the downloaded package after clicking download button available on main screen
+     * This method saves and gives back the info related to heritage site intro packages that is showed on main screen
+     *
      */
 
 
-    public static final String LOGTAG = "PackageReader";
+
+    public static final String LOGTAG = "HeritageSiteReader";
     private final String dataLocation;
     private final String xmlFile;
     public String _packageName;
-    InterestPoint interestPoint;
-    ArrayList<InterestPoint> MonumentsList;
-    ArrayList<InterestPoint> KingsList;
+    HeritageSite heritageSite;
+    ArrayList<HeritageSite> heritageSiteList;
 
 
 
     private Context context;
+
+
 
     /**
      * This is the class used to read content of the xml file
      * @param packageName name of the package name i.e. heritage site
      * @param _context
      */
-    public PackageReader(String packageName, Context _context){
+    public HeritageSiteReader(String packageName, Context _context){
         context = _context;
         _packageName = packageName;
         dataLocation = context.getString(R.string.extracted_location);
 
         String prevLanguage = Locale.getDefault().getLanguage();
-        xmlFile = _packageName + "_" + prevLanguage + context.getString(R.string.xml_extension);
+        //xmlFile = _packageName + "_" + prevLanguage + context.getString(R.string.xml_extension);
+        xmlFile = "heritagesite" + context.getString(R.string.xml_extension);
         Log.v(LOGTAG, "Name of the xml file is " + xmlFile);
 
-        //xmlFile = context.getString(R.string.xml_file);
-        MonumentsList = new ArrayList<InterestPoint>();
-        KingsList = new ArrayList<InterestPoint>();
+        heritageSiteList = new ArrayList<HeritageSite>();
         readFromFile();
     }
 
+
+
     /**
      * This is the method  is accessible from outside and gives data on monuments
-     * @return Array list of all the InterestPoints info which is already calculated when this class is initialised
+     * @return Array list of all the HeritageSite info which is already calculated when this class is initialised
      */
-    public ArrayList<InterestPoint> getMonumentsList(){
-        return MonumentsList;
+    public ArrayList<HeritageSite> getHeritageSiteList(){
+        return heritageSiteList;
     }
-
-    /**
-     *
-     *This is the method  is accessible from outside and gives data on kings
-     * @return Array list of all the KingsList info which is already calculated when this class is initialised
-     */
-    public ArrayList<InterestPoint> getKingsList(){
-        return KingsList;
-    }
-
 
     /**
      * This method is called from readFromFile
      * This method extracts information from xml file according to their tags in xml file
-     * This method calls InterestPoint object to set the interest points
-     * It stores obtained interest points in InterestPoint array
+     * This method calls HeritageSite object to set the heritage sites
+     * It stores obtained heritage sites in HeritageSite array
      * @param xml It is the string containing all the data from the d.xml file
      */
     private void readContentsFromString(String xml){
@@ -114,61 +108,35 @@ public class PackageReader {
                 //get the first element
                 Element root = doc.getDocumentElement();
 
-                Node monument = root.getElementsByTagName("monument").item(0);
-                Node ruler = root.getElementsByTagName("ruler").item(0);
-
                 //get all the child elements
-                NodeList ips = monument.getChildNodes();
-                NodeList kings = ruler.getChildNodes();
+                NodeList heritagesite = root.getChildNodes();
 
-                //Following for loop is for ip tagged objects
-                for(int i=0; i<ips.getLength(); i++){
 
-                    if(ips.item(i).getNodeType() == Node.ELEMENT_NODE){
+                //Following for loop is for site tagged objects
+                for(int i=0; i<heritagesite.getLength(); i++){
+
+                    if(heritagesite.item(i).getNodeType() == Node.ELEMENT_NODE){
 
                         //We are creating an interest point object to store all the relevant data available
-                        interestPoint = new InterestPoint();
+                        heritageSite = new HeritageSite();
 
                         //getting a list of all the child elements
-                        NodeList keys = ips.item(i).getChildNodes();
+                        NodeList keys = heritagesite.item(i).getChildNodes();
 
                         for(int j=0; j<keys.getLength(); j++){
                             if(keys.item(j).getNodeType() == Node.ELEMENT_NODE){
                                 Element key = (Element)keys.item(j);
                                 ///This interest point contains all the data relevant to particular interest point
-                                interestPoint.setMonument(key.getNodeName(), key.getTextContent());
+                                heritageSite.setHeritageSite(key.getNodeName(), key.getTextContent());
+
+                                Log.v(LOGTAG,key.getNodeName());
                             }
                         }
                         //Here we are storing each InterestPoint object in an InterestPoint array
                         //So InterestPoints has all the information on all the interest points available for a heritage site
-                        MonumentsList.add(interestPoint);
+                        heritageSiteList.add(heritageSite);
                     }
                 }
-
-                for(int i=0; i<kings.getLength(); i++){
-
-                    if(kings.item(i).getNodeType() == Node.ELEMENT_NODE){
-
-                        //We are creating an interest point object to store all the relevant data available
-                        interestPoint = new InterestPoint();
-
-                        //getting a list of all the child elements
-                        NodeList keys = kings.item(i).getChildNodes();
-
-                        for(int j=0; j<keys.getLength(); j++){
-                            if(keys.item(j).getNodeType() == Node.ELEMENT_NODE){
-                                Element key = (Element)keys.item(j);
-                                ///This interest point contains all the data relevant to particular interest point
-                                interestPoint.setRoyal(key.getNodeName(), key.getTextContent());
-                            }
-                        }
-                        //Here we are storing each InterestPoint object in an InterestPoint array
-                        //So InterestPoints has all the information on all the interest points available for a heritage site
-                        KingsList.add(interestPoint);
-                    }
-                }
-
-
 
             } catch (SAXException e) {
                 e.printStackTrace();
@@ -180,6 +148,10 @@ public class PackageReader {
         }
     }
 
+
+
+
+
     /**
      * This method is called when this class is initialised.
      * It calls readTextFile and readContentsFromString to get the contents from heritage storage folder
@@ -187,7 +159,9 @@ public class PackageReader {
     private void readFromFile(){
         File baseLocal = Environment.getExternalStorageDirectory();
 
-        File xmlfile = new File(baseLocal, dataLocation + _packageName + "/" + xmlFile );
+        //File xmlfile = new File(baseLocal, dataLocation + _packageName + "/" + xmlFile );
+        File xmlfile = new File(baseLocal, "Heritage/heritagesite.xml" );
+
         try {
             FileInputStream xmlStream = new FileInputStream(xmlfile);
             String contents = readTextFile(xmlStream);
@@ -197,9 +171,10 @@ public class PackageReader {
         }
     }
 
+
     /**
      * This function is called from readFromFile
-     *This class reads the entire d.xml file into a string. THis string is used as input to readContentsFromString
+     *This class reads the entire xml file into a string. This string is used as input to readContentsFromString
      * @param inputStream It is an InputStream file containing location of the file to be read into string
      * @return String containing the contents of the d.xml file
      */
@@ -219,4 +194,5 @@ public class PackageReader {
         }
         return outputStream.toString();
     }
+
 }
