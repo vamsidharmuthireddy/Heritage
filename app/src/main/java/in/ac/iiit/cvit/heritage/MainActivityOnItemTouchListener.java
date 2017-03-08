@@ -2,6 +2,7 @@ package in.ac.iiit.cvit.heritage;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -12,6 +13,8 @@ import android.view.View;
 
 public class MainActivityOnItemTouchListener extends RecyclerView.SimpleOnItemTouchListener {
 
+    private final static String LOGTAG = "MainActTouchListener";
+
     private OnItemClickListener mListener;
     private GestureDetector mGestureDetector;
     public MainActivityOnItemTouchListener(Context context, final RecyclerView recyclerView, OnItemClickListener listener) {
@@ -20,6 +23,8 @@ public class MainActivityOnItemTouchListener extends RecyclerView.SimpleOnItemTo
         mGestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
             @Override
             public boolean onSingleTapUp(MotionEvent e) {
+                View childView = recyclerView.findChildViewUnder(e.getX(), e.getY());
+                Log.v(LOGTAG,"child view is "+ childView);
                 return true;
             }
 

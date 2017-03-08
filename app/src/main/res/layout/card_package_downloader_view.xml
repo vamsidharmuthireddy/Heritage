@@ -58,13 +58,14 @@
             android:layout_weight="1"
             />
 
-        <ImageView
+        <ImageButton
             android:id="@+id/heritage_info_reveal_button"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
             android:layout_weight="6"
             android:adjustViewBounds="false"
+            android:background="@android:color/transparent"
             android:cropToPadding="false"
             android:elevation="6dp"
             android:focusable="false"
@@ -73,15 +74,15 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/heritage_site_info_short_parent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:animateLayoutChanges="true">
-
+<!--Don't make this view as gone! It will delay the animation-->
         <TextView
             android:id="@+id/heritage_site_info_short"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone"/>
+            android:layout_height="1dp"/>
     </LinearLayout>
 
     </LinearLayout>

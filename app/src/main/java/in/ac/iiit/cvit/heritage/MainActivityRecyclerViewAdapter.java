@@ -2,13 +2,15 @@ package in.ac.iiit.cvit.heritage;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -22,7 +24,11 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
 
     private Context context;
     private ArrayList<HeritageSite> heritageSites;
-    private static final String LOGTAG = "Heritage";
+    private static final String LOGTAG = "MainActivityAdapter";
+
+    private int expandedPosition = -1;
+
+    private Boolean isShortInfoVisible = false;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -33,7 +39,9 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
         private TextView title;
         private TextView infoHeader;
         private Switch downloadSwitch;
+        private ImageButton revealButton;
         private TextView shortInfo;
+        private LinearLayout shortInfoParent;
 
         public DataObjectHolder(View view) {
             super(view);
@@ -41,7 +49,9 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
             this.title = (TextView) view.findViewById(R.id.heritage_site_title);
             this.infoHeader = (TextView) view.findViewById(R.id.heritage_site_info_header);
             this.downloadSwitch =(Switch) view.findViewById(R.id.download_switch);
+            this.revealButton = (ImageButton)view.findViewById(R.id.heritage_info_reveal_button);
             this.shortInfo = (TextView) view.findViewById(R.id.heritage_site_info_short);
+            this.shortInfoParent = (LinearLayout) view.findViewById(R.id.heritage_site_info_short_parent);
         }
     }
 
@@ -61,14 +71,15 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(DataObjectHolder holder, int position) {
+    public void onBindViewHolder(final DataObjectHolder holder, int position) {
 
         ImageView titleImage = holder.titleImage;
         TextView title = holder.title;
         TextView infoHeader = holder.infoHeader;
         Switch downloadSwitch = holder.downloadSwitch;
-        TextView shortInfo = holder.shortInfo;
-
+        final ImageButton revealButton = holder.revealButton;
+        final TextView shortInfo = holder.shortInfo;
+        LinearLayout shortInfoParent = holder.shortInfoParent;
 
 
         SessionManager sessionManager = new SessionManager();
@@ -84,44 +95,60 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
 
         final int tempNumber = position;
 
-        holder.itemView.setOnClickListener(new View.OnClickListener(){
+        holder.revealButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.v(LOGTAG,v.getId()+" is clicked"+" position= "+tempNumber);
+                //Toast.makeText(context,tempNumber,Toast.LENGTH_SHORT);
 
-                switch(v.getId()){
+                if(isShortInfoVisible) {
+                    //hiding the view
+                    isShortInfoVisible = false;
+                    new CardViewAnimator(context).collapseShortInfo(holder.shortInfo);
+/*                    holder.shortInfo.animate()
+                            .setDuration(500)
+                            .alpha(0.0f)
+                            .translationY(0)
+                            .setListener(new AnimatorListenerAdapter(){
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+                                    super.onAnimationEnd(animation);
+                                    holder.shortInfo.setVisibility(View.GONE);
+                                    holder.shortInfo.animate().setListener(null);
+                                    Log.v(LOGTAG,"view is made invisible");
+                                }
+                            }).start();
+*/
+                    v.animate().rotation(0).setDuration(500).start();
 
-                    case R.id.heritage_site_title:
-                        Toast.makeText(context,tempNumber,Toast.LENGTH_SHORT);
-
-                        break;
-
-                    case R.id.heritage_site_title_image:
-                        Toast.makeText(context,tempNumber,Toast.LENGTH_SHORT);
-
-
-                        break;
-
-                    case R.id.download_switch:
-                        Toast.makeText(context,tempNumber,Toast.LENGTH_SHORT);
-
-
-                        break;
-
-                    case R.id.heritage_site_info_header:
-                        Toast.makeText(context,tempNumber,Toast.LENGTH_SHORT);
-
-
-                        break;
-
-                    case R.id.heritage_info_reveal_button:
-                        Toast.makeText(context,tempNumber,Toast.LENGTH_SHORT);
-
-
-                        break;
                 }
+                else {
+                    //showing the view
+                    isShortInfoVisible = true;
+                    new CardViewAnimator(context).expandShortInfo(holder.shortInfo, holder.shortInfoParent);
+/*
+                    holder.shortInfo.animate()
+                            .setDuration(500)
+                            .alpha(1.0f)
+                            .translationY(holder.shortInfo.getHeight())
+                            .setListener(new AnimatorListenerAdapter(){
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+                                    super.onAnimationEnd(animation);
+                                    holder.shortInfo.setVisibility(View.VISIBLE);
+                                    holder.shortInfo.animate().setListener(null);
+                                    Log.v(LOGTAG,"view is made visible");
+                                }
+                            }).start();
+*/
+                    v.animate().rotation(-180).setDuration(500).start();
 
+                }
             }
         });
+
+
+
 
     }
 
