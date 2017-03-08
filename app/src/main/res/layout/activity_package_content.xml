@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/app_bar_main"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+<RelativeLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <include
+        layout="@layout/card_package_content"
+        android:id="@+id/kings"
+        android:layout_height="150dp"
+        android:layout_width="150dp"
+        android:layout_weight="0.5"
+        android:layout_alignParentLeft="true"/>
+
+    <include
+        layout="@layout/card_package_content"
+        android:id="@+id/monuments"
+        android:layout_height="150dp"
+        android:layout_width="150dp"
+        android:layout_weight="0.5"
+        android:layout_alignParentRight="true"/>
+
+</RelativeLayout>
+
+</LinearLayout>

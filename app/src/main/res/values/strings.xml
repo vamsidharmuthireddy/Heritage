@@ -1,5 +1,9 @@
 <resources>
 
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
     <!--SplashscreenAcivity-->
     <string name="heritage_caps">HERITAGE</string>
     <string name="powered_by" translatable="false">Powered By</string>

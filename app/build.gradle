@@ -45,6 +45,10 @@ dependencies {
     compile 'com.google.android.gms:play-services-location:10.2.0'
     compile 'com.android.support:multidex:1.0.1'
 
+
+    compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
+
+
     testCompile 'junit:junit:4.12'
     compile files('libs/commons-compress-1.12.jar')
 }
