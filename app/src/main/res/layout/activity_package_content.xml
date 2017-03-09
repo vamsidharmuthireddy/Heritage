@@ -12,7 +12,7 @@
     android:layout_height="wrap_content">
 
     <include
-        layout="@layout/card_package_content"
+        layout="@layout/card_kings"
         android:id="@+id/kings"
         android:layout_height="150dp"
         android:layout_width="150dp"
@@ -20,7 +20,7 @@
         android:layout_alignParentLeft="true"/>
 
     <include
-        layout="@layout/card_package_content"
+        layout="@layout/card_monuments"
         android:id="@+id/monuments"
         android:layout_height="150dp"
         android:layout_width="150dp"
