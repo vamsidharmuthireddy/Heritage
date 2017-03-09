@@ -54,9 +54,8 @@ public class HeritageSite {
 
 
 
-    public Bitmap getHeritageSiteImage(String packageName, String interestPointName) {
+    public Bitmap getHeritageSiteImage() {
 
-        packageName = packageName.toLowerCase();
 
         String imageName = heritageSitedetails.get(imageTag);
         //       Log.v("getImage","reached getImage");

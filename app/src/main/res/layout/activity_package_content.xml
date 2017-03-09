@@ -13,19 +13,19 @@
 
     <include
         layout="@layout/card_kings"
-        android:id="@+id/kings"
+        android:id="@+id/kings_card"
         android:layout_height="150dp"
         android:layout_width="150dp"
         android:layout_weight="0.5"
-        android:layout_alignParentLeft="true"/>
+        android:layout_alignParentStart="true"/>
 
     <include
         layout="@layout/card_monuments"
-        android:id="@+id/monuments"
+        android:id="@+id/monuments_card"
         android:layout_height="150dp"
         android:layout_width="150dp"
         android:layout_weight="0.5"
-        android:layout_alignParentRight="true"/>
+        android:layout_alignParentEnd="true"/>
 
 </RelativeLayout>
 
