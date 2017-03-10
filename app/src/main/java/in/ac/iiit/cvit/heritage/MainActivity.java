@@ -75,6 +75,9 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
 
     }
 
+    /**
+     * setting recyclerview of the activity
+     */
     private void setRecyclerView(){
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerview_heritage_sites);
@@ -99,6 +102,12 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
         }
     }
 
+    /**
+     * listener for item click in navigation menu
+     *
+     * @param item
+     * @return
+     */
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {

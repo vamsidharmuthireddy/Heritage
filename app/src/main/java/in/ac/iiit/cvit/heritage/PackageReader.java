@@ -59,7 +59,7 @@ public class PackageReader {
 
         String prevLanguage = Locale.getDefault().getLanguage();
         xmlFile = _packageName + "_" + prevLanguage + context.getString(R.string.xml_extension);
-        Log.v(LOGTAG, "Name of the xml file is " + xmlFile);
+        //Log.v(LOGTAG, "Name of the xml file is " + xmlFile);
 
         //xmlFile = context.getString(R.string.xml_file);
         MonumentsList = new ArrayList<InterestPoint>();
@@ -117,9 +117,15 @@ public class PackageReader {
                 Node monument = root.getElementsByTagName("monument").item(0);
                 Node ruler = root.getElementsByTagName("ruler").item(0);
 
+                Log.v(LOGTAG, root.getNodeName() + " " + root.getChildNodes().getLength());
+                Log.v(LOGTAG, monument.getNodeName());
+                Log.v(LOGTAG, ruler.getNodeName());
+
+
                 //get all the child elements
                 NodeList ips = monument.getChildNodes();
                 NodeList kings = ruler.getChildNodes();
+
 
                 //Following for loop is for ip tagged objects
                 for(int i=0; i<ips.getLength(); i++){
@@ -187,7 +193,10 @@ public class PackageReader {
     private void readFromFile(){
         File baseLocal = Environment.getExternalStorageDirectory();
 
-        File xmlfile = new File(baseLocal, dataLocation + _packageName + "/" + xmlFile );
+        //File xmlfile = new File(baseLocal, dataLocation + _packageName + "/" + xmlFile );
+        File xmlfile = new File(baseLocal, "Heritage/golconda_en.xml");
+        Log.v(LOGTAG, "xml file name is " + xmlfile.getAbsolutePath());
+
         try {
             FileInputStream xmlStream = new FileInputStream(xmlfile);
             String contents = readTextFile(xmlStream);

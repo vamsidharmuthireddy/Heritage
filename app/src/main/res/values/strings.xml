@@ -120,7 +120,7 @@
     <string name="downloading_package">Click the package that you want to download. An alert dialog will ask you to choose either \"Download\" or  \"Locate\". If you click \"Download\", the relevant package will be downloaded. If you already have the package in your mobile, click \"Locate\" button to select the package from storage. For example Golconda will have a package name of golconda.tar.gz. Look for the similar package while looking in the storage </string>
     <string name="first_time_instructions" translatable="false">first_time</string>
 
-    <!--InterestPointActivity-->
+    <!--MonumentActivity-->
     <string name="images">Images</string>
     <string name="videos">Videos</string>
     <string name="audio">Audio</string>

@@ -108,9 +108,11 @@ public class HeritageSiteReader {
                 //get the first element
                 Element root = doc.getDocumentElement();
 
+                Log.v(LOGTAG, root.getNodeName() + " " + root.getChildNodes().getLength());
                 //get all the child elements
                 NodeList heritagesite = root.getChildNodes();
-
+                //NodeList heritagesite = root.getElementsByTagName("site");
+                //Log.v(LOGTAG,heritagesite.item(0).getNodeName());
 
                 //Following for loop is for site tagged objects
                 for(int i=0; i<heritagesite.getLength(); i++){

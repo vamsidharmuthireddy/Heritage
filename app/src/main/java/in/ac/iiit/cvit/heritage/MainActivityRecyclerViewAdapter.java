@@ -19,7 +19,9 @@ import java.util.ArrayList;
  */
 
 public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainActivityRecyclerViewAdapter.DataObjectHolder> {
-
+    /**
+     * This is the Recycler view Adapter for the contents in MainActivity
+     */
 
 
     private Context context;
@@ -30,9 +32,11 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
 
     private Boolean isShortInfoVisible = false;
 
-    // Provide a reference to the views for each data item
-    // Complex data items may need more than one view per item, and
-    // you provide access to all the views for a data item in a view holder
+    /**
+     * Provide a reference to the views for each data item
+     * Complex data items may need more than one view per item, and
+     * you provide access to all the views for a data item in a view holder
+     */
     public static class DataObjectHolder extends RecyclerView.ViewHolder {
 
         private ImageView titleImage;
@@ -61,6 +65,13 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
         notifyDataSetChanged();
     }
 
+    /**
+     * This method is invoked by layout manager and inflates the recyclerview with cards
+     *
+     * @param parent
+     * @param viewType
+     * @return
+     */
     // Create new views (invoked by the layout manager)
     @Override
     public DataObjectHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -69,6 +80,11 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
         return dataObjectHolder;
     }
 
+    /**
+     * Whenever contents of the screen are changed, this method is called
+     * @param holder
+     * @param position
+     */
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(DataObjectHolder holder, int position) {
@@ -78,12 +94,14 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
         setListeners(holder, position);
 
 
-
-
-
-
     }
 
+
+    /**
+     * This method sets the content to the child views of the cards in MainActivity
+     * @param holder
+     * @param position
+     */
     private void setViews(DataObjectHolder holder,int position){
 
         ImageView titleImage = holder.titleImage;
@@ -104,6 +122,11 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
 
     }
 
+    /**
+     * This method sets the listeners for the child views of the cards in MainActivity
+     * @param _holder
+     * @param _position
+     */
     private void setListeners(DataObjectHolder _holder, int _position){
 
         final DataObjectHolder holder = _holder;

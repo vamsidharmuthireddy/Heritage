@@ -9,15 +9,24 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 
+import java.util.ArrayList;
+
 /**
  * Created by HOME on 07-03-2017.
  */
 
 public class PackageContentActivity extends AppCompatActivity {
+    /**
+     * This activity hosts contents of a package and is called when you click on one from MainActivity
+     */
+
 
     private SessionManager sessionManager;
     private String packageName;
     private Toolbar toolbar;
+    private ArrayList<InterestPoint> monumentList;
+    private ArrayList<InterestPoint> kingsList;
+
 
     private final static String LOGTAG = "PackageContentActivity";
 
@@ -38,14 +47,44 @@ public class PackageContentActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(packageName.toUpperCase());
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         sessionManager.setSessionPreferences(PackageContentActivity.this, getString(R.string.package_name), packageName);
 
         setListeners();
 
+        LoadPackage(packageName);
+
 
     }
 
+    /**
+     * This method returns interest points of the chosen Heritage site by calling PackageReader class
+     *
+     * @param packageName It is the name of the site that user wants to see
+     * @return List of all the interest points along with their contents in an InterestPoint array
+     */
+    public void LoadPackage(String packageName) {
+        PackageReader reader;
+        packageName = packageName.toLowerCase();
+        Log.v(LOGTAG, packageName);
+        reader = new PackageReader(packageName, PackageContentActivity.this);
+        //This reader has all the information about all the interest points
+        //We are getting an array of InterestPoint objects
+        monumentList = reader.getMonumentsList();
+        kingsList = reader.getKingsList();
+        //The above interestPoints has the data on all available interest points
+
+
+        Log.v(LOGTAG, "End of LoadPackage in MainActivity");
+
+    }
+
+
+    /**
+     * This method sets listeners for the cards hosted on this activity
+     */
     private void setListeners(){
 
         CardView cardKings = (CardView)findViewById(R.id.kings_card);
@@ -55,6 +94,7 @@ public class PackageContentActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.v(LOGTAG,"Clicked kings");
+
             }
         });
 
@@ -62,18 +102,40 @@ public class PackageContentActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.v(LOGTAG,"Clicked monuments");
+
+                Intent showMonuments = new Intent(PackageContentActivity.this, MonumentActivity.class);
+                showMonuments.putExtra(getString(R.string.package_name), packageName);
+                startActivity(showMonuments);
             }
         });
 
 
     }
 
-
+    /**
+     * Functioning of Back arrow shown in toolbar
+     *
+     * @return
+     */
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
 
     @Override
     public void onBackPressed() {
         Intent intent = new Intent(PackageContentActivity.this, MainActivity.class);
         startActivity(intent);
+    }
+
+
+    public ArrayList<InterestPoint> giveMonumentList() {
+        return monumentList;
+    }
+
+    public ArrayList<InterestPoint> giveKingsList() {
+        return kingsList;
     }
 
 
