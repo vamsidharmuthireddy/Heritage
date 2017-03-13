@@ -23,8 +23,19 @@ public class SessionManager {
         editor.commit();
     }
 
+    public void setSessionPreferences(Context context, String key, boolean value) {
+        SharedPreferences.Editor editor = context.getSharedPreferences(SESSION_PREFERENCES, CONTEXT_MODE).edit();
+        editor.putBoolean(key, value);
+        editor.commit();
+    }
 
     public String getStringSessionPreferences(Context context, String key, String default_value) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SESSION_PREFERENCES, CONTEXT_MODE);
+        String preference = sharedPreferences.getString(key, default_value);
+        return preference;
+    }
+
+    public String getBooleanSessionPreferences(Context context, String key, String default_value) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SESSION_PREFERENCES, CONTEXT_MODE);
         String preference = sharedPreferences.getString(key, default_value);
         return preference;

@@ -91,6 +91,10 @@
     <string name="default_package_value" translatable="false"></string>
     <string name="heritage_site" translatable="false">heritage_site</string>
     <string name="default_heritage_site" translatable="false"></string>
+    <string name="interestpoint_name" translatable="false">interestpoint_name</string>
+    <string name="default_interestpoint_name" translatable="false"></string>
+    <string name="package_is_downloaded" translatable="false">package_is_downloaded</string>
+    <string name="default_package_is_downloaded" translatable="false"></string>
 
 
 

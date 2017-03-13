@@ -53,8 +53,7 @@ public class HeritageSite {
     }
 
 
-
-    public Bitmap getHeritageSiteImage() {
+    public Bitmap getHeritageSiteImage(String packageName) {
 
 
         String imageName = heritageSitedetails.get(imageTag);

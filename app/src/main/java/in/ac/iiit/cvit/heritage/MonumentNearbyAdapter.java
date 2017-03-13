@@ -14,14 +14,14 @@ import java.util.ArrayList;
  * Created by HOME on 09-03-2017.
  */
 
-public class MonumentRecyclerViewAdapter extends RecyclerView.Adapter<MonumentRecyclerViewAdapter.DataObjectHolder> {
+public class MonumentNearbyAdapter extends RecyclerView.Adapter<MonumentNearbyAdapter.DataObjectHolder> {
     /**
-     * This class is called from InterestPointsFragment after we get all the interest points
-     * This class sets the picture and text(Title) on the InterestPointsFragment's recycler view
+     * This class is called from MonumentNearbyFragment after we get all the nearby monuments.
+     * This class sets the picture and text(Title) on the MonumentNearby's recycler view
      */
     private Context context;
     private ArrayList<InterestPoint> interestPoints;
-    private static final String LOGTAG = "Heritage";
+    private static final String LOGTAG = "MonumentNearbyAdapter";
 
     public static class DataObjectHolder extends RecyclerView.ViewHolder {
 
@@ -35,7 +35,7 @@ public class MonumentRecyclerViewAdapter extends RecyclerView.Adapter<MonumentRe
         }
     }
 
-    public MonumentRecyclerViewAdapter(ArrayList<InterestPoint> interestPoints, Context _context) {
+    public MonumentNearbyAdapter(ArrayList<InterestPoint> interestPoints, Context _context) {
         context = _context;
         this.interestPoints = interestPoints;
         notifyDataSetChanged();

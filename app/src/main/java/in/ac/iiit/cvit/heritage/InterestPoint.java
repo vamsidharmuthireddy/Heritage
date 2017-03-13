@@ -173,5 +173,40 @@ public class InterestPoint {
         return Math.sqrt(sum);
     }
 
+    /**
+     * This method is called from NearbyPointsFragment. This method gives the view angle of the interest point
+     * based on user's current location and mobile's direction
+     *
+     * @param iLat  latitude
+     * @param iLong longitude
+     * @return view angle from mobile's direction od axis
+     */
+    double giveAngle(double iLat, double iLong, double[] coEfficients) {
 
+        double pLat;
+        double pLong;
+        double angle = 0;
+        double perpDist = 0;
+
+
+        double a = coEfficients[0];
+        double b = coEfficients[1];
+        double c = coEfficients[2];
+
+//         Log.d("giveAngle", "a="+ a);
+//         Log.d("giveAngle", "b="+ b);
+//         Log.d("giveAngle", "c="+ c);
+
+        pLat = Double.parseDouble(monumentdetails.get(latitudeTag));
+        pLong = Double.parseDouble(monumentdetails.get(longitudeTag));
+        //        Log.d("InterestPoint:distance", "pLat="+ pLat);
+        //        Log.d("InterestPoint:distance", "pLong="+ pLong);
+
+        perpDist = (a * pLat + b * pLong + c) / (Math.sqrt((Math.pow(a, 2) + Math.pow(b, 2))));
+//         Log.d("giveAngle:perpDist", "perpDist="+ perpDist);
+
+        angle = Math.asin(perpDist / betweenDistance);
+
+        return angle;
+    }
 }

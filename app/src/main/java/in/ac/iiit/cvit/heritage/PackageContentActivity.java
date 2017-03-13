@@ -40,17 +40,17 @@ public class PackageContentActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_package_content);
 
-        packageName = getIntent().getStringExtra(getString(R.string.package_name)).toLowerCase().replaceAll("\\s","");
+        packageName = getIntent().getStringExtra(getString(R.string.package_name)).toLowerCase();
 
-        sessionManager = new SessionManager();
+        //sessionManager = new SessionManager();
+        //sessionManager.setSessionPreferences(PackageContentActivity.this, getString(R.string.package_name), packageName);
+
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(packageName.toUpperCase());
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-
-        sessionManager.setSessionPreferences(PackageContentActivity.this, getString(R.string.package_name), packageName);
 
         setListeners();
 
@@ -67,7 +67,7 @@ public class PackageContentActivity extends AppCompatActivity {
      */
     public void LoadPackage(String packageName) {
         PackageReader reader;
-        packageName = packageName.toLowerCase();
+        packageName = packageName.toLowerCase().replaceAll("\\s", "");
         Log.v(LOGTAG, packageName);
         reader = new PackageReader(packageName, PackageContentActivity.this);
         //This reader has all the information about all the interest points

@@ -44,6 +44,10 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //Loading the language preference
+        LocaleManager localeManager = new LocaleManager(MainActivity.this);
+        localeManager.loadLocale();
         setContentView(R.layout.activity_main);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -52,15 +56,13 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
         //Setting permissions
         if (checkPermission()) {
             Log.i(LOGTAG,"PackagesDownloaderActivity has storage permission");
+            heritageSitesList = LoadPackage("heritagesite");
+            setRecyclerView();
 
         } else {
             requestPermission();
         }
 
-
-        heritageSitesList = LoadPackage("heritagesite");
-
-        setRecyclerView();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -98,7 +100,10 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.addCategory(Intent.CATEGORY_HOME);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
         }
     }
 
@@ -192,7 +197,8 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
         switch (requestCode) {
             case PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
+                    heritageSitesList = LoadPackage("heritagesite");
+                    setRecyclerView();
 
                 } else {
                     //openApplicationPermissions();

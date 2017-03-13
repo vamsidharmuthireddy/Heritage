@@ -1,18 +1,23 @@
 package in.ac.iiit.cvit.heritage;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Environment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 /**
  * Created by HOME on 06-03-2017.
@@ -89,6 +94,8 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
     @Override
     public void onBindViewHolder(DataObjectHolder holder, int position) {
 
+        Log.v(LOGTAG, "position = " + position);
+
         setViews(holder, position);
 
         setListeners(holder, position);
@@ -104,6 +111,11 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
      */
     private void setViews(DataObjectHolder holder,int position){
 
+        SessionManager sessionManager = new SessionManager();
+        final String packageName = sessionManager
+                .getStringSessionPreferences(
+                        context, context.getString(R.string.package_name), context.getString(R.string.default_package_value));
+
         ImageView titleImage = holder.titleImage;
         TextView title = holder.title;
         TextView infoHeader = holder.infoHeader;
@@ -115,7 +127,7 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
 
 //settings the card contents for the recycler view
         title.setText(heritageSites.get(position).getHeritageSite(context.getString(R.string.interest_point_title)));
-        titleImage.setImageBitmap(heritageSites.get(position).getHeritageSiteImage());
+        titleImage.setImageBitmap(heritageSites.get(position).getHeritageSiteImage(packageName));
         infoHeader.setText(context.getString(R.string.heritage_site_introduction));
         downloadSwitch.setChecked(false);
         shortInfo.setText(heritageSites.get(position).getHeritageSite(context.getString(R.string.interest_point_short_info)));
@@ -137,10 +149,10 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
             @Override
             public void onClick(View v) {
 
-                String packageName = holder.title.getText().toString().toLowerCase().replaceAll("\\s","");
+                String packageName = holder.title.getText().toString().toLowerCase();
                 SessionManager sessionManager = new SessionManager();
                 sessionManager.setSessionPreferences(context
-                        , context.getString(R.string.package_name), packageName);
+                        , context.getString(R.string.package_name), packageName.replaceAll("\\s", ""));
                 Log.v(LOGTAG,v.getId()+" is clicked"+" position= "+position+" packageName = "+packageName);
 
                 Intent openPackageContent = new Intent(context,PackageContentActivity.class);
@@ -149,10 +161,6 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
 
             }
         });
-
-
-
-
 
         holder.revealButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -178,6 +186,64 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
                 }
             }
         });
+
+        holder.downloadSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                Log.v(LOGTAG, "Switch is " + isChecked);
+
+                SessionManager sessionManager = new SessionManager();
+                sessionManager.setSessionPreferences(context,
+                        context.getString(R.string.package_is_downloaded), isChecked);
+
+                String packageName = holder.title.getText().toString().toUpperCase();
+
+                if (isChecked) {
+
+                    new AlertDialog.Builder(context)
+                            .setMessage(packageName + " : " + context.getString(R.string.do_you_want_to_download_the_package)
+                                    + context.getString(R.string.or_locate_it))
+                            .setPositiveButton(context.getString(R.string.download_file), new DialogInterface.OnClickListener() {
+
+                                // do something when the button is clicked
+                                public void onClick(DialogInterface arg0, int arg1) {
+                                    String currentLanguage = Locale.getDefault().getLanguage();
+                                    //String list_item_copy = adapter.getItem(position).toLowerCase();
+                                    LocaleManager localeManager = new LocaleManager(context);
+                                    localeManager.changeLang(context.getString(R.string.english));
+
+                                    String packageName = "";
+
+                                    Log.v(LOGTAG, "default language packageName = " + packageName);
+                                    localeManager.changeLang(currentLanguage);
+
+                                    new PackageDownloader(context).execute(packageName);
+
+                                }
+                            })
+                            .setNegativeButton(context.getString(R.string.locate_file), new DialogInterface.OnClickListener() {
+
+                                // do something when the button is clicked
+                                public void onClick(DialogInterface arg0, int arg1) {
+                                    PackageLoader packageLoader = new PackageLoader(context);
+                                    packageLoader.showFileListDialog(Environment.getExternalStorageDirectory().toString());
+                                    //onBackPressed();
+                                }
+                            })
+                            .show();
+
+                } else {
+
+
+                }
+
+
+                //holder.title.invalidate();
+
+            }
+        });
+
     }
 
 
