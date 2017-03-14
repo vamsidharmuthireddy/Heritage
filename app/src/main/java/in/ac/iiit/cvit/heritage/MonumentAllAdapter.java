@@ -24,6 +24,7 @@ public class MonumentAllAdapter extends RecyclerView.Adapter<MonumentAllAdapter.
      */
     private Context context;
     private ArrayList<InterestPoint> interestPoints;
+    private String packagename_en;
     private static final String LOGTAG = "MonumentAllAdapter";
 
     public static class DataObjectHolder extends RecyclerView.ViewHolder {
@@ -38,8 +39,9 @@ public class MonumentAllAdapter extends RecyclerView.Adapter<MonumentAllAdapter.
         }
     }
 
-    public MonumentAllAdapter(ArrayList<InterestPoint> interestPoints, Context _context) {
+    public MonumentAllAdapter(ArrayList<InterestPoint> interestPoints, Context _context, String _packageName_en) {
         context = _context;
+        packagename_en = _packageName_en;
         this.interestPoints = interestPoints;
         notifyDataSetChanged();
     }
@@ -75,6 +77,7 @@ public class MonumentAllAdapter extends RecyclerView.Adapter<MonumentAllAdapter.
         textView.setText(interestPoints.get(position).getMonument(context.getString(R.string.interest_point_title)));
         imageView.setImageBitmap(interestPoints.get(position).getMonumentImage(packageName, context.getString(R.string.interest_point_title)));
 
+        setListeners(holder, position);
 
     }
 
@@ -88,12 +91,13 @@ public class MonumentAllAdapter extends RecyclerView.Adapter<MonumentAllAdapter.
             @Override
             public void onClick(View v) {
 
-                String interestPointTitle = holder.textView.getText().toString().toLowerCase();
+                String interestPointTitle = holder.textView.getText().toString();
 
                 Log.v(LOGTAG, v.getId() + " is clicked" + " position= " + position + " packageName = " + interestPointTitle);
 
                 Intent openMonument = new Intent(context, InterestPointActivity.class);
                 openMonument.putExtra(context.getString(R.string.interestpoint_name), interestPointTitle);
+                openMonument.putExtra(context.getString(R.string.package_name_en), packagename_en);
                 context.startActivity(openMonument);
 
             }
@@ -110,6 +114,7 @@ public class MonumentAllAdapter extends RecyclerView.Adapter<MonumentAllAdapter.
 
                 Intent openMonument = new Intent(context, InterestPointActivity.class);
                 openMonument.putExtra(context.getString(R.string.interestpoint_name), interestPointTitle);
+                openMonument.putExtra(context.getString(R.string.package_name_en), packagename_en);
                 context.startActivity(openMonument);
 
             }

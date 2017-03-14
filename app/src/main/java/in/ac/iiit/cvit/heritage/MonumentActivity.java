@@ -26,11 +26,12 @@ public class MonumentActivity extends AppCompatActivity {
 
     private SessionManager sessionManager;
     private String packageName;
+    public String packageName_en;
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
 
-    private ArrayList<InterestPoint> monumentList;
+    public ArrayList<InterestPoint> monumentList;
 
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private static final int PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION = 2;
@@ -56,6 +57,7 @@ public class MonumentActivity extends AppCompatActivity {
         setContentView(R.layout.activity_monuments);
 
         packageName = getIntent().getStringExtra(getString(R.string.package_name));
+        packageName_en = getIntent().getStringExtra(getString(R.string.package_name_en));
 
         sessionManager = new SessionManager();
 
@@ -68,9 +70,10 @@ public class MonumentActivity extends AppCompatActivity {
 
         sessionManager.setSessionPreferences(MonumentActivity.this, getString(R.string.package_name), packageName);
 
-        monumentList = new PackageContentActivity().giveMonumentList();
-        //monumentList = LoadPackage(packageName);
-
+        //monumentList = new PackageContentActivity().giveMonumentList();
+        //monumentList = new PackageContentActivity().giveMonumentList();
+        monumentList = LoadPackage(packageName);
+        Log.v(LOGTAG, "size of monumentList is " + monumentList.size());
 
         //Setting up tabs "NEARBY", "PLACES"
         tabLayout = (TabLayout) findViewById(R.id.tab_layout);
@@ -137,6 +140,8 @@ public class MonumentActivity extends AppCompatActivity {
     public void onBackPressed() {
         Intent intent = new Intent(MonumentActivity.this, PackageContentActivity.class);
         intent.putExtra(getString(R.string.package_name), packageName);
+        intent.putExtra(getString(R.string.package_name_en), packageName_en);
+
         startActivity(intent);
 
     }

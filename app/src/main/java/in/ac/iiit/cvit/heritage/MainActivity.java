@@ -22,6 +22,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity  implements NavigationView.OnNavigationItemSelectedListener {
     /**
@@ -33,6 +34,10 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
     private RecyclerView.Adapter recyclerViewAdapter;
     private RecyclerView.LayoutManager recyclerViewLayoutManager;
     private ArrayList<HeritageSite> heritageSitesList;
+    public ArrayList<HeritageSite> heritageSitesList_en;
+    private String language;
+
+    private LocaleManager localeManager;
 
     private static final String LOGTAG = "MainActivity";
 
@@ -46,9 +51,10 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
         super.onCreate(savedInstanceState);
 
         //Loading the language preference
-        LocaleManager localeManager = new LocaleManager(MainActivity.this);
+        localeManager = new LocaleManager(MainActivity.this);
         localeManager.loadLocale();
         setContentView(R.layout.activity_main);
+        language = Locale.getDefault().getLanguage();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -88,7 +94,8 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
 
         //setting the view of the PLACES tab
-        recyclerViewAdapter = new MainActivityRecyclerViewAdapter(heritageSitesList,MainActivity.this);
+        recyclerViewAdapter = new MainActivityRecyclerViewAdapter(heritageSitesList,
+                heritageSitesList_en, MainActivity.this, MainActivity.this);
         recyclerView.setAdapter(recyclerViewAdapter);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
@@ -144,11 +151,30 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
     public ArrayList<HeritageSite> LoadPackage(String packageName){
         HeritageSiteReader reader;
         packageName = packageName.toLowerCase();
-        reader = new HeritageSiteReader(packageName, MainActivity.this);
+        ArrayList<HeritageSite> heritageSites;
+        if (language.equals("en")) {
+            //reading available heritage site data in english
+            reader = new HeritageSiteReader(packageName, MainActivity.this, language);
+
+            heritageSites = reader.getHeritageSiteList();
+            heritageSitesList_en = reader.getHeritageSiteList();
+            //heritageSitesList_en = new ArrayList<HeritageSite>(heritageSites);
+
+        } else {
+            //reading available heritage site data in local language
+            reader = new HeritageSiteReader(packageName, MainActivity.this, language);
+            heritageSites = reader.getHeritageSiteList();
+
+            //reading available heritage site data in english
+            reader = new HeritageSiteReader(packageName, MainActivity.this, "en");
+            heritageSitesList_en = reader.getHeritageSiteList();
+
+        }
+
+        Log.v(LOGTAG, "End of LoadPackage in MainActivity " + heritageSitesList_en.size());
+
         //This reader has all the information about all the interest points
         //We are getting an array of InterestPoint objects
-        ArrayList<HeritageSite> heritageSites = reader.getHeritageSiteList();
-        //The above interestPoints has the data on all available interest points
 
 
         Log.v(LOGTAG,"End of LoadPackage in MainActivity");

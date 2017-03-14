@@ -53,8 +53,8 @@ public class MonumentNearbyFragment extends Fragment implements SensorEventListe
     private double currentLatitude;
     private double currentLongitude;
 
-    private ArrayList<InterestPoint> sortedInterestPoints;
-    private ArrayList<InterestPoint> interestPoints;
+    private ArrayList<InterestPoint> sortedInterestPoints = null;
+    private ArrayList<InterestPoint> interestPoints = null;
 
 
     private RecyclerView recyclerView;
@@ -66,7 +66,7 @@ public class MonumentNearbyFragment extends Fragment implements SensorEventListe
     private static int yIndex;
     private static int itemOffset;
 
-    private Context _context;
+    private Context context;
 
     private static final int TRUNCATION_LIMIT = 3;
 
@@ -89,7 +89,7 @@ public class MonumentNearbyFragment extends Fragment implements SensorEventListe
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_nearby_monuments, container, false);
-        _context = getActivity();
+        context = getActivity();
         mGoogleApiClient = null;
         createLocationClients();
 
@@ -97,15 +97,18 @@ public class MonumentNearbyFragment extends Fragment implements SensorEventListe
         currentTime = calendar.getTimeInMillis();
         previousTime = 0;
 
-        mSensorManager = (SensorManager) _context.getSystemService(SENSOR_SERVICE);
+        mSensorManager = (SensorManager) context.getSystemService(SENSOR_SERVICE);
         accelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         magnetometer = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 //        Log.d(LOGTAG,"sensors in onCreate got created");
 
-        //can we try the below code?
-        //       interestPoints = MainActivity.interestPoints;
-        //getting the InterestPoint object set in MainActivity
-        interestPoints = ((PackageContentActivity) this.getActivity()).giveMonumentList();
+
+        //interestPoints = new PackageContentActivity().giveMonumentList(context);
+        //interestPoints = new MonumentActivity().monumentList;
+
+        interestPoints = ((MonumentActivity) this.getActivity()).monumentList;
+        Log.v(LOGTAG, "interestPoints size is " + interestPoints.size());
+
         //initializing the array
         sortedInterestPoints = new ArrayList<InterestPoint>();
         for (int i = 0; i < Math.min(TRUNCATION_LIMIT, interestPoints.size()); i++) {
@@ -146,9 +149,11 @@ public class MonumentNearbyFragment extends Fragment implements SensorEventListe
         });
         Log.i(LOGTAG, "scroll yPosition = " + yPosition + " yIndex = " + yIndex + " itemOffset = " + itemOffset);
 
+
+        String packageName_en = ((MonumentActivity) this.getActivity()).packageName_en;
         //After refreshing the view with new data. The following line sets the position of view to previous one
         recyclerViewLayoutManager.scrollToPositionWithOffset(yIndex, itemOffset);
-        recyclerViewAdapter = new MonumentNearbyAdapter(sortedInterestPoints, getContext());
+        recyclerViewAdapter = new MonumentNearbyAdapter(sortedInterestPoints, getContext(), packageName_en);
         recyclerView.setAdapter(recyclerViewAdapter);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
@@ -199,7 +204,7 @@ public class MonumentNearbyFragment extends Fragment implements SensorEventListe
 
     private void createLocationClients() {
         if (mGoogleApiClient == null) {
-            mGoogleApiClient = new GoogleApiClient.Builder(_context)
+            mGoogleApiClient = new GoogleApiClient.Builder(context)
                     .addConnectionCallbacks(this)
                     .addOnConnectionFailedListener(this)
                     .addApi(LocationServices.API)
@@ -217,8 +222,8 @@ public class MonumentNearbyFragment extends Fragment implements SensorEventListe
     @Override
     public void onConnected(Bundle bundle) {
         //Log.d(LOGTAG, "Running onConnected");
-        if (ActivityCompat.checkSelfPermission(_context, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(_context, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -246,7 +251,7 @@ public class MonumentNearbyFragment extends Fragment implements SensorEventListe
             textView.setText("latitude: " + currentLatitude + " longitude: " + currentLongitude);
             */
             //Log.d(LOGTAG, "Creating toast, onConnected");
-            //Toast.makeText(_context, currentLatitude + " WORKS " + currentLongitude + "", Toast.LENGTH_LONG).show();
+            //Toast.makeText(context, currentLatitude + " WORKS " + currentLongitude + "", Toast.LENGTH_LONG).show();
         }
 
         boolean mRequestingLocationUpdates = true;
@@ -257,8 +262,8 @@ public class MonumentNearbyFragment extends Fragment implements SensorEventListe
 
     protected void startLocationUpdates() {
         //Log.d(LOGTAG, "Calling startLocationUpdates");
-        if (ActivityCompat.checkSelfPermission(_context, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(_context, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -311,7 +316,7 @@ public class MonumentNearbyFragment extends Fragment implements SensorEventListe
     public void onLocationChanged(Location location) {
         currentLatitude = location.getLatitude();
         currentLongitude = location.getLongitude();
-        //Toast.makeText(_context, currentLatitude + " WORKS " + currentLongitude + "", Toast.LENGTH_LONG).show();
+        //Toast.makeText(context, currentLatitude + " WORKS " + currentLongitude + "", Toast.LENGTH_LONG).show();
         computeNearby(currentLatitude, currentLongitude);
 
 

@@ -23,9 +23,10 @@ public class PackageContentActivity extends AppCompatActivity {
 
     private SessionManager sessionManager;
     private String packageName;
+    private String packageName_en;
     private Toolbar toolbar;
-    private ArrayList<InterestPoint> monumentList;
-    private ArrayList<InterestPoint> kingsList;
+    public static ArrayList<InterestPoint> monumentList;
+    public static ArrayList<InterestPoint> kingsList;
 
 
     private final static String LOGTAG = "PackageContentActivity";
@@ -41,6 +42,7 @@ public class PackageContentActivity extends AppCompatActivity {
         setContentView(R.layout.activity_package_content);
 
         packageName = getIntent().getStringExtra(getString(R.string.package_name)).toLowerCase();
+        packageName_en = getIntent().getStringExtra(getString(R.string.package_name_en)).toLowerCase();
 
         //sessionManager = new SessionManager();
         //sessionManager.setSessionPreferences(PackageContentActivity.this, getString(R.string.package_name), packageName);
@@ -54,7 +56,7 @@ public class PackageContentActivity extends AppCompatActivity {
 
         setListeners();
 
-        LoadPackage(packageName);
+        LoadPackage(packageName_en);
 
 
     }
@@ -76,8 +78,10 @@ public class PackageContentActivity extends AppCompatActivity {
         kingsList = reader.getKingsList();
         //The above interestPoints has the data on all available interest points
 
+        Log.v(LOGTAG, "monumentList size is " + monumentList.size());
+        Log.v(LOGTAG, "kingsList size is " + kingsList.size());
 
-        Log.v(LOGTAG, "End of LoadPackage in MainActivity");
+        Log.v(LOGTAG, "End of LoadPackage in PackageContentActivity");
 
     }
 
@@ -105,6 +109,7 @@ public class PackageContentActivity extends AppCompatActivity {
 
                 Intent showMonuments = new Intent(PackageContentActivity.this, MonumentActivity.class);
                 showMonuments.putExtra(getString(R.string.package_name), packageName);
+                showMonuments.putExtra(getString(R.string.package_name_en), packageName_en);
                 startActivity(showMonuments);
             }
         });

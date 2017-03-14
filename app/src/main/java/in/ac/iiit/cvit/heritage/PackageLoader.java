@@ -280,7 +280,7 @@ public class PackageLoader {
                         sessionManager.setSessionPreferences(context, context.getString(R.string.package_name), basePackageName);
 
                         Intent intent_main_activity = new Intent(context, MainActivity.class);
-                        intent_main_activity.putExtra(context.getString(R.string.packageNameKey), basePackageName);
+                        intent_main_activity.putExtra(context.getString(R.string.package_name_en), basePackageName);
                         context.startActivity(intent_main_activity);
 
                     }

@@ -1,5 +1,6 @@
 package in.ac.iiit.cvit.heritage;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -8,6 +9,7 @@ import android.os.AsyncTask;
 import android.os.Environment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.widget.Switch;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
@@ -42,19 +44,25 @@ public class PackageDownloader extends AsyncTask<String, String, String> {
     private final String packageUrl;
     private final String packageFormat;
     private URL url;
-    private Context _context;
+    private Context context;
+    private Activity activity;
+    private Switch downloadSwitch;
     private ProgressDialog progressDialog;
     private HttpURLConnection httpURLConnection;
     private String packageName;
-    private String basePackageName;
+    private String packageName_en;
+    private String basepackageName;
+    private String basepackageName_en;
 
-    public PackageDownloader(Context context) {
-        _context = context;
+    public PackageDownloader(Context _context, Activity _activity, Switch _downloadSwitch) {
+        context = _context;
+        activity = _activity;
+        downloadSwitch = _downloadSwitch;
 
-        EXTRACT_DIR = _context.getString(R.string.extracted_location);
-        COMPRESSED_DIR = _context.getString(R.string.compressed_location);
-        packageUrl = _context.getString(R.string.package_download_url);
-        packageFormat = _context.getString(R.string.package_format);
+        EXTRACT_DIR = context.getString(R.string.extracted_location);
+        COMPRESSED_DIR = context.getString(R.string.compressed_location);
+        packageUrl = context.getString(R.string.package_download_url);
+        packageFormat = context.getString(R.string.package_format);
     }
 
     /**
@@ -64,11 +72,11 @@ public class PackageDownloader extends AsyncTask<String, String, String> {
     protected void onPreExecute() {
         super.onPreExecute();
 
-        progressDialog = new ProgressDialog(_context);
+        progressDialog = new ProgressDialog(context);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         progressDialog.setIndeterminate(false);
         progressDialog.setProgress(0);
-        progressDialog.setMessage(_context.getString(R.string.downloading));
+        progressDialog.setMessage(context.getString(R.string.downloading));
         progressDialog.setCancelable(false);
         progressDialog.show();
 
@@ -83,9 +91,12 @@ public class PackageDownloader extends AsyncTask<String, String, String> {
      */
     @Override
     protected String doInBackground(String... params) {
-        basePackageName = params[0];
-        packageName = params[0] + packageFormat;
-        String address = packageUrl + packageName;
+        basepackageName = params[0];
+        packageName = params[0];
+        basepackageName_en = params[1];
+        packageName_en = params[1];
+        packageName_en = packageName_en.toLowerCase().replace("\\s", "") + packageFormat;
+        String address = packageUrl + packageName_en;
         Log.i(LOGTAG, address);
         initializeDirectory();
         File baseLocal = Environment.getExternalStorageDirectory();
@@ -104,7 +115,7 @@ public class PackageDownloader extends AsyncTask<String, String, String> {
             Log.i(LOGTAG, "responseCode = " + responseCode);
             if (responseCode == HttpURLConnection.HTTP_OK) {
 
-                File archive = new File(baseLocal, COMPRESSED_DIR + packageName);
+                File archive = new File(baseLocal, COMPRESSED_DIR + packageName_en);
                 FileOutputStream archiveStream = new FileOutputStream(archive);
 
                 //getting the package
@@ -129,7 +140,7 @@ public class PackageDownloader extends AsyncTask<String, String, String> {
                 }
 
                 //Log.i(LOGTAG, "Download Finished");
-                ExtractPackage(basePackageName);
+                ExtractPackage(basepackageName_en);
 
                 return "Package Download Completed";
             } else {
@@ -170,38 +181,51 @@ public class PackageDownloader extends AsyncTask<String, String, String> {
         progressDialog.dismiss();
         Log.i(LOGTAG, result);
 
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(_context);
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
 
-        alertDialog.setTitle(_context.getString(R.string.download_update));
+        alertDialog.setTitle(context.getString(R.string.download_update));
 
         if (result.equals("Package Download Completed")) {
-            alertDialog.setPositiveButton(_context.getString(R.string.ok), new DialogInterface.OnClickListener() {
+
+            Log.v(LOGTAG, packageName_en + "package download is complete");
+
+            downloadSwitch.setChecked(true);
+            downloadSwitch.invalidate();
+
+            alertDialog.setPositiveButton(context.getString(R.string.ok), new DialogInterface.OnClickListener() {
                 // do something when the button is clicked
                 public void onClick(DialogInterface arg0, int arg1) {
 
                     SessionManager sessionManager = new SessionManager();
-                    sessionManager.setSessionPreferences(_context, _context.getString(R.string.package_name), basePackageName);
+                    sessionManager.setSessionPreferences(context, context.getString(R.string.package_name), basepackageName);
 
-                    Intent intent_main_activity = new Intent(_context, MainActivity.class);
-                    intent_main_activity.putExtra(_context.getString(R.string.packageNameKey), basePackageName);
-                    _context.startActivity(intent_main_activity);
+                    Intent intent_package_content = new Intent(context, PackageContentActivity.class);
+                    intent_package_content.putExtra(context.getString(R.string.package_name_en), basepackageName_en);
+                    intent_package_content.putExtra(context.getString(R.string.package_name), basepackageName);
+                    context.startActivity(intent_package_content);
 
                 }
             });
 
-            alertDialog.setMessage(_context.getString(R.string.package_download_completed) + "\n" + _context.getString(R.string.click_to_view));
+            alertDialog.setMessage(context.getString(R.string.package_download_completed) + "\n" + context.getString(R.string.click_to_view));
             alertDialog.show();
 
         } else {
 
-            alertDialog.setPositiveButton(_context.getString(R.string.ok), new DialogInterface.OnClickListener() {
+            Log.v(LOGTAG, packageName_en + "package download is not complete");
+
+            downloadSwitch.setChecked(false);
+            downloadSwitch.invalidate();
+
+            alertDialog.setPositiveButton(context.getString(R.string.ok), new DialogInterface.OnClickListener() {
                 // do something when the button is clicked
                 public void onClick(DialogInterface arg0, int arg1) {
+
 
                 }
             });
 
-            alertDialog.setMessage(_context.getString(R.string.package_not_downloaded));
+            alertDialog.setMessage(context.getString(R.string.package_not_downloaded));
             alertDialog.show();
         }
 
@@ -212,7 +236,7 @@ public class PackageDownloader extends AsyncTask<String, String, String> {
      */
     void initializeDirectory() {
         File baseLocal = Environment.getExternalStorageDirectory();
-        //File baseLocal = _context.getDir("Heritage",Context.MODE_PRIVATE);
+        //File baseLocal = context.getDir("Heritage",Context.MODE_PRIVATE);
         File extracted = new File(baseLocal, EXTRACT_DIR);
         if (!extracted.exists()) {
             extracted.mkdirs();
@@ -226,12 +250,12 @@ public class PackageDownloader extends AsyncTask<String, String, String> {
     /**
      * Extracting the package from compresses tar.gz file
      *
-     * @param basePackageName name of the tar file with extension
+     * @param basepackageName_en name of the tar file with extension
      */
-    void ExtractPackage(String basePackageName) {
-        String packageName = basePackageName + _context.getString(R.string.package_format);
+    void ExtractPackage(String basepackageName_en) {
+        String packageName_en = basepackageName_en + context.getString(R.string.package_format);
         File baseLocal = Environment.getExternalStorageDirectory();
-        File archive = new File(baseLocal, COMPRESSED_DIR + packageName);
+        File archive = new File(baseLocal, COMPRESSED_DIR + packageName_en);
         File destination = new File(baseLocal, EXTRACT_DIR);
         Log.v("Extracted directory", destination.toString());
 

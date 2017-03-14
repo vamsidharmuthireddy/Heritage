@@ -59,7 +59,7 @@ public class PackageReader {
 
         String prevLanguage = Locale.getDefault().getLanguage();
         xmlFile = _packageName + "_" + prevLanguage + context.getString(R.string.xml_extension);
-        //Log.v(LOGTAG, "Name of the xml file is " + xmlFile);
+        Log.v(LOGTAG, "Name of the xml file is " + xmlFile);
 
         //xmlFile = context.getString(R.string.xml_file);
         MonumentsList = new ArrayList<InterestPoint>();

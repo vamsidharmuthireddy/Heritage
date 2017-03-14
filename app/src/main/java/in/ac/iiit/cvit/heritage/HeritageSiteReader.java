@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Locale;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -55,13 +54,13 @@ public class HeritageSiteReader {
      * @param packageName name of the package name i.e. heritage site
      * @param _context
      */
-    public HeritageSiteReader(String packageName, Context _context){
+    public HeritageSiteReader(String packageName, Context _context, String language) {
         context = _context;
         _packageName = packageName;
         dataLocation = context.getString(R.string.extracted_location);
 
-        String prevLanguage = Locale.getDefault().getLanguage();
-        //xmlFile = _packageName + "_" + prevLanguage + context.getString(R.string.xml_extension);
+        //String prevLanguage = Locale.getDefault().getLanguage();
+        //xmlFile = _packageName + "_" + language + context.getString(R.string.xml_extension);
         xmlFile = "heritagesite" + context.getString(R.string.xml_extension);
         Log.v(LOGTAG, "Name of the xml file is " + xmlFile);
 

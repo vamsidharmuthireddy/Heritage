@@ -1,5 +1,6 @@
 package in.ac.iiit.cvit.heritage;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -10,14 +11,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.File;
 import java.util.ArrayList;
-import java.util.Locale;
 
 /**
  * Created by HOME on 06-03-2017.
@@ -30,7 +31,9 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
 
 
     private Context context;
+    private Activity activity;
     private ArrayList<HeritageSite> heritageSites;
+    private ArrayList<HeritageSite> heritageSites_en;
     private static final String LOGTAG = "MainActivityAdapter";
 
     private int expandedPosition = -1;
@@ -64,9 +67,13 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
         }
     }
 
-    public MainActivityRecyclerViewAdapter(ArrayList<HeritageSite> heritageSites, Context _context) {
+    public MainActivityRecyclerViewAdapter(ArrayList<HeritageSite> heritageSites,
+                                           ArrayList<HeritageSite> heritageSites_en, Context _context, Activity _activity) {
         context = _context;
+        activity = _activity;
         this.heritageSites = heritageSites;
+        this.heritageSites_en = heritageSites_en;
+        Log.v(LOGTAG, "" + heritageSites_en.size());
         notifyDataSetChanged();
     }
 
@@ -116,6 +123,28 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
                 .getStringSessionPreferences(
                         context, context.getString(R.string.package_name), context.getString(R.string.default_package_value));
 
+        String packageName_en =
+                heritageSites_en.get(position).getHeritageSite(context.getString(R.string.interest_point_title));
+        String switchKey = context.getString(R.string.download_switch_state) + packageName_en.toLowerCase().replace("\\s", "");
+        ;
+        boolean download_switch_state;
+        //download_switch_state = sessionManager.getBooleanSessionPreferences(context, switchKey, false);
+
+        String EXTRACT_DIR = context.getString(R.string.extracted_location);
+        File baseLocal = Environment.getExternalStorageDirectory();
+        //File baseLocal = context.getDir("Heritage",Context.MODE_PRIVATE);
+        File extracted = new File(baseLocal, EXTRACT_DIR + packageName_en);
+        if (extracted.exists()) {
+            download_switch_state = true;
+            sessionManager.setSessionPreferences(context, context.getString(R.string.download_switch_state), true);
+            Log.v(LOGTAG, packageName_en + " already exists");
+        } else {
+            download_switch_state = false;
+            sessionManager.setSessionPreferences(context, context.getString(R.string.download_switch_state), false);
+            Log.v(LOGTAG, packageName_en + " does not exists");
+        }
+
+
         ImageView titleImage = holder.titleImage;
         TextView title = holder.title;
         TextView infoHeader = holder.infoHeader;
@@ -129,7 +158,7 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
         title.setText(heritageSites.get(position).getHeritageSite(context.getString(R.string.interest_point_title)));
         titleImage.setImageBitmap(heritageSites.get(position).getHeritageSiteImage(packageName));
         infoHeader.setText(context.getString(R.string.heritage_site_introduction));
-        downloadSwitch.setChecked(false);
+        downloadSwitch.setChecked(download_switch_state);
         shortInfo.setText(heritageSites.get(position).getHeritageSite(context.getString(R.string.interest_point_short_info)));
 
     }
@@ -149,16 +178,23 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
             @Override
             public void onClick(View v) {
 
-                String packageName = holder.title.getText().toString().toLowerCase();
-                SessionManager sessionManager = new SessionManager();
-                sessionManager.setSessionPreferences(context
-                        , context.getString(R.string.package_name), packageName.replaceAll("\\s", ""));
-                Log.v(LOGTAG,v.getId()+" is clicked"+" position= "+position+" packageName = "+packageName);
+                if (holder.downloadSwitch.isChecked()) {
 
-                Intent openPackageContent = new Intent(context,PackageContentActivity.class);
-                openPackageContent.putExtra(context.getString(R.string.package_name),packageName);
-                context.startActivity(openPackageContent);
+                    String packageName = holder.title.getText().toString().toLowerCase();
+                    SessionManager sessionManager = new SessionManager();
+                    sessionManager.setSessionPreferences(context
+                            , context.getString(R.string.package_name), packageName.replaceAll("\\s", ""));
+                    Log.v(LOGTAG, v.getId() + " is clicked" + " position= " + position + " packageName = " + packageName);
 
+                    final String packageName_en =
+                            heritageSites_en.get(position).getHeritageSite(context.getString(R.string.interest_point_title));
+                    Intent openPackageContent = new Intent(context, PackageContentActivity.class);
+                    openPackageContent.putExtra(context.getString(R.string.package_name), packageName);
+                    openPackageContent.putExtra(context.getString(R.string.package_name_en), packageName_en);
+                    context.startActivity(openPackageContent);
+                } else {
+                    Toast.makeText(context, "Please download this package to view more", Toast.LENGTH_LONG).show();
+                }
             }
         });
 
@@ -187,19 +223,27 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
             }
         });
 
-        holder.downloadSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+        holder.downloadSwitch.setOnClickListener(new View.OnClickListener() {
+
+
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            public void onClick(View v) {
+                boolean isChecked = ((Switch) v).isChecked();
+
+                final String packageName = holder.title.getText().toString().toUpperCase();
+                final String packageName_en =
+                        heritageSites_en.get(position).getHeritageSite(context.getString(R.string.interest_point_title));
 
                 Log.v(LOGTAG, "Switch is " + isChecked);
 
+                String sessionKey = context.getString(R.string.download_switch_state) + packageName_en.toLowerCase().replace("\\s", "");
                 SessionManager sessionManager = new SessionManager();
-                sessionManager.setSessionPreferences(context,
-                        context.getString(R.string.package_is_downloaded), isChecked);
-
-                String packageName = holder.title.getText().toString().toUpperCase();
+                sessionManager.setSessionPreferences(context, sessionKey, isChecked);
 
                 if (isChecked) {
+
+                    //holder.downloadSwitch.setChecked(false);
 
                     new AlertDialog.Builder(context)
                             .setMessage(packageName + " : " + context.getString(R.string.do_you_want_to_download_the_package)
@@ -208,17 +252,8 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
 
                                 // do something when the button is clicked
                                 public void onClick(DialogInterface arg0, int arg1) {
-                                    String currentLanguage = Locale.getDefault().getLanguage();
-                                    //String list_item_copy = adapter.getItem(position).toLowerCase();
-                                    LocaleManager localeManager = new LocaleManager(context);
-                                    localeManager.changeLang(context.getString(R.string.english));
 
-                                    String packageName = "";
-
-                                    Log.v(LOGTAG, "default language packageName = " + packageName);
-                                    localeManager.changeLang(currentLanguage);
-
-                                    new PackageDownloader(context).execute(packageName);
+                                    new PackageDownloader(context, activity, holder.downloadSwitch).execute(packageName, packageName_en);
 
                                 }
                             })
@@ -231,18 +266,49 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
                                     //onBackPressed();
                                 }
                             })
+                            .setCancelable(false)
                             .show();
 
                 } else {
 
+                    //holder.downloadSwitch.setChecked(true);
+                    //delete the package from the storage
+                    new AlertDialog.Builder(context)
+                            .setMessage(packageName + " : " + context.getString(R.string.delete_package))
+                            .setPositiveButton(context.getString(R.string.yes), new DialogInterface.OnClickListener() {
+
+                                // do something when the button is clicked
+                                public void onClick(DialogInterface arg0, int arg1) {
+
+                                    //Delete the package
+                                    Log.i(LOGTAG, packageName_en + " is deleted");
+                                    holder.downloadSwitch.setChecked(false);
+
+                                }
+                            })
+                            .setNegativeButton(context.getString(R.string.no), new DialogInterface.OnClickListener() {
+
+                                // do something when the button is clicked
+                                public void onClick(DialogInterface arg0, int arg1) {
+                                    //go back
+                                    Log.i(LOGTAG, packageName_en + " is not deleted");
+                                    holder.downloadSwitch.setChecked(true);
+
+                                    new MainActivity().finish();
+                                }
+                            })
+                            .setCancelable(false)
+                            .show();
 
                 }
 
-
+                holder.downloadSwitch.invalidate();
                 //holder.title.invalidate();
+
 
             }
         });
+
 
     }
 

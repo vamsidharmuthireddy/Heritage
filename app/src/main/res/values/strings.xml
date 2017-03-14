@@ -50,12 +50,12 @@
     <string name="available_languages_2" translatable="false">తెలుగు</string>
     <string name="available_languages_3" translatable="false">हिंदी</string>
 
-    <!--PackageListActivity screen-->
+    <!--PackageListActivity screen
     <string name="my_heritage_sites">My Heritage Sites</string>
     <string name="download">Download</string>
     <string name="my_packages_1">Golconda</string>
     <string name="my_packages_2">Hampi</string>
-
+    -->
 
     <!--PackageDownloaderActivity screen-->
     <string name="available_for_download">Click to download</string>
@@ -80,21 +80,21 @@
     <string name="no">No</string>
     <string name="download_file">Download</string>
     <string name="locate_file">Locate</string>
-    <string name="download_packages_list_1">Golconda</string>
-    <string name="download_packages_list_2">Hampi</string>
+    <string name="delete_package">Do you want to delete the package?</string>
 
 
 
     <!--SessionManager-->
     <string name="user_session" translatable="false">UserSession</string>
     <string name="package_name" translatable="false">package_name</string>
+    <string name="package_name_en" translatable="false">package_name_en</string>
     <string name="default_package_value" translatable="false"></string>
     <string name="heritage_site" translatable="false">heritage_site</string>
     <string name="default_heritage_site" translatable="false"></string>
     <string name="interestpoint_name" translatable="false">interestpoint_name</string>
     <string name="default_interestpoint_name" translatable="false"></string>
-    <string name="package_is_downloaded" translatable="false">package_is_downloaded</string>
-    <string name="default_package_is_downloaded" translatable="false"></string>
+    <string name="download_switch_state" translatable="false">download_switch_state</string>
+    <string name="default_download_switch_state" translatable="false">true</string>
 
 
 
@@ -104,11 +104,11 @@
     <string name="nearby">Nearby</string>
     <string name="places">Places</string>
 
-    <!--Home Tab-->
+    <!--Home Tab
     <string name="home_golconda">
         Golconda, also known as Golkonda, Golconda (Round shaped hill), or Golla konda (Shepherd\'s hill), is a citadel and fort in Southern India and was the capital of the medieval sultanate of the Qutub Shahi dynasty (c.1518–1687), is situated 11 kilometres (6.8 mi) west of Hyderabad. It is also a tehsil of Hyderabad district, Telangana, India. The region is known for the mines that have produced some of the world\'s most famous gems, including the Koh-i-Noor, the Hope Diamond and the Nassak Diamond.
     </string>
-
+-->
     <!--Menu-->
     <string name="settings">Settings</string>
     <string name="about_us">About Us</string>
@@ -148,6 +148,5 @@
     <!--Others-->
     <string name="images_name_splitter" translatable="false">,</string>
     <string name="image_type" translatable="false">.JPG</string>
-    <string name="packageNameKey" translatable="false">package</string>
 
 </resources>

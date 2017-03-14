@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +21,7 @@ public class MonumentAllFragment extends Fragment {
     private RecyclerView recyclerView;
     private RecyclerView.Adapter recyclerViewAdapter;
     private RecyclerView.LayoutManager recyclerViewLayoutManager;
-    private ArrayList<InterestPoint> interestPoints;
+    private ArrayList<InterestPoint> interestPoints = null;
 
     private static final String LOGTAG = "MonumentAllFragment";
 
@@ -28,7 +29,13 @@ public class MonumentAllFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_all_monuments, container, false);
 
-        interestPoints = ((PackageContentActivity) this.getActivity()).giveMonumentList();
+        //interestPoints = ((PackageContentActivity) this.getActivity()).giveMonumentList();
+        //interestPoints = new MonumentActivity().monumentList;
+
+        interestPoints = ((MonumentActivity) this.getActivity()).monumentList;
+        Log.v(LOGTAG, "interestPoints size is " + interestPoints.size());
+
+        String packageName_en = ((MonumentActivity) this.getActivity()).packageName_en;
 
         recyclerView = (RecyclerView) root.findViewById(R.id.recyclerview_all_monuments);
         recyclerView.setHasFixedSize(true);
@@ -36,7 +43,7 @@ public class MonumentAllFragment extends Fragment {
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
 
         //setting the view of the PLACES tab
-        recyclerViewAdapter = new MonumentAllAdapter(interestPoints, getContext());
+        recyclerViewAdapter = new MonumentAllAdapter(interestPoints, getContext(), packageName_en);
         recyclerView.setAdapter(recyclerViewAdapter);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 

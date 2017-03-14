@@ -1,7 +1,9 @@
 package in.ac.iiit.cvit.heritage;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +22,7 @@ public class MonumentNearbyAdapter extends RecyclerView.Adapter<MonumentNearbyAd
      * This class sets the picture and text(Title) on the MonumentNearby's recycler view
      */
     private Context context;
+    private String packageName_en;
     private ArrayList<InterestPoint> interestPoints;
     private static final String LOGTAG = "MonumentNearbyAdapter";
 
@@ -35,8 +38,9 @@ public class MonumentNearbyAdapter extends RecyclerView.Adapter<MonumentNearbyAd
         }
     }
 
-    public MonumentNearbyAdapter(ArrayList<InterestPoint> interestPoints, Context _context) {
+    public MonumentNearbyAdapter(ArrayList<InterestPoint> interestPoints, Context _context, String _packagename_en) {
         context = _context;
+        packageName_en = _packagename_en;
         this.interestPoints = interestPoints;
         notifyDataSetChanged();
     }
@@ -60,7 +64,52 @@ public class MonumentNearbyAdapter extends RecyclerView.Adapter<MonumentNearbyAd
 
         textView.setText(interestPoints.get(position).getMonument(context.getString(R.string.interest_point_title)));
         imageView.setImageBitmap(interestPoints.get(position).getMonumentImage(packageName, context.getString(R.string.interest_point_title)));
+
+        setListeners(holder, position);
+
     }
+
+    private void setListeners(DataObjectHolder _holder, int _position) {
+
+        final DataObjectHolder holder = _holder;
+        final int position = _position;
+
+
+        holder.imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String interestPointTitle = holder.textView.getText().toString().toLowerCase();
+
+                Log.v(LOGTAG, v.getId() + " is clicked" + " position= " + position + " packageName = " + interestPointTitle);
+
+                Intent openMonument = new Intent(context, InterestPointActivity.class);
+                openMonument.putExtra(context.getString(R.string.interestpoint_name), interestPointTitle);
+                openMonument.putExtra(context.getString(R.string.package_name_en), packageName_en);
+                context.startActivity(openMonument);
+
+            }
+        });
+
+
+        holder.textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String interestPointTitle = holder.textView.getText().toString();
+
+                Log.v(LOGTAG, v.getId() + " is clicked" + " position= " + position + " monument = " + interestPointTitle);
+
+                Intent openMonument = new Intent(context, InterestPointActivity.class);
+                openMonument.putExtra(context.getString(R.string.interestpoint_name), interestPointTitle);
+                openMonument.putExtra(context.getString(R.string.package_name_en), packageName_en);
+                context.startActivity(openMonument);
+
+            }
+        });
+
+    }
+
 
     @Override
     public int getItemCount() {

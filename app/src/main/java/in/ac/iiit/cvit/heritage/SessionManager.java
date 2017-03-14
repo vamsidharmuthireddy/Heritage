@@ -35,9 +35,9 @@ public class SessionManager {
         return preference;
     }
 
-    public String getBooleanSessionPreferences(Context context, String key, String default_value) {
+    public boolean getBooleanSessionPreferences(Context context, String key, boolean default_value) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SESSION_PREFERENCES, CONTEXT_MODE);
-        String preference = sharedPreferences.getString(key, default_value);
+        boolean preference = sharedPreferences.getBoolean(key, default_value);
         return preference;
     }
 
