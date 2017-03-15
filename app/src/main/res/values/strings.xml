@@ -83,7 +83,6 @@
     <string name="delete_package">Do you want to delete the package?</string>
 
 
-
     <!--SessionManager-->
     <string name="user_session" translatable="false">UserSession</string>
     <string name="package_name" translatable="false">package_name</string>
@@ -95,7 +94,9 @@
     <string name="default_interestpoint_name" translatable="false"></string>
     <string name="download_switch_state" translatable="false">download_switch_state</string>
     <string name="default_download_switch_state" translatable="false">true</string>
-
+    <string name="interest_point_type" translatable="false">interestPointType</string>
+    <string name="monument" translatable="false">monument</string>
+    <string name="king" translatable="false">king</string>
 
 
     <!--MainActivity-->
@@ -144,6 +145,13 @@
     <string name="interest_point_images" translatable="false">images</string>
     <string name="interest_point_info" translatable="false">info</string>
     <string name="interest_point_short_info" translatable="false">shortinfo</string>
+
+    <string name="king_name" translatable="false">name</string>
+    <string name="king_position" translatable="false">position</string>
+    <string name="king_start" translatable="false">start</string>
+    <string name="king_end" translatable="false">end</string>
+    <string name="king_info" translatable="false">info</string>
+
 
     <!--Others-->
     <string name="images_name_splitter" translatable="false">,</string>

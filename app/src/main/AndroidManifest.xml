@@ -28,7 +28,13 @@
 
         </activity>
 
+        <activity android:name=".OverviewActivity">
 
+        </activity>
+
+        <activity android:name=".KingActivity">
+
+        </activity>
         <activity android:name=".MonumentActivity">
 
         </activity>
@@ -36,6 +42,7 @@
         <activity android:name=".InterestPointActivity">
 
         </activity>
+
 
     </application>
 

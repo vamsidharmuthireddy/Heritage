@@ -38,7 +38,7 @@ public class PackageReader {
     public static final String LOGTAG = "PackageReader";
     private final String dataLocation;
     private final String xmlFile;
-    public String _packageName;
+    public String packageName_en;
     InterestPoint interestPoint;
     ArrayList<InterestPoint> MonumentsList;
     ArrayList<InterestPoint> KingsList;
@@ -49,16 +49,16 @@ public class PackageReader {
 
     /**
      * This is the class used to read content of the xml file
-     * @param packageName name of the package name i.e. heritage site
+     * @param _packageName_en name of the package name i.e. heritage site
      * @param _context
      */
-    public PackageReader(String packageName, Context _context){
+    public PackageReader(String _packageName_en, Context _context, String language) {
         context = _context;
-        _packageName = packageName;
+        packageName_en = _packageName_en;
         dataLocation = context.getString(R.string.extracted_location);
 
         String prevLanguage = Locale.getDefault().getLanguage();
-        xmlFile = _packageName + "_" + prevLanguage + context.getString(R.string.xml_extension);
+        xmlFile = packageName_en + "_" + prevLanguage + context.getString(R.string.xml_extension);
         Log.v(LOGTAG, "Name of the xml file is " + xmlFile);
 
         //xmlFile = context.getString(R.string.xml_file);
@@ -165,7 +165,7 @@ public class PackageReader {
                             if(keys.item(j).getNodeType() == Node.ELEMENT_NODE){
                                 Element key = (Element)keys.item(j);
                                 ///This interest point contains all the data relevant to particular interest point
-                                interestPoint.setRoyal(key.getNodeName(), key.getTextContent());
+                                interestPoint.setKing(key.getNodeName(), key.getTextContent());
                             }
                         }
                         //Here we are storing each InterestPoint object in an InterestPoint array
@@ -173,7 +173,6 @@ public class PackageReader {
                         KingsList.add(interestPoint);
                     }
                 }
-
 
 
             } catch (SAXException e) {
@@ -193,8 +192,8 @@ public class PackageReader {
     private void readFromFile(){
         File baseLocal = Environment.getExternalStorageDirectory();
 
-        //File xmlfile = new File(baseLocal, dataLocation + _packageName + "/" + xmlFile );
-        File xmlfile = new File(baseLocal, "Heritage/golconda_en.xml");
+        File xmlfile = new File(baseLocal, dataLocation + packageName_en + "/" + xmlFile);
+        //File xmlfile = new File(baseLocal, "Heritage/golconda_en.xml");
         Log.v(LOGTAG, "xml file name is " + xmlfile.getAbsolutePath());
 
         try {

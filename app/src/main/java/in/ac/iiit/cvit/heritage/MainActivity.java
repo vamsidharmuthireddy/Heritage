@@ -33,8 +33,8 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
     private RecyclerView recyclerView;
     private RecyclerView.Adapter recyclerViewAdapter;
     private RecyclerView.LayoutManager recyclerViewLayoutManager;
-    private ArrayList<HeritageSite> heritageSitesList;
-    public ArrayList<HeritageSite> heritageSitesList_en;
+    public static ArrayList<HeritageSite> heritageSitesList;
+    public static ArrayList<HeritageSite> heritageSitesList_en;
     private String language;
 
     private LocaleManager localeManager;

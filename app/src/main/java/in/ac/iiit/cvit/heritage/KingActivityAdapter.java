@@ -13,19 +13,15 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 /**
- * Created by HOME on 13-03-2017.
+ * Created by HOME on 15-03-2017.
  */
 
-public class MonumentAllAdapter extends RecyclerView.Adapter<MonumentAllAdapter.DataObjectHolder> {
+public class KingActivityAdapter extends RecyclerView.Adapter<KingActivityAdapter.DataObjectHolder> {
 
-    /**
-     * This class is called from InterestPointsFragment after we get all the interest points
-     * This class sets the picture and text(Title) on the InterestPointsFragment's recycler view
-     */
     private Context context;
-    private ArrayList<InterestPoint> interestPoints;
+    private ArrayList<InterestPoint> kingsList;
     private String packageName_en;
-    private static final String LOGTAG = "MonumentAllAdapter";
+    private static final String LOGTAG = "KingActivityAdapter";
 
     public static class DataObjectHolder extends RecyclerView.ViewHolder {
 
@@ -34,21 +30,21 @@ public class MonumentAllAdapter extends RecyclerView.Adapter<MonumentAllAdapter.
 
         public DataObjectHolder(View view) {
             super(view);
-            this.imageView = (ImageView) view.findViewById(R.id.cardview_image);
-            this.textView = (TextView) view.findViewById(R.id.cardview_text);
+            this.imageView = (ImageView) view.findViewById(R.id.cardview_king_image);
+            this.textView = (TextView) view.findViewById(R.id.cardview_king_text);
         }
     }
 
-    public MonumentAllAdapter(ArrayList<InterestPoint> interestPoints, Context _context, String _packageName_en) {
+    public KingActivityAdapter(ArrayList<InterestPoint> interestPoints, Context _context, String _packageName_en) {
         context = _context;
         packageName_en = _packageName_en;
-        this.interestPoints = interestPoints;
+        this.kingsList = interestPoints;
         notifyDataSetChanged();
     }
 
     @Override
     public DataObjectHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_monument, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_king, parent, false);
         DataObjectHolder dataObjectHolder = new DataObjectHolder(view);
         return dataObjectHolder;
     }
@@ -74,11 +70,12 @@ public class MonumentAllAdapter extends RecyclerView.Adapter<MonumentAllAdapter.
         ImageView imageView = holder.imageView;
         TextView textView = holder.textView;
 
-        textView.setText(interestPoints.get(position).getMonument(context.getString(R.string.interest_point_title)));
-        imageView.setImageBitmap(interestPoints.get(position)
-                .getMonumentImage(packageName, context.getString(R.string.interest_point_title), context));
+        textView.setText(kingsList.get(position).getKing(context.getString(R.string.king_name)));
+        imageView.setImageBitmap(kingsList.get(position)
+                .getKingImage(packageName, context.getString(R.string.king_info), context));
 
     }
+
 
     private void setListeners(DataObjectHolder _holder, int _position) {
 
@@ -92,13 +89,13 @@ public class MonumentAllAdapter extends RecyclerView.Adapter<MonumentAllAdapter.
 
                 String interestPointTitle = holder.textView.getText().toString();
 
-                Log.v(LOGTAG, v.getId() + " is clicked" + " position= " + position + " packageName = " + interestPointTitle);
+                Log.v(LOGTAG, v.getId() + " is clicked" + " position= " + position + " king = " + interestPointTitle);
 
-                Intent openMonument = new Intent(context, InterestPointActivity.class);
-                openMonument.putExtra(context.getString(R.string.interestpoint_name), interestPointTitle);
-                openMonument.putExtra(context.getString(R.string.package_name_en), packageName_en);
-                openMonument.putExtra(context.getString(R.string.interest_point_type), context.getString(R.string.monument));
-                context.startActivity(openMonument);
+                Intent openKing = new Intent(context, InterestPointActivity.class);
+                openKing.putExtra(context.getString(R.string.interestpoint_name), interestPointTitle);
+                openKing.putExtra(context.getString(R.string.package_name_en), packageName_en);
+                openKing.putExtra(context.getString(R.string.interest_point_type), context.getString(R.string.king));
+                context.startActivity(openKing);
 
             }
         });
@@ -112,11 +109,11 @@ public class MonumentAllAdapter extends RecyclerView.Adapter<MonumentAllAdapter.
 
                 Log.v(LOGTAG, v.getId() + " is clicked" + " position= " + position + " packageName = " + interestPointTitle);
 
-                Intent openMonument = new Intent(context, InterestPointActivity.class);
-                openMonument.putExtra(context.getString(R.string.interestpoint_name), interestPointTitle);
-                openMonument.putExtra(context.getString(R.string.package_name_en), packageName_en);
-                openMonument.putExtra(context.getString(R.string.interest_point_type), context.getString(R.string.monument));
-                context.startActivity(openMonument);
+                Intent openKing = new Intent(context, InterestPointActivity.class);
+                openKing.putExtra(context.getString(R.string.interestpoint_name), interestPointTitle);
+                openKing.putExtra(context.getString(R.string.package_name_en), packageName_en);
+                openKing.putExtra(context.getString(R.string.interest_point_type), context.getString(R.string.king));
+                context.startActivity(openKing);
 
             }
         });
@@ -126,7 +123,6 @@ public class MonumentAllAdapter extends RecyclerView.Adapter<MonumentAllAdapter.
 
     @Override
     public int getItemCount() {
-        return interestPoints.size();
+        return kingsList.size();
     }
-
 }

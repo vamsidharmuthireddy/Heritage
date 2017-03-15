@@ -15,15 +15,15 @@
         android:layout_height="wrap_content">
 
         <ImageView
-            android:id="@+id/cardview_image"
+            android:id="@+id/cardview_king_image"
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:layout_marginBottom="@dimen/activity_std_padding"
             android:scaleType="centerCrop" />
 
         <TextView
-            android:id="@+id/cardview_text"
-            android:layout_below="@+id/cardview_image"
+            android:id="@+id/cardview_king_text"
+            android:layout_below="@+id/cardview_king_image"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"

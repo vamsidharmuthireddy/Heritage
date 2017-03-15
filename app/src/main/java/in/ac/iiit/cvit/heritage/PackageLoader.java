@@ -39,10 +39,14 @@ public class PackageLoader {
     private ProgressDialog progressDialog;
     private String temp;
     private String basePackageName;
+    private String packageName;
+    private String packageName_en;
 
 
-    public PackageLoader(Context _context) {
+    public PackageLoader(Context _context, String _packagename, String _packagename_en) {
         context = _context;
+        packageName = _packagename;
+        packageName_en = _packagename_en;
 
         EXTRACT_DIR = context.getString(R.string.extracted_location);
         packageFormat = _context.getString(R.string.package_format);
@@ -277,11 +281,12 @@ public class PackageLoader {
                     public void onClick(DialogInterface arg0, int arg1) {
 
                         SessionManager sessionManager = new SessionManager();
-                        sessionManager.setSessionPreferences(context, context.getString(R.string.package_name), basePackageName);
+                        sessionManager.setSessionPreferences(context, context.getString(R.string.package_name), packageName_en);
 
-                        Intent intent_main_activity = new Intent(context, MainActivity.class);
-                        intent_main_activity.putExtra(context.getString(R.string.package_name_en), basePackageName);
-                        context.startActivity(intent_main_activity);
+                        Intent intent_monument_activity = new Intent(context, MonumentActivity.class);
+                        intent_monument_activity.putExtra(context.getString(R.string.package_name), packageName);
+                        intent_monument_activity.putExtra(context.getString(R.string.package_name_en), packageName_en);
+                        context.startActivity(intent_monument_activity);
 
                     }
                 });

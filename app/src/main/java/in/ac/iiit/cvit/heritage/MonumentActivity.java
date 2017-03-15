@@ -17,6 +17,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 /**
  * Created by HOME on 09-03-2017.
@@ -30,8 +31,10 @@ public class MonumentActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
+    private String language;
 
     public ArrayList<InterestPoint> monumentList;
+    public ArrayList<InterestPoint> monumentList_en;
 
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private static final int PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION = 2;
@@ -53,6 +56,7 @@ public class MonumentActivity extends AppCompatActivity {
 
         final LocaleManager localeManager = new LocaleManager(MonumentActivity.this);
         localeManager.loadLocale();
+        language = Locale.getDefault().getLanguage();
 
         setContentView(R.layout.activity_monuments);
 
@@ -63,23 +67,29 @@ public class MonumentActivity extends AppCompatActivity {
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(packageName.toUpperCase());
+        toolbar.setTitleTextColor(ContextCompat.getColor(MonumentActivity.this, R.color.colorBlack));
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
 
+
         sessionManager.setSessionPreferences(MonumentActivity.this, getString(R.string.package_name), packageName);
 
         //monumentList = new PackageContentActivity().giveMonumentList();
-        //monumentList = new PackageContentActivity().giveMonumentList();
-        monumentList = LoadPackage(packageName);
+        monumentList = PackageContentActivity.monumentList;
+        monumentList_en = PackageContentActivity.monumentList_en;
+        //LoadPackage(packageName_en);
         Log.v(LOGTAG, "size of monumentList is " + monumentList.size());
 
         //Setting up tabs "NEARBY", "PLACES"
         tabLayout = (TabLayout) findViewById(R.id.tab_layout);
-        tabLayout.addTab(tabLayout.newTab().setText(R.string.nearby));
-        tabLayout.addTab(tabLayout.newTab().setText(R.string.places));
+        tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.nearby)));
+        tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.places)));
+        tabLayout.setTabTextColors(ContextCompat.getColor(MonumentActivity.this, R.color.colorGray),
+                ContextCompat.getColor(MonumentActivity.this, R.color.colorBlack));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+        tabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(MonumentActivity.this, R.color.colorGray));
 
         //linking viewpager with the tab layout
         viewPager = (ViewPager) findViewById(R.id.view_pager);
@@ -109,19 +119,29 @@ public class MonumentActivity extends AppCompatActivity {
 
     /**
      * This method returns interest points of the chosen Heritage site by calling PackageReader class
-     * @param packageName It is the name of the site that user wants to see
+     * @param packageName_en It is the name of the site that user wants to see
      * @return List of all the interest points along with their contents in an InterestPoint array
      */
-    public ArrayList<InterestPoint> LoadPackage(String packageName) {
+    public void LoadPackage(String packageName_en) {
         PackageReader reader;
-        packageName = packageName.toLowerCase();
-        reader = new PackageReader(packageName, MonumentActivity.this);
-        //This reader has all the information about all the interest points
-        //We are getting an array of InterestPoint objects
-        ArrayList<InterestPoint> interestPoints = reader.getMonumentsList();
+        packageName_en = packageName_en.toLowerCase().replace("\\s", "");
+
+        if (language.equals("en")) {
+            reader = new PackageReader(packageName_en, MonumentActivity.this, language);
+            monumentList = reader.getMonumentsList();
+            monumentList_en = reader.getMonumentsList();
+
+        } else {
+            reader = new PackageReader(packageName_en, MonumentActivity.this, language);
+            monumentList = reader.getMonumentsList();
+
+            reader = new PackageReader(packageName_en, MonumentActivity.this, "en");
+            monumentList_en = reader.getMonumentsList();
+
+        }
 
         //The above interestPoints has the data on all available interest points
-        return interestPoints;
+
     }
 
 

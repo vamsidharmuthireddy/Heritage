@@ -6,10 +6,12 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 /**
  * Created by HOME on 13-03-2017.
@@ -27,6 +29,8 @@ public class InterestPointActivity extends AppCompatActivity {
     private InterestPoint interestPoint;
     private SessionManager sessionManager;
     private CollapsingToolbarLayout collapsingToolbarLayout;
+    private String language;
+    private String interestPointType;
 
     private String packageName;
     private String packageName_en;
@@ -39,6 +43,7 @@ public class InterestPointActivity extends AppCompatActivity {
         //Loading the language preference
         LocaleManager localeManager = new LocaleManager(InterestPointActivity.this);
         localeManager.loadLocale();
+        language = Locale.getDefault().getLanguage();
         setContentView(R.layout.activity_interest_point);
 
         //we are getting the name of the session(Heritage site that user initially clicked to see)
@@ -50,19 +55,21 @@ public class InterestPointActivity extends AppCompatActivity {
         Intent intent = getIntent();
         final String text_interest_point = intent.getStringExtra(getString(R.string.interestpoint_name));
         packageName_en = intent.getStringExtra(getString(R.string.package_name_en));
+        interestPointType = intent.getStringExtra(getString(R.string.interest_point_type));
+
         //loading the relevant interest point
-        interestPoint = LoadInterestPoint(packageName, text_interest_point);
-        Log.v(LOGTAG, "interestPoint size is " + interestPoint);
+        interestPoint = LoadInterestPoint(packageName_en, text_interest_point);
+        Log.v(LOGTAG, "clicked interest point is " + text_interest_point.toUpperCase());
 
         toolbar = (Toolbar) findViewById(R.id.coordinatorlayout_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         //setting up the interest point name as title on action bar in co-ordinator layout
-        toolbar.setTitle(text_interest_point);
+        toolbar.setTitle(text_interest_point.toUpperCase());
 
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.coordinatorlayout_colltoolbar);
-        collapsingToolbarLayout.setTitle(text_interest_point);
+        collapsingToolbarLayout.setTitle(text_interest_point.toUpperCase());
         collapsingToolbarLayout.setContentScrimColor(getResources().getColor(R.color.colorPrimaryDark));
         collapsingToolbarLayout.setStatusBarScrimColor(getResources().getColor(R.color.colorPrimaryDark));
         collapsingToolbarLayout.setCollapsedTitleTextAppearance(R.style.ToolbarStyle);
@@ -70,11 +77,18 @@ public class InterestPointActivity extends AppCompatActivity {
 
         //setting up the interest point image as image in image view in co-ordinator layout
         imageView = (ImageView) findViewById(R.id.coordinatorlayout_imageview);
-        imageView.setImageBitmap(interestPoint.getMonumentImage(packageName, text_interest_point));
+        textview_info = (TextView) findViewById(R.id.interestPoint_details);
 
+        if (interestPointType.equals(getString(R.string.monument))) {
+            imageView.setImageBitmap(interestPoint.getMonumentImage(packageName, text_interest_point, InterestPointActivity.this));
+            textview_info.setText(interestPoint.getMonument(getString(R.string.interest_point_info)));
+            textview_info.setGravity(Gravity.CENTER);
 
-        textview_info = (TextView) findViewById(R.id.monument_details);
-        textview_info.setText(interestPoint.getMonument(getString(R.string.interest_point_info)));
+        } else {
+            imageView.setImageBitmap(interestPoint.getKingImage(packageName, text_interest_point, InterestPointActivity.this));
+            textview_info.setText(interestPoint.getKing(getString(R.string.king_info)));
+            textview_info.setGravity(Gravity.CENTER);
+        }
 
 
     }
@@ -96,7 +110,8 @@ public class InterestPointActivity extends AppCompatActivity {
         intent.putExtra(getString(R.string.package_name), packageName);
         intent.putExtra(getString(R.string.package_name_en), packageName_en);
 
-        startActivity(intent);
+        super.onBackPressed();
+        //startActivity(intent);
 
     }
 
@@ -104,29 +119,54 @@ public class InterestPointActivity extends AppCompatActivity {
     /**
      * This method checks for the clicked interest point by it's name in the database
      *
-     * @param packageName       Name of the Heritage site that usr chooses initially
+     * @param packageName_en       Name of the Heritage site that usr chooses initially
      * @param interestPointName Clicked interest point name
      * @return clicked InterestPoint object
      */
-    public InterestPoint LoadInterestPoint(String packageName, String interestPointName) {
+    public InterestPoint LoadInterestPoint(String packageName_en, String interestPointName) {
+
+        interestPointName = interestPointName.toLowerCase();
+
         PackageReader reader;
-        packageName = packageName.toLowerCase();
-        reader = new PackageReader(packageName, InterestPointActivity.this);
-        ArrayList<InterestPoint> interestPointsList = reader.getMonumentsList();
+        packageName_en = packageName_en.toLowerCase().replace("\\s", "");
+        reader = new PackageReader(packageName_en, InterestPointActivity.this, language);
+        ArrayList<InterestPoint> interestPointsList;
+
+        if (interestPointType.equals(getString(R.string.monument))) {
+            interestPointsList = reader.getMonumentsList();
+
+            Log.v(LOGTAG, "clicked point is " + interestPointName);
+            Log.v(LOGTAG, "interestPointsList size is " + interestPointsList.size());
+
+
+            InterestPoint interestPoint;
+            for (int i = 0; i < interestPointsList.size(); i++) {
+                interestPoint = interestPointsList.get(i);
+                Log.v(LOGTAG, "Available titles are " + interestPoint.getMonument(getString(R.string.interest_point_title)).toLowerCase());
+                if (interestPoint.getMonument(getString(R.string.interest_point_title)).toLowerCase().equals(interestPointName)) {
+                    return interestPoint;
+                }
+            }
+        } else {
+            interestPointsList = reader.getKingsList();
+
+            Log.v(LOGTAG, "clicked point is " + interestPointName);
+            Log.v(LOGTAG, "interestPointsList size is " + interestPointsList.size());
+
+            InterestPoint interestPoint;
+            for (int i = 0; i < interestPointsList.size(); i++) {
+                interestPoint = interestPointsList.get(i);
+                Log.v(LOGTAG, "Available titles are " + interestPoint.getKing(getString(R.string.king_name)).toLowerCase());
+                if (interestPoint.getKing(getString(R.string.king_name)).toLowerCase().equals(interestPointName)) {
+                    return interestPoint;
+                }
+            }
+
+        }
+
         //ArrayList<InterestPoint> interestPointsList = new PackageContentActivity().giveMonumentList();
 
-        Log.v(LOGTAG, "clicked point is " + interestPointName);
-        Log.v(LOGTAG, "interestPointsList size is " + interestPointsList.size());
 
-
-        InterestPoint interestPoint;
-        for (int i = 0; i < interestPointsList.size(); i++) {
-            interestPoint = interestPointsList.get(i);
-            Log.v(LOGTAG, "Available titles are " + interestPoint.getMonument(getString(R.string.interest_point_title)).toLowerCase());
-            if (interestPoint.getMonument(getString(R.string.interest_point_title)).toLowerCase().equals(interestPointName)) {
-                return interestPoint;
-            }
-        }
         return null;
     }
 

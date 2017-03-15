@@ -186,8 +186,10 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
                             , context.getString(R.string.package_name), packageName.replaceAll("\\s", ""));
                     Log.v(LOGTAG, v.getId() + " is clicked" + " position= " + position + " packageName = " + packageName);
 
-                    final String packageName_en =
-                            heritageSites_en.get(position).getHeritageSite(context.getString(R.string.interest_point_title));
+                    final String packageName_en = heritageSites_en
+                            .get(position)
+                            .getHeritageSite(context.getString(R.string.interest_point_title));
+
                     Intent openPackageContent = new Intent(context, PackageContentActivity.class);
                     openPackageContent.putExtra(context.getString(R.string.package_name), packageName);
                     openPackageContent.putExtra(context.getString(R.string.package_name_en), packageName_en);
@@ -232,12 +234,14 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
                 boolean isChecked = ((Switch) v).isChecked();
 
                 final String packageName = holder.title.getText().toString().toUpperCase();
-                final String packageName_en =
-                        heritageSites_en.get(position).getHeritageSite(context.getString(R.string.interest_point_title));
+                final String packageName_en = heritageSites_en.get(position)
+                        .getHeritageSite(context.getString(R.string.interest_point_title))
+                        .toLowerCase()
+                        .replace("\\s", "");
 
                 Log.v(LOGTAG, "Switch is " + isChecked);
 
-                String sessionKey = context.getString(R.string.download_switch_state) + packageName_en.toLowerCase().replace("\\s", "");
+                String sessionKey = context.getString(R.string.download_switch_state) + packageName_en;
                 SessionManager sessionManager = new SessionManager();
                 sessionManager.setSessionPreferences(context, sessionKey, isChecked);
 
@@ -261,7 +265,7 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
 
                                 // do something when the button is clicked
                                 public void onClick(DialogInterface arg0, int arg1) {
-                                    PackageLoader packageLoader = new PackageLoader(context);
+                                    PackageLoader packageLoader = new PackageLoader(context, packageName, packageName_en);
                                     packageLoader.showFileListDialog(Environment.getExternalStorageDirectory().toString());
                                     //onBackPressed();
                                 }

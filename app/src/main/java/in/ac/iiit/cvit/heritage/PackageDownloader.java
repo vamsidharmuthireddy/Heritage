@@ -212,7 +212,7 @@ public class PackageDownloader extends AsyncTask<String, String, String> {
 
         } else {
 
-            Log.v(LOGTAG, packageName_en + "package download is not complete");
+            Log.v(LOGTAG, packageName_en + " package download is not complete");
 
             downloadSwitch.setChecked(false);
             downloadSwitch.invalidate();

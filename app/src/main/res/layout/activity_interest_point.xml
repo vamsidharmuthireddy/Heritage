@@ -15,6 +15,7 @@
             android:id="@+id/coordinatorlayout_colltoolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:minHeight="50dp"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:collapsedTitleTextAppearance="@color/colorWhite">
 
@@ -40,7 +41,7 @@
 
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_gravity=""
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
@@ -51,11 +52,12 @@
             android:layout_marginBottom="25dp">
 
             <TextView
-                android:id="@+id/monument_details"
+                android:id="@+id/interestPoint_details"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/activity_std_margin"
-                android:textSize="@dimen/activity_small_text" />
+                android:textSize="@dimen/activity_small_text"
+                android:gravity="center" />
 
 
         </LinearLayout>

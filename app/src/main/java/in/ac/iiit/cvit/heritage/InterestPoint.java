@@ -1,8 +1,10 @@
 package in.ac.iiit.cvit.heritage;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
+import android.util.Log;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -62,7 +64,7 @@ public class InterestPoint {
      * @param key It's the tag name of the particular xml field
      * @param value It's the value in the relevant tag of the xml file
      */
-    public void setRoyal(String key, String value) {
+    public void setKing(String key, String value) {
         royalDetails.put(key, value);
     }
 
@@ -71,7 +73,7 @@ public class InterestPoint {
      * @param key It's the tag name of the particular xml field
      * @return Value of the selected xml field
      */
-    public String getRoyal(String key) {
+    public String getKing(String key) {
         return royalDetails.get(key);
     }
 
@@ -81,7 +83,7 @@ public class InterestPoint {
      *
      * @return Image of Interest point in Bitmap data type
      */
-    public Bitmap getMonumentImage(String packageName, String interestPointName) {
+    public Bitmap getMonumentImage(String packageName, String interestPointName, Context context) {
 
         packageName = packageName.toLowerCase();
 
@@ -92,18 +94,46 @@ public class InterestPoint {
         String image_path =  dataLocation + packageName + "/" + imageName + imageType;
 
         File imageFile = new File(Environment.getExternalStorageDirectory(),image_path);
-//        Log.v("getImage", Environment.getExternalStorageDirectory()+image_path);
+        Log.v("getImage", Environment.getExternalStorageDirectory() + image_path);
         if(imageFile.exists()) {
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inPreferredConfig = Bitmap.Config.ARGB_8888;
             Bitmap bitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath(), options);
             //            bitmap = bitmap.createScaledBitmap(bitmap, 627, 353, false);
-            //             Log.v("getImage", imageName + ".JPG");
+            Log.v("getImage", imageName + ".JPG");
 
+            return bitmap;
+        } else {
+            Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher);
             return bitmap;
         }
 
-        return null;
+    }
+
+
+    /**
+     * This class is used to get the image related to a particular interest point
+     *
+     * @return Image of Interest point in Bitmap data type
+     */
+    public Bitmap getKingImage(String packageName, String interestPointName, Context context) {
+
+        packageName = packageName.toLowerCase();
+
+        String imageName = monumentdetails.get(imageTag);
+        //       Log.v("getImage","reached getImage");
+
+
+        String image_path = dataLocation + packageName + "/" + imageName + imageType;
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher);
+
+
+        return bitmap;
+
+
     }
 
 

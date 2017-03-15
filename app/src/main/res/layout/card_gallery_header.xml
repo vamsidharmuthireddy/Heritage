@@ -68,7 +68,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:text="Image Gallary" />
+                android:text="Gallery" />
         </LinearLayout>
 
     </LinearLayout>

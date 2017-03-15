@@ -8,8 +8,9 @@
         layout="@layout/tool_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
+
 <RelativeLayout
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <include
@@ -20,6 +21,13 @@
         android:layout_weight="0.5"
         android:layout_alignParentStart="true" />
 
+    <include
+        layout="@layout/card_monuments_header"
+        android:id="@+id/monuments_card"
+        android:layout_height="150dp"
+        android:layout_width="150dp"
+        android:layout_weight="0.5"
+        android:layout_alignParentEnd="true" />
 
     <include
         layout="@layout/card_kings_header"
@@ -31,15 +39,7 @@
         android:layout_below="@id/overview_card" />
 
     <include
-        layout="@layout/card_monuments_header"
-        android:id="@+id/monuments_card"
-        android:layout_height="150dp"
-        android:layout_width="150dp"
-        android:layout_weight="0.5"
-        android:layout_alignParentEnd="true"/>
-
-    <include
-        layout="@layout/card_allimages_header"
+        layout="@layout/card_gallery_header"
         android:id="@+id/allimages_card"
         android:layout_height="150dp"
         android:layout_width="150dp"

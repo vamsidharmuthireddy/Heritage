@@ -57,13 +57,16 @@ public class MonumentNearbyAdapter extends RecyclerView.Adapter<MonumentNearbyAd
         ImageView imageView = holder.imageView;
         TextView textView = holder.textView;
 
-        SessionManager sessionManager = new SessionManager();
-        final String packageName = sessionManager
-                .getStringSessionPreferences(
-                        context, context.getString(R.string.package_name), context.getString(R.string.default_package_value));
+        //SessionManager sessionManager = new SessionManager();
+        //final String packageName = sessionManager
+        //        .getStringSessionPreferences(
+        //                context, context.getString(R.string.package_name_en), context.getString(R.string.default_package_value));
+
+        final String packageName = packageName_en;
 
         textView.setText(interestPoints.get(position).getMonument(context.getString(R.string.interest_point_title)));
-        imageView.setImageBitmap(interestPoints.get(position).getMonumentImage(packageName, context.getString(R.string.interest_point_title)));
+        imageView.setImageBitmap(interestPoints.get(position)
+                .getMonumentImage(packageName, context.getString(R.string.interest_point_title), context));
 
         setListeners(holder, position);
 
@@ -86,6 +89,7 @@ public class MonumentNearbyAdapter extends RecyclerView.Adapter<MonumentNearbyAd
                 Intent openMonument = new Intent(context, InterestPointActivity.class);
                 openMonument.putExtra(context.getString(R.string.interestpoint_name), interestPointTitle);
                 openMonument.putExtra(context.getString(R.string.package_name_en), packageName_en);
+                openMonument.putExtra(context.getString(R.string.interest_point_type), context.getString(R.string.monument));
                 context.startActivity(openMonument);
 
             }
@@ -103,6 +107,7 @@ public class MonumentNearbyAdapter extends RecyclerView.Adapter<MonumentNearbyAd
                 Intent openMonument = new Intent(context, InterestPointActivity.class);
                 openMonument.putExtra(context.getString(R.string.interestpoint_name), interestPointTitle);
                 openMonument.putExtra(context.getString(R.string.package_name_en), packageName_en);
+                openMonument.putExtra(context.getString(R.string.interest_point_type), context.getString(R.string.monument));
                 context.startActivity(openMonument);
 
             }

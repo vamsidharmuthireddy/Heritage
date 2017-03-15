@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 /**
  * Created by HOME on 07-03-2017.
@@ -25,8 +26,12 @@ public class PackageContentActivity extends AppCompatActivity {
     private String packageName;
     private String packageName_en;
     private Toolbar toolbar;
+    private String language;
     public static ArrayList<InterestPoint> monumentList;
+    public static ArrayList<InterestPoint> monumentList_en;
     public static ArrayList<InterestPoint> kingsList;
+    public static ArrayList<InterestPoint> kingsList_en;
+
 
 
     private final static String LOGTAG = "PackageContentActivity";
@@ -38,6 +43,7 @@ public class PackageContentActivity extends AppCompatActivity {
 
         final LocaleManager localeManager = new LocaleManager(PackageContentActivity.this);
         localeManager.loadLocale();
+        language = Locale.getDefault().getLanguage();
 
         setContentView(R.layout.activity_package_content);
 
@@ -64,19 +70,39 @@ public class PackageContentActivity extends AppCompatActivity {
     /**
      * This method returns interest points of the chosen Heritage site by calling PackageReader class
      *
-     * @param packageName It is the name of the site that user wants to see
+     * @param packageName_en It is the name of the site that user wants to see
      * @return List of all the interest points along with their contents in an InterestPoint array
      */
-    public void LoadPackage(String packageName) {
+    public void LoadPackage(String packageName_en) {
         PackageReader reader;
-        packageName = packageName.toLowerCase().replaceAll("\\s", "");
-        Log.v(LOGTAG, packageName);
-        reader = new PackageReader(packageName, PackageContentActivity.this);
-        //This reader has all the information about all the interest points
-        //We are getting an array of InterestPoint objects
-        monumentList = reader.getMonumentsList();
-        kingsList = reader.getKingsList();
-        //The above interestPoints has the data on all available interest points
+        packageName_en = packageName_en.toLowerCase().replaceAll("\\s", "");
+        Log.v(LOGTAG, packageName_en);
+
+        if (language.equals("en")) {
+            reader = new PackageReader(packageName_en, PackageContentActivity.this, language);
+            //This reader has all the information about all the interest points
+            //We are getting an array of InterestPoint objects
+            monumentList = reader.getMonumentsList();
+            kingsList = reader.getKingsList();
+
+            monumentList_en = reader.getMonumentsList();
+            kingsList_en = reader.getKingsList();
+            //The above interestPoints has the data on all available interest points
+        } else {
+            reader = new PackageReader(packageName_en, PackageContentActivity.this, language);
+            //This reader has all the information about all the interest points
+            //We are getting an array of InterestPoint objects
+            monumentList = reader.getMonumentsList();
+            kingsList = reader.getKingsList();
+
+            reader = new PackageReader(packageName_en, PackageContentActivity.this, "en");
+            monumentList_en = reader.getMonumentsList();
+            kingsList_en = reader.getKingsList();
+
+
+        }
+
+
 
         Log.v(LOGTAG, "monumentList size is " + monumentList.size());
         Log.v(LOGTAG, "kingsList size is " + kingsList.size());
@@ -93,12 +119,30 @@ public class PackageContentActivity extends AppCompatActivity {
 
         CardView cardKings = (CardView)findViewById(R.id.kings_card);
         CardView cardMonuments = (CardView)findViewById(R.id.monuments_card);
+        CardView cardOverview = (CardView) findViewById(R.id.overview_card);
+        CardView cardAllImages = (CardView) findViewById(R.id.allimages_card);
+
+        cardOverview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.v(LOGTAG, "clicked Overview");
+
+                Intent showOverview = new Intent(PackageContentActivity.this, OverviewActivity.class);
+                showOverview.putExtra(getString(R.string.package_name), packageName);
+                showOverview.putExtra(getString(R.string.package_name_en), packageName_en);
+                startActivity(showOverview);
+            }
+        });
 
         cardKings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.v(LOGTAG,"Clicked kings");
 
+                Intent showKings = new Intent(PackageContentActivity.this, KingActivity.class);
+                showKings.putExtra(getString(R.string.package_name), packageName);
+                showKings.putExtra(getString(R.string.package_name_en), packageName_en);
+                startActivity(showKings);
             }
         });
 
@@ -113,6 +157,16 @@ public class PackageContentActivity extends AppCompatActivity {
                 startActivity(showMonuments);
             }
         });
+
+        cardAllImages.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.v(LOGTAG, "Clicked Gallery");
+
+
+            }
+        });
+
 
 
     }
