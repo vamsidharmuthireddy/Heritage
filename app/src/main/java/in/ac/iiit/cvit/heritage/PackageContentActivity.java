@@ -136,10 +136,10 @@ public class PackageContentActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Log.v(LOGTAG, "clicked Overview");
 
-                Intent showOverview = new Intent(PackageContentActivity.this, OverviewActivity.class);
-                showOverview.putExtra(getString(R.string.package_name), packageName);
-                showOverview.putExtra(getString(R.string.package_name_en), packageName_en);
-                startActivity(showOverview);
+                Intent openOverview = new Intent(PackageContentActivity.this, OverviewActivity.class);
+                openOverview.putExtra(getString(R.string.package_name), packageName);
+                openOverview.putExtra(getString(R.string.package_name_en), packageName_en);
+                startActivity(openOverview);
             }
         });
 
@@ -148,10 +148,10 @@ public class PackageContentActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Log.v(LOGTAG,"Clicked kings");
 
-                Intent showKings = new Intent(PackageContentActivity.this, KingActivity.class);
-                showKings.putExtra(getString(R.string.package_name), packageName);
-                showKings.putExtra(getString(R.string.package_name_en), packageName_en);
-                startActivity(showKings);
+                Intent openKings = new Intent(PackageContentActivity.this, KingActivity.class);
+                openKings.putExtra(getString(R.string.package_name), packageName);
+                openKings.putExtra(getString(R.string.package_name_en), packageName_en);
+                startActivity(openKings);
             }
         });
 
@@ -160,10 +160,10 @@ public class PackageContentActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Log.v(LOGTAG,"Clicked monuments");
 
-                Intent showMonuments = new Intent(PackageContentActivity.this, MonumentActivity.class);
-                showMonuments.putExtra(getString(R.string.package_name), packageName);
-                showMonuments.putExtra(getString(R.string.package_name_en), packageName_en);
-                startActivity(showMonuments);
+                Intent openMonuments = new Intent(PackageContentActivity.this, MonumentActivity.class);
+                openMonuments.putExtra(getString(R.string.package_name), packageName);
+                openMonuments.putExtra(getString(R.string.package_name_en), packageName_en);
+                startActivity(openMonuments);
             }
         });
 
@@ -172,10 +172,11 @@ public class PackageContentActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Log.v(LOGTAG, "Clicked Gallery");
 
-                Intent showGallery = new Intent(PackageContentActivity.this, GalleryActivity.class);
-                showGallery.putExtra(getString(R.string.package_name), packageName);
-                showGallery.putExtra(getString(R.string.package_name_en), packageName_en);
-                startActivity(showGallery);
+                Intent openGallery = new Intent(PackageContentActivity.this, GalleryActivity.class);
+                openGallery.putExtra(getString(R.string.package_name), packageName);
+                openGallery.putExtra(getString(R.string.package_name_en), packageName_en);
+                openGallery.putExtra(getString(R.string.image_count), getString(R.string.all));
+                startActivity(openGallery);
 
             }
         });
@@ -199,6 +200,7 @@ public class PackageContentActivity extends AppCompatActivity {
     public void onBackPressed() {
         Intent intent = new Intent(PackageContentActivity.this, MainActivity.class);
         startActivity(intent);
+        finish();
     }
 
     public void getImageList() {

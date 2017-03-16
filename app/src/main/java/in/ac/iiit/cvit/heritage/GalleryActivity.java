@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.WindowManager;
@@ -29,14 +30,17 @@ public class GalleryActivity extends AppCompatActivity {
     private SessionManager sessionManager;
     private String packageName;
     public String packageName_en;
+    public String interestPointName;
+    public String interestPointType;
     private Toolbar toolbar;
     private String language;
+    private String decider;
 
     //   private Utils utils;
     private ArrayList<String> imagePaths = new ArrayList<String>();
     private int columnWidth;
 
-
+    private static final String LOGTAG = "GalleryActivity";
     // Number of columns of Grid View
     public static final int NUM_OF_COLUMNS = 3;
 
@@ -58,13 +62,14 @@ public class GalleryActivity extends AppCompatActivity {
 
         packageName = getIntent().getStringExtra(getString(R.string.package_name));
         packageName_en = getIntent().getStringExtra(getString(R.string.package_name_en));
-
+        decider = getIntent().getStringExtra(getString(R.string.image_count));
         sessionManager = new SessionManager();
 
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(packageName.toUpperCase());
         toolbar.setTitleTextColor(ContextCompat.getColor(GalleryActivity.this, R.color.colorBlack));
+
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -79,7 +84,17 @@ public class GalleryActivity extends AppCompatActivity {
         // loading all image paths from SD card
         //imagePaths = utils.getFilePaths();
 
-        imagePaths = PackageContentActivity.ImageNamesList;
+        if (decider.equals(getString(R.string.all))) {
+            Log.v(LOGTAG, "Entered Gallery from PacakgeContentActivity");
+            imagePaths = PackageContentActivity.ImageNamesList;
+        } else {
+            Log.v(LOGTAG, "Entered Gallery from InterestPointActivity");
+            imagePaths = InterestPointActivity.ImageNamesList;
+            interestPointName = getIntent().getStringExtra(getString(R.string.interestpoint_name));
+            interestPointType = getIntent().getStringExtra(getString(R.string.interest_point_type));
+        }
+
+
         // Initilizing Grid View
         setGridView();
 
@@ -133,10 +148,21 @@ public class GalleryActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(GalleryActivity.this, PackageContentActivity.class);
+
+        Intent intent = new Intent();
+        if (decider.equals(getString(R.string.all))) {
+            intent.setClass(GalleryActivity.this, PackageContentActivity.class);
+        } else {
+            intent.setClass(GalleryActivity.this, InterestPointActivity.class);
+            intent.putExtra(getString(R.string.interestpoint_name), interestPointName);
+            intent.putExtra(getString(R.string.interest_point_type), interestPointType);
+
+        }
+
         intent.putExtra(getString(R.string.package_name), packageName);
         intent.putExtra(getString(R.string.package_name_en), packageName_en);
         startActivity(intent);
+        finish();
     }
 
 }

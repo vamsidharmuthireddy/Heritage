@@ -180,6 +180,37 @@ public class InterestPoint {
     }
 
 
+    public ArrayList<String> getMonumentImagePaths(String packageName_en, String interestPointName) {
+
+        packageName_en = packageName_en.toLowerCase().replace("\\s", "");
+
+        String allImages = monumentdetails.get(imagesTag);
+
+        //Log.v("getImages",interestPointName);
+
+//        Log.v("getImages",allImages);
+        ArrayList<String> imagesList = new ArrayList<String>();
+        imagesList.addAll(Arrays.asList(allImages.split(imagesNameSplitter)));
+
+        for (int i = 0; i < imagesList.size(); i++) {
+
+            String image_path = Environment.getExternalStorageDirectory() + File.separator
+                    + dataLocation + packageName_en + File.separator + imagesList.get(i) + imageType;
+
+            imagesList.set(i, image_path);
+
+            File imageFile = new File(image_path);
+            if (!imageFile.exists()) {
+                imagesList.remove(i);
+            }
+
+        }
+
+        return imagesList;
+
+    }
+
+
     private double betweenDistance;
 
     double distance(double iLat, double iLong) {

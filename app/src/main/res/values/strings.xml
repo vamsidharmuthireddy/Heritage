@@ -97,6 +97,9 @@
     <string name="interest_point_type" translatable="false">interestPointType</string>
     <string name="monument" translatable="false">monument</string>
     <string name="king" translatable="false">king</string>
+    <string name="image_count" translatable="false">image_count</string>
+    <string name="all" translatable="false">all</string>
+    <string name="specific" translatable="false">specific</string>
 
 
     <!--MainActivity-->

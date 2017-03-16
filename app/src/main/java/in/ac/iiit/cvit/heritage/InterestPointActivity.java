@@ -3,10 +3,12 @@ package in.ac.iiit.cvit.heritage;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -26,14 +28,18 @@ public class InterestPointActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private ImageView imageView;
     private TextView textview_info;
+    private FloatingActionButton galleryButton;
     private InterestPoint interestPoint;
     private SessionManager sessionManager;
     private CollapsingToolbarLayout collapsingToolbarLayout;
     private String language;
     private String interestPointType;
+    private String interestPointName;
 
     private String packageName;
     private String packageName_en;
+
+    public static ArrayList<String> ImageNamesList = new ArrayList<String>();
 
     private static final String LOGTAG = "InterestPointActivity";
 
@@ -53,41 +59,60 @@ public class InterestPointActivity extends AppCompatActivity {
 
         //we are getting tha name of the interest point that was clicked
         Intent intent = getIntent();
-        final String text_interest_point = intent.getStringExtra(getString(R.string.interestpoint_name));
+        interestPointName = intent.getStringExtra(getString(R.string.interestpoint_name));
         packageName_en = intent.getStringExtra(getString(R.string.package_name_en));
         interestPointType = intent.getStringExtra(getString(R.string.interest_point_type));
 
         //loading the relevant interest point
-        interestPoint = LoadInterestPoint(packageName_en, text_interest_point);
-        Log.v(LOGTAG, "clicked interest point is " + text_interest_point.toUpperCase());
+        interestPoint = LoadInterestPoint(packageName_en, interestPointName);
+        Log.v(LOGTAG, "clicked interest point is " + interestPointName.toUpperCase());
 
         toolbar = (Toolbar) findViewById(R.id.coordinatorlayout_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         //setting up the interest point name as title on action bar in co-ordinator layout
-        toolbar.setTitle(text_interest_point.toUpperCase());
+        toolbar.setTitle(interestPointName.toUpperCase());
 
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.coordinatorlayout_colltoolbar);
-        collapsingToolbarLayout.setTitle(text_interest_point.toUpperCase());
+        collapsingToolbarLayout.setTitle(interestPointName.toUpperCase());
         collapsingToolbarLayout.setContentScrimColor(getResources().getColor(R.color.colorPrimaryDark));
         collapsingToolbarLayout.setStatusBarScrimColor(getResources().getColor(R.color.colorPrimaryDark));
         collapsingToolbarLayout.setCollapsedTitleTextAppearance(R.style.ToolbarStyle);
         collapsingToolbarLayout.setExpandedTitleTextAppearance(R.style.ToolbarStyle);
 
+        ImageNamesList = interestPoint.getMonumentImagePaths(packageName_en, interestPointName);
+
         //setting up the interest point image as image in image view in co-ordinator layout
         imageView = (ImageView) findViewById(R.id.coordinatorlayout_imageview);
         textview_info = (TextView) findViewById(R.id.interestPoint_details);
+        galleryButton = (FloatingActionButton) findViewById(R.id.gallery_button);
 
         if (interestPointType.equals(getString(R.string.monument))) {
-            imageView.setImageBitmap(interestPoint.getMonumentImage(packageName_en, text_interest_point, InterestPointActivity.this));
+            imageView.setImageBitmap(interestPoint.getMonumentImage(packageName_en, interestPointName, InterestPointActivity.this));
             textview_info.setText(interestPoint.getMonument(getString(R.string.interest_point_info)));
             textview_info.setGravity(Gravity.CENTER);
+            galleryButton.setAlpha(0.55f);
+            galleryButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    Intent openGallery = new Intent(InterestPointActivity.this, GalleryActivity.class);
+                    openGallery.putExtra(getString(R.string.package_name), packageName);
+                    openGallery.putExtra(getString(R.string.package_name_en), packageName_en);
+                    openGallery.putExtra(getString(R.string.image_count), getString(R.string.interestpoint_name));
+                    openGallery.putExtra(getString(R.string.interestpoint_name), interestPointName);
+                    openGallery.putExtra(getString(R.string.interest_point_type), interestPointType);
+                    startActivity(openGallery);
+                    finish();
+                }
+            });
 
         } else {
-            imageView.setImageBitmap(interestPoint.getKingImage(packageName, text_interest_point, InterestPointActivity.this));
+            imageView.setImageBitmap(interestPoint.getKingImage(packageName, interestPointName, InterestPointActivity.this));
             textview_info.setText(interestPoint.getKing(getString(R.string.king_info)));
             textview_info.setGravity(Gravity.CENTER);
+            galleryButton.setVisibility(View.INVISIBLE);
         }
 
 
