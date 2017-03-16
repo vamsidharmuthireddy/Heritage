@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
@@ -43,13 +42,13 @@ public class FullScreenImageAdapter extends PagerAdapter {
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-        ImageView imgDisplay;
+        TouchImageView imgDisplay;
         Button btnClose;
 
         inflater = (LayoutInflater) _activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View viewLayout = inflater.inflate(R.layout.activity_fullscreen_image, container, false);
+        View viewLayout = inflater.inflate(R.layout.layout_fullscreen_image, container, false);
 
-        imgDisplay = (ImageView) viewLayout.findViewById(R.id.imgDisplay);
+        imgDisplay = (TouchImageView) viewLayout.findViewById(R.id.imgDisplay);
 
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inPreferredConfig = Bitmap.Config.ARGB_8888;
