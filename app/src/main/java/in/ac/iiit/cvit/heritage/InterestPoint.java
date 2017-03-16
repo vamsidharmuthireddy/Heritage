@@ -83,15 +83,15 @@ public class InterestPoint {
      *
      * @return Image of Interest point in Bitmap data type
      */
-    public Bitmap getMonumentImage(String packageName, String interestPointName, Context context) {
+    public Bitmap getMonumentImage(String packageName_en, String interestPointName, Context context) {
 
-        packageName = packageName.toLowerCase();
+        packageName_en = packageName_en.toLowerCase().replace("\\s", "");
 
         String imageName = monumentdetails.get(imageTag);
         //       Log.v("getImage","reached getImage");
 
 
-        String image_path =  dataLocation + packageName + "/" + imageName + imageType;
+        String image_path = dataLocation + packageName_en + "/" + imageName + imageType;
 
         File imageFile = new File(Environment.getExternalStorageDirectory(),image_path);
         Log.v("getImage", Environment.getExternalStorageDirectory() + image_path);
@@ -116,15 +116,15 @@ public class InterestPoint {
      *
      * @return Image of Interest point in Bitmap data type
      */
-    public Bitmap getKingImage(String packageName, String interestPointName, Context context) {
+    public Bitmap getKingImage(String packageName_en, String interestPointName, Context context) {
 
-        packageName = packageName.toLowerCase();
+        packageName_en = packageName_en.toLowerCase().replace("\\s", "");
 
         String imageName = monumentdetails.get(imageTag);
         //       Log.v("getImage","reached getImage");
 
 
-        String image_path = dataLocation + packageName + "/" + imageName + imageType;
+        String image_path = dataLocation + packageName_en + "/" + imageName + imageType;
 
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inPreferredConfig = Bitmap.Config.ARGB_8888;
@@ -144,9 +144,9 @@ public class InterestPoint {
      *
      * @return Images of Interest point in Bitmap Array data type
      */
-    public ArrayList<Bitmap> getMonumentImages(String packageName, String interestPointName) {
+    public ArrayList<Bitmap> getMonumentImages(String packageName_en, String interestPointName) {
 
-        packageName = packageName.toLowerCase();
+        packageName_en = packageName_en.toLowerCase().replace("\\s", "");
 
 //        String[] image_names = {"a1", "a2", "a3", "a4", "a5"};
 
@@ -163,7 +163,7 @@ public class InterestPoint {
         for (int i = 0; i < imagesList.size(); i++) {
             String imageName = imagesList.get(i);
 //            Log.v("getImages",imageName);
-            String image_path = dataLocation + packageName + "/" + imageName + imageType;
+            String image_path = dataLocation + packageName_en + "/" + imageName + imageType;
 
             File imageFile = new File(Environment.getExternalStorageDirectory(),image_path);
             if (imageFile.exists()) {

@@ -80,7 +80,7 @@ public class InterestPointActivity extends AppCompatActivity {
         textview_info = (TextView) findViewById(R.id.interestPoint_details);
 
         if (interestPointType.equals(getString(R.string.monument))) {
-            imageView.setImageBitmap(interestPoint.getMonumentImage(packageName, text_interest_point, InterestPointActivity.this));
+            imageView.setImageBitmap(interestPoint.getMonumentImage(packageName_en, text_interest_point, InterestPointActivity.this));
             textview_info.setText(interestPoint.getMonument(getString(R.string.interest_point_info)));
             textview_info.setGravity(Gravity.CENTER);
 

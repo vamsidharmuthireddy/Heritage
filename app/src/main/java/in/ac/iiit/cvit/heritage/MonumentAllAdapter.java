@@ -76,7 +76,7 @@ public class MonumentAllAdapter extends RecyclerView.Adapter<MonumentAllAdapter.
 
         textView.setText(interestPoints.get(position).getMonument(context.getString(R.string.interest_point_title)));
         imageView.setImageBitmap(interestPoints.get(position)
-                .getMonumentImage(packageName, context.getString(R.string.interest_point_title), context));
+                .getMonumentImage(packageName_en, context.getString(R.string.interest_point_title), context));
 
     }
 

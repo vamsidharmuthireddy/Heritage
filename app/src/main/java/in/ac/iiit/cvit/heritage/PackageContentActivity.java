@@ -2,6 +2,7 @@ package in.ac.iiit.cvit.heritage;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
@@ -9,7 +10,9 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Locale;
 
 /**
@@ -28,6 +31,8 @@ public class PackageContentActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private String language;
     public static ArrayList<InterestPoint> monumentList;
+    public static ArrayList<String> ImageNamesList = new ArrayList<String>();
+    ;
     public static ArrayList<InterestPoint> monumentList_en;
     public static ArrayList<InterestPoint> kingsList;
     public static ArrayList<InterestPoint> kingsList_en;
@@ -88,6 +93,9 @@ public class PackageContentActivity extends AppCompatActivity {
             monumentList_en = reader.getMonumentsList();
             kingsList_en = reader.getKingsList();
             //The above interestPoints has the data on all available interest points
+
+            getImageList();
+
         } else {
             reader = new PackageReader(packageName_en, PackageContentActivity.this, language);
             //This reader has all the information about all the interest points
@@ -99,6 +107,7 @@ public class PackageContentActivity extends AppCompatActivity {
             monumentList_en = reader.getMonumentsList();
             kingsList_en = reader.getKingsList();
 
+            getImageList();
 
         }
 
@@ -163,6 +172,10 @@ public class PackageContentActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Log.v(LOGTAG, "Clicked Gallery");
 
+                Intent showGallery = new Intent(PackageContentActivity.this, GalleryActivity.class);
+                showGallery.putExtra(getString(R.string.package_name), packageName);
+                showGallery.putExtra(getString(R.string.package_name_en), packageName_en);
+                startActivity(showGallery);
 
             }
         });
@@ -188,6 +201,39 @@ public class PackageContentActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void getImageList() {
+
+        ImageNamesList.clear();
+
+        String images[] = new String[1000];
+        for (int i = 0; i < monumentList.size(); i++) {
+
+            InterestPoint monument = monumentList.get(i);
+            images[i] = monument.getMonument(getString(R.string.interest_point_images));
+
+            //Log.v(LOGTAG,monument.getMonument(getString(R.string.interest_point_title))+" Images are "+ images[i]);
+            if (!images[i].equals("")) {
+
+                ImageNamesList.addAll(Arrays.asList(images[i].split(",")));
+            }
+
+        }
+
+        Log.v(LOGTAG, "Total images are " + ImageNamesList.size());
+
+        for (int i = 0; i < ImageNamesList.size(); i++) {
+            String imagepath = Environment.getExternalStorageDirectory()
+                    + File.separator
+                    + getString(R.string.extracted_location)
+                    + packageName_en + File.separator + ImageNamesList.get(i) + ".JPG";
+
+            ImageNamesList.set(i, imagepath);
+
+            //Log.v(LOGTAG,"ip is "+i+" and is " +ImageNamesList.get(i));
+        }
+
+
+    }
 
     public ArrayList<InterestPoint> giveMonumentList() {
         return monumentList;

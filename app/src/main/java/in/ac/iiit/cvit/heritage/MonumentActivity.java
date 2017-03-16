@@ -46,13 +46,6 @@ public class MonumentActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //Setting permissions
-        if (checkPermission()) {
-            Log.i(LOGTAG, "MainActivity has File Location permission");
-
-        } else {
-            requestPermission();
-        }
 
         final LocaleManager localeManager = new LocaleManager(MonumentActivity.this);
         localeManager.loadLocale();
@@ -64,6 +57,30 @@ public class MonumentActivity extends AppCompatActivity {
         packageName_en = getIntent().getStringExtra(getString(R.string.package_name_en));
 
         sessionManager = new SessionManager();
+        sessionManager.setSessionPreferences(MonumentActivity.this, getString(R.string.package_name), packageName);
+
+
+        //Setting permissions
+        if (checkPermission()) {
+            Log.i(LOGTAG, "MonumentActivity has File Location permission");
+            setViews();
+
+        } else {
+            requestPermission();
+        }
+
+        //monumentList = new PackageContentActivity().giveMonumentList();
+        monumentList = PackageContentActivity.monumentList;
+        monumentList_en = PackageContentActivity.monumentList_en;
+        //LoadPackage(packageName_en);
+        Log.v(LOGTAG, "size of monumentList is " + monumentList.size());
+
+
+    }
+
+
+    private void setViews() {
+
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(packageName.toUpperCase());
@@ -72,15 +89,6 @@ public class MonumentActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-
-
-        sessionManager.setSessionPreferences(MonumentActivity.this, getString(R.string.package_name), packageName);
-
-        //monumentList = new PackageContentActivity().giveMonumentList();
-        monumentList = PackageContentActivity.monumentList;
-        monumentList_en = PackageContentActivity.monumentList_en;
-        //LoadPackage(packageName_en);
-        Log.v(LOGTAG, "size of monumentList is " + monumentList.size());
 
         //Setting up tabs "NEARBY", "PLACES"
         tabLayout = (TabLayout) findViewById(R.id.tab_layout);
@@ -114,8 +122,8 @@ public class MonumentActivity extends AppCompatActivity {
             }
         });
 
-    }
 
+    }
 
     /**
      * This method returns interest points of the chosen Heritage site by calling PackageReader class
@@ -166,10 +174,6 @@ public class MonumentActivity extends AppCompatActivity {
 
     }
 
-    private void setRecyclerView() {
-
-    }
-
     protected boolean checkPermission() {
         int result = ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION);
         if (result == PackageManager.PERMISSION_GRANTED) {
@@ -203,6 +207,9 @@ public class MonumentActivity extends AppCompatActivity {
             case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION:
             case PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    Log.i(LOGTAG, "MonumentActivity has File Location permission");
+                    setViews();
 
                 } else {
                     if (ActivityCompat.shouldShowRequestPermissionRationale(MonumentActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION)) {

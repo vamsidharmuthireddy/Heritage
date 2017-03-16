@@ -281,7 +281,7 @@ public class PackageLoader {
                     public void onClick(DialogInterface arg0, int arg1) {
 
                         SessionManager sessionManager = new SessionManager();
-                        sessionManager.setSessionPreferences(context, context.getString(R.string.package_name), packageName_en);
+                        sessionManager.setSessionPreferences(context, context.getString(R.string.package_name), packageName);
 
                         Intent intent_monument_activity = new Intent(context, MonumentActivity.class);
                         intent_monument_activity.putExtra(context.getString(R.string.package_name), packageName);

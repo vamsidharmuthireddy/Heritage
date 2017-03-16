@@ -183,7 +183,7 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
                     String packageName = holder.title.getText().toString().toLowerCase();
                     SessionManager sessionManager = new SessionManager();
                     sessionManager.setSessionPreferences(context
-                            , context.getString(R.string.package_name), packageName.replaceAll("\\s", ""));
+                            , context.getString(R.string.package_name), packageName.toLowerCase().replaceAll("\\s", ""));
                     Log.v(LOGTAG, v.getId() + " is clicked" + " position= " + position + " packageName = " + packageName);
 
                     final String packageName_en = heritageSites_en
