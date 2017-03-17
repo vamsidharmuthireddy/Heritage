@@ -28,8 +28,16 @@ public class FullScreenImageActivity extends AppCompatActivity {
         Intent i = getIntent();
         int position = i.getIntExtra("position", 0);
 
+        String decider = GalleryActivity.decider;
 
-        viewPager.setAdapter(new FullScreenImageAdapter(FullScreenImageActivity.this, PackageContentActivity.ImageNamesList));
+        if (decider.equals(getString(R.string.all))) {
+            viewPager.setAdapter(new FullScreenImageAdapter(FullScreenImageActivity.this, PackageContentActivity.ImageNamesList));
+
+        } else {
+            viewPager.setAdapter(new FullScreenImageAdapter(FullScreenImageActivity.this, GalleryActivity.ImageNamesList));
+
+        }
+
 
         // displaying selected image first
         viewPager.setCurrentItem(position);

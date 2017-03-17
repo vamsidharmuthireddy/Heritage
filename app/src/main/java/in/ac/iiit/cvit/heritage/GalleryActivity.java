@@ -34,10 +34,10 @@ public class GalleryActivity extends AppCompatActivity {
     public String interestPointType;
     private Toolbar toolbar;
     private String language;
-    private String decider;
+    public static String decider = new String();
 
     //   private Utils utils;
-    private ArrayList<String> imagePaths = new ArrayList<String>();
+    public static ArrayList<String> ImageNamesList = new ArrayList<String>();
     private int columnWidth;
 
     private static final String LOGTAG = "GalleryActivity";
@@ -86,10 +86,10 @@ public class GalleryActivity extends AppCompatActivity {
 
         if (decider.equals(getString(R.string.all))) {
             Log.v(LOGTAG, "Entered Gallery from PacakgeContentActivity");
-            imagePaths = PackageContentActivity.ImageNamesList;
+            ImageNamesList = PackageContentActivity.ImageNamesList;
         } else {
             Log.v(LOGTAG, "Entered Gallery from InterestPointActivity");
-            imagePaths = InterestPointActivity.ImageNamesList;
+            ImageNamesList = InterestPointActivity.ImageNamesList;
             interestPointName = getIntent().getStringExtra(getString(R.string.interestpoint_name));
             interestPointType = getIntent().getStringExtra(getString(R.string.interest_point_type));
         }
@@ -116,7 +116,7 @@ public class GalleryActivity extends AppCompatActivity {
         gridView.setHorizontalSpacing((int) padding);
         gridView.setVerticalSpacing((int) padding);
         // setting grid view adapter
-        gridView.setAdapter(new GalleryAdapter(GalleryActivity.this, GalleryActivity.this, imagePaths, columnWidth));
+        gridView.setAdapter(new GalleryAdapter(GalleryActivity.this, GalleryActivity.this, ImageNamesList, columnWidth));
     }
 
 
