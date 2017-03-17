@@ -56,7 +56,10 @@
                 android:id="@+id/interestPoint_details"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_fab_margin"
+                android:layout_marginBottom="@dimen/activity_fab_margin"
                 android:layout_margin="@dimen/activity_std_margin"
+                android:paddingBottom="@dimen/activity_fab_margin"
                 android:textSize="@dimen/activity_small_text"
                 android:gravity="center" />
 
@@ -68,9 +71,9 @@
         android:id="@+id/gallery_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center|end"
         android:layout_margin="16dp"
         android:background="@color/colorWhite"
+        android:layout_gravity="right|bottom"
         android:elevation="@dimen/activity_elevation"
         android:scaleType="fitCenter"
         android:src="@drawable/ic_gallery_icon_white"

@@ -1,6 +1,7 @@
 package in.ac.iiit.cvit.heritage;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -23,12 +24,14 @@ import java.util.ArrayList;
 public class GalleryAdapter extends BaseAdapter {
 
     private Activity _activity;
+    private Context context;
     private ArrayList<String> _filePaths = new ArrayList<String>();
     private int imageWidth;
 
     private static final String LOGTAG = "GalleryAdapter";
 
-    public GalleryAdapter(Activity activity, ArrayList<String> filePaths, int imageWidth) {
+    public GalleryAdapter(Context _context, Activity activity, ArrayList<String> filePaths, int imageWidth) {
+        this.context = _context;
         this._activity = activity;
         this._filePaths = filePaths;
         this.imageWidth = imageWidth;
@@ -75,6 +78,7 @@ public class GalleryAdapter extends BaseAdapter {
             public void onClick(View v) {
                 Intent i = new Intent(_activity, FullScreenImageActivity.class);
                 i.putExtra("position", _position);
+
                 Log.v(LOGTAG, "clicked image is " + ff.get(_position));
                 _activity.startActivity(i);
             }

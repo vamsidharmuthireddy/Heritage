@@ -116,7 +116,7 @@ public class GalleryActivity extends AppCompatActivity {
         gridView.setHorizontalSpacing((int) padding);
         gridView.setVerticalSpacing((int) padding);
         // setting grid view adapter
-        gridView.setAdapter(new GalleryAdapter(GalleryActivity.this, imagePaths, columnWidth));
+        gridView.setAdapter(new GalleryAdapter(GalleryActivity.this, GalleryActivity.this, imagePaths, columnWidth));
     }
 
 
@@ -161,8 +161,9 @@ public class GalleryActivity extends AppCompatActivity {
 
         intent.putExtra(getString(R.string.package_name), packageName);
         intent.putExtra(getString(R.string.package_name_en), packageName_en);
-        startActivity(intent);
+        //startActivity(intent);
         finish();
+        super.onBackPressed();
     }
 
 }

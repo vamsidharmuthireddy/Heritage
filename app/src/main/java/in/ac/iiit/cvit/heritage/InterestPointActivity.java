@@ -92,7 +92,7 @@ public class InterestPointActivity extends AppCompatActivity {
             imageView.setImageBitmap(interestPoint.getMonumentImage(packageName_en, interestPointName, InterestPointActivity.this));
             textview_info.setText(interestPoint.getMonument(getString(R.string.interest_point_info)));
             textview_info.setGravity(Gravity.CENTER);
-            galleryButton.setAlpha(0.55f);
+            galleryButton.setAlpha(0.60f);
             galleryButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -104,7 +104,7 @@ public class InterestPointActivity extends AppCompatActivity {
                     openGallery.putExtra(getString(R.string.interestpoint_name), interestPointName);
                     openGallery.putExtra(getString(R.string.interest_point_type), interestPointType);
                     startActivity(openGallery);
-                    finish();
+                    //finish();
                 }
             });
 
