@@ -18,8 +18,7 @@ public class HeritageSite {
     private HashMap<String, String> heritageSitedetails;
     private SessionManager sessionManager;
 
-//    private static final String dataLocation = "Android/data/in.ac.iiit.cvit.heritage/files/extracted/";
-    private static final String dataLocation = "Heritage/";
+    private static final String dataLocation = "Android/data/in.ac.iiit.cvit.heritage/files/introPackages/extracted/";
 
     private static final String imageType = ".jpg";
     private static final String latitudeTag = "lat";
@@ -59,8 +58,8 @@ public class HeritageSite {
         String imageName = heritageSitedetails.get(imageTag);
         //       Log.v("getImage","reached getImage");
 
-        //String image_path =  dataLocation + packageName + "/" + imageName + imageType;
-        String image_path =  dataLocation+"golconda_1.jpg";
+        String image_path = dataLocation + imageName + imageType;
+        //String image_path =  dataLocation+"golconda_1.jpg";
 
         File imageFile = new File(Environment.getExternalStorageDirectory(),image_path);
         Log.v(LOGTAG, imageFile.getAbsolutePath());

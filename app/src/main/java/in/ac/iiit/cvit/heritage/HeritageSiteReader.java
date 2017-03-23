@@ -57,11 +57,11 @@ public class HeritageSiteReader {
     public HeritageSiteReader(String packageName, Context _context, String language) {
         context = _context;
         _packageName = packageName;
-        dataLocation = context.getString(R.string.extracted_location);
+        dataLocation = context.getString(R.string.intro_package_extracted_location);
 
         //String prevLanguage = Locale.getDefault().getLanguage();
         //xmlFile = _packageName + "_" + language + context.getString(R.string.xml_extension);
-        xmlFile = "heritagesite" + context.getString(R.string.xml_extension);
+        xmlFile = context.getString(R.string.intro_package_name) + context.getString(R.string.xml_extension);
         Log.v(LOGTAG, "Name of the xml file is " + xmlFile);
 
         heritageSiteList = new ArrayList<HeritageSite>();
@@ -160,8 +160,7 @@ public class HeritageSiteReader {
     private void readFromFile(){
         File baseLocal = Environment.getExternalStorageDirectory();
 
-        //File xmlfile = new File(baseLocal, dataLocation + _packageName + "/" + xmlFile );
-        File xmlfile = new File(baseLocal, "Heritage/heritagesite.xml" );
+        File xmlfile = new File(baseLocal, dataLocation + "/" + xmlFile);
 
         try {
             FileInputStream xmlStream = new FileInputStream(xmlfile);

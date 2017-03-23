@@ -11,6 +11,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -58,7 +59,7 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        getSupportActionBar().setElevation(60.0f);
         //Setting permissions
         if (checkPermission()) {
             Log.i(LOGTAG,"PackagesDownloaderActivity has storage permission");
@@ -88,6 +89,7 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
      */
     private void setRecyclerView(){
 
+
         recyclerView = (RecyclerView) findViewById(R.id.recyclerview_heritage_sites);
         recyclerView.setHasFixedSize(true);
         recyclerViewLayoutManager = new LinearLayoutManager(MainActivity.this);
@@ -98,6 +100,19 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
                 heritageSitesList_en, MainActivity.this, MainActivity.this);
         recyclerView.setAdapter(recyclerViewAdapter);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
+
+
+        final SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                IntroPackageDownloader introPackageDownloader
+                        = new IntroPackageDownloader(MainActivity.this, MainActivity.this, recyclerViewAdapter);
+
+                introPackageDownloader.execute(getString(R.string.intro_package_name));
+
+            }
+        });
 
     }
 

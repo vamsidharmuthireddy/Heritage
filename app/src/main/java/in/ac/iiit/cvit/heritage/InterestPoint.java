@@ -22,7 +22,7 @@ public class InterestPoint {
     private HashMap<String, String> royalDetails;
     private SessionManager sessionManager;
 
-    private static final String dataLocation = "Android/data/in.ac.iiit.cvit.heritage/files/extracted/";
+    private static final String dataLocation = "Android/data/in.ac.iiit.cvit.heritage/files/completePackages/extracted/";
 
     private static final String imageType = ".JPG";
     private static final String latitudeTag = "lat";

@@ -130,7 +130,7 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
         boolean download_switch_state;
         //download_switch_state = sessionManager.getBooleanSessionPreferences(context, switchKey, false);
 
-        String EXTRACT_DIR = context.getString(R.string.extracted_location);
+        String EXTRACT_DIR = context.getString(R.string.full_package_extracted_location);
         File baseLocal = Environment.getExternalStorageDirectory();
         //File baseLocal = context.getDir("Heritage",Context.MODE_PRIVATE);
         File extracted = new File(baseLocal, EXTRACT_DIR + packageName_en);
@@ -265,9 +265,19 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
 
                                 // do something when the button is clicked
                                 public void onClick(DialogInterface arg0, int arg1) {
-                                    PackageLoader packageLoader = new PackageLoader(context, packageName, packageName_en);
+                                    PackageLoader packageLoader = new PackageLoader(context, holder.downloadSwitch, packageName, packageName_en);
                                     packageLoader.showFileListDialog(Environment.getExternalStorageDirectory().toString());
                                     //onBackPressed();
+                                }
+                            })
+                            .setNeutralButton(context.getString(R.string.close_dialog), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                    Log.v(LOGTAG, packageName_en + " Alert box is closed");
+
+                                    holder.downloadSwitch.setChecked(false);
+                                    holder.downloadSwitch.invalidate();
                                 }
                             })
                             .setCancelable(false)
@@ -285,7 +295,32 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
                                 public void onClick(DialogInterface arg0, int arg1) {
 
                                     //Delete the package
-                                    Log.i(LOGTAG, packageName_en + " is deleted");
+
+                                    String compressName = context.getString(R.string.full_package_compressed_location)
+                                            + packageName_en + context.getString(R.string.package_format);
+
+                                    File compressedFile = new File(Environment.getExternalStorageDirectory(), compressName);
+                                    if (compressedFile.exists()) {
+                                        compressedFile.delete();
+                                        Log.i(LOGTAG, compressedFile.getAbsolutePath() + " is deleted");
+                                    }
+
+
+                                    String extractedName = context.getString(R.string.full_package_extracted_location) + packageName_en;
+                                    File extractedDir = new File(Environment.getExternalStorageDirectory(), extractedName);
+
+                                    if (extractedDir.isDirectory()) {
+                                        String[] children = extractedDir.list();
+                                        for (int i = 0; i < children.length; i++) {
+                                            new File(extractedDir, children[i]).delete();
+                                            //Log.v(LOGTAG, children[i]+" is deleted");
+                                        }
+                                        extractedDir.delete();
+                                        Log.i(LOGTAG, extractedDir.getAbsolutePath() + " is deleted");
+                                    }
+
+
+
                                     holder.downloadSwitch.setChecked(false);
 
                                 }

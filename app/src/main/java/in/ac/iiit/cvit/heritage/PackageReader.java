@@ -55,7 +55,7 @@ public class PackageReader {
     public PackageReader(String _packageName_en, Context _context, String language) {
         context = _context;
         packageName_en = _packageName_en;
-        dataLocation = context.getString(R.string.extracted_location);
+        dataLocation = context.getString(R.string.full_package_extracted_location);
 
         String prevLanguage = Locale.getDefault().getLanguage();
         xmlFile = packageName_en + "_" + prevLanguage + context.getString(R.string.xml_extension);

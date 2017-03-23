@@ -59,9 +59,12 @@
 
     <!--PackageDownloaderActivity screen-->
     <string name="available_for_download">Click to download</string>
-    <string name="package_download_url" translatable="false">http://preon.iiit.ac.in/~heritage/packages/</string>
-    <string name="extracted_location" translatable="false">Android/data/in.ac.iiit.cvit.heritage/files/extracted/</string>
-    <string name="compressed_location" translatable="false">Android/data/in.ac.iiit.cvit.heritage/files/compressed/</string>
+    <string name="full_package_download_url" translatable="false">http://preon.iiit.ac.in/~heritage/packages/fullPackages/</string>
+    <string name="full_package_base_location" translatable="false">Android/data/in.ac.iiit.cvit.heritage/files/completePackages/</string>
+    <string name="extracted" translatable="false">extracted/</string>
+    <string name="compressed" translatable="false">compressed/</string>
+    <string name="full_package_extracted_location" translatable="false">Android/data/in.ac.iiit.cvit.heritage/files/completePackages/extracted/</string>
+    <string name="full_package_compressed_location" translatable="false">Android/data/in.ac.iiit.cvit.heritage/files/completePackages/compressed/</string>
     <string name="package_format" translatable="false">.tar.gz</string>
     <string name="xml_extension" translatable="false">.xml</string>
     <string name="downloading">Downloading the Package</string>
@@ -70,6 +73,7 @@
     <string name="load_update">Load Update</string>
     <string name="package_download_completed">Package Download Completed</string>
     <string name="package_load_completed">Package Loading Completed</string>
+    <string name="close_dialog">Close</string>
     <string name="ok">OK</string>
     <string name="click_to_view">"Click to view "</string>
     <string name="package_not_downloaded">Package could not be downloaded</string>
@@ -81,6 +85,16 @@
     <string name="download_file">Download</string>
     <string name="locate_file">Locate</string>
     <string name="delete_package">Do you want to delete the package?</string>
+
+    <!--IntroPackageDownloader-->
+    <string name="intro_package_download_url" translatable="false">http://preon.iiit.ac.in/~heritage/packages/introPackages/</string>
+    <string name="intro_package_extracted_location" translatable="false">Android/data/in.ac.iiit.cvit.heritage/files/introPackages/extracted/</string>
+    <string name="intro_package_compressed_location" translatable="false">Android/data/in.ac.iiit.cvit.heritage/files/introPackages/compressed/</string>
+    <string name="intro_package_name" translatable="false">heritageSites</string>
+    <string name="checking_for_packages">Checking for Packages</string>
+    <string name="intro_package_update_message">Refresh Update</string>
+    <string name="content_refresh_completed">Content refresh completed</string>
+    <string name="content_not_refreshed">Content could not be refreshed</string>
 
 
     <!--SessionManager-->

@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.os.Environment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.widget.Switch;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
@@ -38,17 +39,19 @@ public class PackageLoader {
     private Context context;
     private ProgressDialog progressDialog;
     private String temp;
+    private Switch downloadSwitch;
     private String basePackageName;
     private String packageName;
     private String packageName_en;
 
 
-    public PackageLoader(Context _context, String _packagename, String _packagename_en) {
+    public PackageLoader(Context _context, Switch _downloadSwitch, String _packagename, String _packagename_en) {
         context = _context;
+        downloadSwitch = _downloadSwitch;
         packageName = _packagename;
         packageName_en = _packagename_en;
 
-        EXTRACT_DIR = context.getString(R.string.extracted_location);
+        EXTRACT_DIR = context.getString(R.string.full_package_extracted_location);
         packageFormat = _context.getString(R.string.package_format);
     }
 
@@ -158,9 +161,17 @@ public class PackageLoader {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
+
+                Log.v(LOGTAG, packageName_en + " package loading is canceled");
+
+                downloadSwitch.setChecked(false);
+                downloadSwitch.invalidate();
+
                 dialog.dismiss();
             }
         });
+
+        builder.setCancelable(false);
 
         dialog = builder.create();
         dialog.show();
@@ -276,6 +287,12 @@ public class PackageLoader {
             alertDialog.setTitle(context.getString(R.string.load_update));
 
             if (result.equals("Package Loading Completed")) {
+
+                Log.v(LOGTAG, packageName_en + " package loading is complete");
+
+                downloadSwitch.setChecked(true);
+                downloadSwitch.invalidate();
+
                 alertDialog.setPositiveButton(context.getString(R.string.ok), new DialogInterface.OnClickListener() {
                     // do something when the button is clicked
                     public void onClick(DialogInterface arg0, int arg1) {
@@ -295,6 +312,11 @@ public class PackageLoader {
                 alertDialog.show();
 
             } else {
+
+                Log.v(LOGTAG, packageName_en + " package loading is not complete");
+
+                downloadSwitch.setChecked(false);
+                downloadSwitch.invalidate();
 
                 alertDialog.setPositiveButton(context.getString(R.string.ok), new DialogInterface.OnClickListener() {
                     // do something when the button is clicked

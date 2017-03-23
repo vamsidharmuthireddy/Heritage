@@ -3,13 +3,12 @@ package in.ac.iiit.cvit.heritage;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Environment;
-import android.support.v7.app.AlertDialog;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.widget.Switch;
+import android.widget.Toast;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
@@ -29,16 +28,14 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
- * Created by HOME on 13-03-2017.
+ * Created by HOME on 14-03-2017.
  */
-public class PackageDownloader extends AsyncTask<String, String, String> {
-    /**
-     * This class is used to download the package from particular website as a compressed file
-     * and extract it
-     */
+
+public class IntroPackageDownloader extends AsyncTask<String, String, String> {
+
     public static final int READ_TIMEOUT = 15000;
     public static final int CONNECTION_TIMEOUT = 10000;
-    public static final String LOGTAG = "PackageDownloader";
+    public static final String LOGTAG = "IntroPackageDownloader";
     private final String EXTRACT_DIR;
     private final String COMPRESSED_DIR;
     private final String packageUrl;
@@ -46,7 +43,8 @@ public class PackageDownloader extends AsyncTask<String, String, String> {
     private URL url;
     private Context context;
     private Activity activity;
-    private Switch downloadSwitch;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private RecyclerView.Adapter recyclerViewAdapter;
     private ProgressDialog progressDialog;
     private HttpURLConnection httpURLConnection;
     private String packageName;
@@ -54,14 +52,14 @@ public class PackageDownloader extends AsyncTask<String, String, String> {
     private String basepackageName;
     private String basepackageName_en;
 
-    public PackageDownloader(Context _context, Activity _activity, Switch _downloadSwitch) {
+    public IntroPackageDownloader(Context _context, Activity _activity, RecyclerView.Adapter _recyclerViewAdapter) {
         context = _context;
         activity = _activity;
-        downloadSwitch = _downloadSwitch;
+        recyclerViewAdapter = _recyclerViewAdapter;
 
-        EXTRACT_DIR = context.getString(R.string.full_package_extracted_location);
-        COMPRESSED_DIR = context.getString(R.string.full_package_compressed_location);
-        packageUrl = context.getString(R.string.full_package_download_url);
+        EXTRACT_DIR = context.getString(R.string.intro_package_extracted_location);
+        COMPRESSED_DIR = context.getString(R.string.intro_package_compressed_location);
+        packageUrl = context.getString(R.string.intro_package_download_url);
         packageFormat = context.getString(R.string.package_format);
     }
 
@@ -73,10 +71,10 @@ public class PackageDownloader extends AsyncTask<String, String, String> {
         super.onPreExecute();
 
         progressDialog = new ProgressDialog(context);
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressDialog.setIndeterminate(false);
         progressDialog.setProgress(0);
-        progressDialog.setMessage(context.getString(R.string.downloading));
+        progressDialog.setMessage(context.getString(R.string.checking_for_packages));
         progressDialog.setCancelable(false);
         progressDialog.show();
 
@@ -91,10 +89,8 @@ public class PackageDownloader extends AsyncTask<String, String, String> {
      */
     @Override
     protected String doInBackground(String... params) {
-        basepackageName = params[0];
-        packageName = params[0];
-        basepackageName_en = params[1];
-        packageName_en = params[1];
+        basepackageName_en = params[0];
+        packageName_en = params[0];
         packageName_en = packageName_en.toLowerCase().replace("\\s", "") + packageFormat;
         String address = packageUrl + packageName_en;
         Log.i(LOGTAG, address);
@@ -181,41 +177,43 @@ public class PackageDownloader extends AsyncTask<String, String, String> {
         progressDialog.dismiss();
         Log.i(LOGTAG, result);
 
+        recyclerViewAdapter.notifyDataSetChanged();
+
+        swipeRefreshLayout = (SwipeRefreshLayout) activity.findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayout.setRefreshing(false);
+
+
+        Toast.makeText(context, context.getString(R.string.content_refresh_completed), Toast.LENGTH_SHORT).show();
+
+        /*
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
 
-        alertDialog.setTitle(context.getString(R.string.download_update));
+        alertDialog.setTitle(context.getString(R.string.intro_package_update_message));
 
         if (result.equals("Package Download Completed")) {
 
-            Log.v(LOGTAG, packageName_en + " package download is complete");
+            Log.v(LOGTAG, packageName_en + " Intro package download is complete");
 
-            downloadSwitch.setChecked(true);
-            downloadSwitch.invalidate();
 
             alertDialog.setPositiveButton(context.getString(R.string.ok), new DialogInterface.OnClickListener() {
                 // do something when the button is clicked
                 public void onClick(DialogInterface arg0, int arg1) {
 
-                    SessionManager sessionManager = new SessionManager();
-                    sessionManager.setSessionPreferences(context, context.getString(R.string.package_name), basepackageName);
-
-                    Intent intent_package_content = new Intent(context, PackageContentActivity.class);
-                    intent_package_content.putExtra(context.getString(R.string.package_name_en), basepackageName_en);
-                    intent_package_content.putExtra(context.getString(R.string.package_name), basepackageName);
-                    context.startActivity(intent_package_content);
+                    Intent intent_main_activity = new Intent(context, MainActivity.class);
+                    intent_main_activity.putExtra(context.getString(R.string.package_name_en), basepackageName_en);
+                    intent_main_activity.putExtra(context.getString(R.string.package_name), basepackageName);
+                    context.startActivity(intent_main_activity);
 
                 }
             });
 
-            alertDialog.setMessage(context.getString(R.string.package_download_completed) + "\n" + context.getString(R.string.click_to_view));
+            alertDialog.setMessage(context.getString(R.string.content_refresh_completed)
+                    + "\n" + context.getString(R.string.click_to_view));
             alertDialog.show();
 
         } else {
 
-            Log.v(LOGTAG, packageName_en + " package download is not complete");
-
-            downloadSwitch.setChecked(false);
-            downloadSwitch.invalidate();
+            Log.v(LOGTAG, packageName_en + " Intro package download is not complete");
 
             alertDialog.setPositiveButton(context.getString(R.string.ok), new DialogInterface.OnClickListener() {
                 // do something when the button is clicked
@@ -225,9 +223,11 @@ public class PackageDownloader extends AsyncTask<String, String, String> {
                 }
             });
 
-            alertDialog.setMessage(context.getString(R.string.package_not_downloaded));
+            alertDialog.setMessage(context.getString(R.string.content_not_refreshed));
             alertDialog.show();
         }
+
+        */
 
     }
 

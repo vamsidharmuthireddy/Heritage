@@ -23,29 +23,38 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-    <include
-        layout="@layout/tool_bar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-
-
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation = "vertical"
-        android:layout_marginTop="?attr/actionBarSize"
-        tools:context=".MainActivity">
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerview_heritage_sites"
+        <include
+            layout="@layout/tool_bar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scrollbars="vertical"
-            app:layout_scrollFlags="scroll|snap" />
+            android:layout_height="wrap_content" />
 
-    </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="?attr/actionBarSize"
+            android:orientation="vertical"
+            tools:context=".MainActivity">
+
+
+            <android.support.v4.widget.SwipeRefreshLayout
+                android:id="@+id/swipeRefreshLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recyclerview_heritage_sites"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scrollbars="vertical"
+                    app:layout_scrollFlags="scroll|snap" />
+
+
+            </android.support.v4.widget.SwipeRefreshLayout>
+
+        </RelativeLayout>
+
+
     </RelativeLayout>
 
 </android.support.v4.widget.DrawerLayout>

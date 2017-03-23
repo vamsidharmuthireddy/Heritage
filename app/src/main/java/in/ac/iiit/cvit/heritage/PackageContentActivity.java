@@ -226,7 +226,7 @@ public class PackageContentActivity extends AppCompatActivity {
         for (int i = 0; i < ImageNamesList.size(); i++) {
             String imagepath = Environment.getExternalStorageDirectory()
                     + File.separator
-                    + getString(R.string.extracted_location)
+                    + getString(R.string.full_package_extracted_location)
                     + packageName_en + File.separator + ImageNamesList.get(i) + ".JPG";
 
             ImageNamesList.set(i, imagepath);
