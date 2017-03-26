@@ -8,11 +8,9 @@
 
 
     <style name="ToolbarStyle" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
         <item name="android:textColor">@color/colorWhite</item>
-        <item name="android:textColorSecondary">@color/colorWhite</item>
+        <item name="android:textColorSecondary">@color/colorBlack</item>
+        <item name="android:textColorPrimary">@color/colorWhite</item>
     </style>
 
     <style name="AppTheme.NoActionBar">

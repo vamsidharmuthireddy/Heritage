@@ -19,6 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:layout_marginBottom="@dimen/activity_std_padding"
+            android:src="@drawable/monument"
             android:scaleType="centerCrop" />
 
         <TextView
@@ -28,7 +29,8 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:gravity="center"
-            android:textSize="@dimen/activity_small_text" />
+            android:textSize="@dimen/activity_medium_text"
+            android:textColor="@color/colorBlack" />
 
     </RelativeLayout>
 

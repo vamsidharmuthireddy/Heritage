@@ -65,8 +65,15 @@ public class MonumentNearbyAdapter extends RecyclerView.Adapter<MonumentNearbyAd
         final String packageName = packageName_en;
 
         textView.setText(interestPoints.get(position).getMonument(context.getString(R.string.interest_point_title)));
+
         imageView.setImageBitmap(interestPoints.get(position)
                 .getMonumentImage(packageName_en, context.getString(R.string.interest_point_title), context));
+
+
+        if (imageView.getDrawable() == context.getResources().getDrawable(R.drawable.monument)) {
+            imageView.setScaleType(ImageView.ScaleType.CENTER);
+        }
+
 
         setListeners(holder, position);
 
@@ -114,7 +121,6 @@ public class MonumentNearbyAdapter extends RecyclerView.Adapter<MonumentNearbyAd
         });
 
     }
-
 
     @Override
     public int getItemCount() {

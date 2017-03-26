@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
@@ -28,6 +29,7 @@ public class InterestPointActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private ImageView imageView;
     private TextView textview_info;
+    private CardView text_card;
     private FloatingActionButton galleryButton;
     private InterestPoint interestPoint;
     private SessionManager sessionManager;
@@ -73,22 +75,30 @@ public class InterestPointActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         //setting up the interest point name as title on action bar in co-ordinator layout
         toolbar.setTitle(interestPointName.toUpperCase());
+        toolbar.setTitleTextColor(getResources().getColor(R.color.colorBlack));
+
 
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.coordinatorlayout_colltoolbar);
         collapsingToolbarLayout.setTitle(interestPointName.toUpperCase());
-        collapsingToolbarLayout.setContentScrimColor(getResources().getColor(R.color.colorPrimaryDark));
-        collapsingToolbarLayout.setStatusBarScrimColor(getResources().getColor(R.color.colorPrimaryDark));
+        collapsingToolbarLayout.setContentScrimColor(getResources().getColor(R.color.colorWhite));
+        collapsingToolbarLayout.setStatusBarScrimColor(getResources().getColor(R.color.colorWhite));
         collapsingToolbarLayout.setCollapsedTitleTextAppearance(R.style.ToolbarStyle);
         collapsingToolbarLayout.setExpandedTitleTextAppearance(R.style.ToolbarStyle);
+        collapsingToolbarLayout.setContentScrimColor(getResources().getColor(R.color.colorWhite));
+        collapsingToolbarLayout.setCollapsedTitleTextColor(getResources().getColor(R.color.colorBlack));
 
-        ImageNamesList = interestPoint.getMonumentImagePaths(packageName_en, interestPointName);
 
         //setting up the interest point image as image in image view in co-ordinator layout
         imageView = (ImageView) findViewById(R.id.coordinatorlayout_imageview);
-        textview_info = (TextView) findViewById(R.id.interestPoint_details);
+
+        text_card = (CardView) findViewById(R.id.monument_details_card);
+        textview_info = (TextView) text_card.findViewById(R.id.interestPoint_details);
         galleryButton = (FloatingActionButton) findViewById(R.id.gallery_button);
 
+
         if (interestPointType.equals(getString(R.string.monument))) {
+            ImageNamesList = interestPoint.getMonumentImagePaths(packageName_en, interestPointName);
+
             imageView.setImageBitmap(interestPoint.getMonumentImage(packageName_en, interestPointName, InterestPointActivity.this));
             textview_info.setText(interestPoint.getMonument(getString(R.string.interest_point_info)));
             textview_info.setGravity(Gravity.CENTER);
@@ -98,6 +108,7 @@ public class InterestPointActivity extends AppCompatActivity {
                 public void onClick(View v) {
 
                     Intent openGallery = new Intent(InterestPointActivity.this, GalleryActivity.class);
+                    //                   Intent openGallery = new Intent(InterestPointActivity.this, MapsActivity.class);
                     openGallery.putExtra(getString(R.string.package_name), packageName);
                     openGallery.putExtra(getString(R.string.package_name_en), packageName_en);
                     openGallery.putExtra(getString(R.string.image_count), getString(R.string.interestpoint_name));

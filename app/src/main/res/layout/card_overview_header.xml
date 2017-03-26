@@ -21,37 +21,38 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.6"
+            android:layout_weight="0.8"
             android:weightSum="1">
 
             <RelativeLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.2">
+                android:layout_weight="0.1">
 
             </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.6"
+                android:layout_weight="0.8"
                 android:layout_gravity="center">
 
                 <ImageView
                     android:id="@+id/overview_intro_image"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:src="@mipmap/ic_launcher"
+                    android:src="@mipmap/ic_overview_logo"
                     android:layout_centerInParent="true"
                     android:adjustViewBounds="true"
-                    android:scaleType="fitCenter" />
+                    android:scaleType="fitCenter"
+                    android:elevation="@dimen/activity_elevation" />
 
             </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.2">
+                android:layout_weight="0.1">
 
             </RelativeLayout>
 
@@ -60,7 +61,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.4">
+            android:layout_weight="0.2">
 
             <TextView
                 android:id="@+id/overview_intro_title"

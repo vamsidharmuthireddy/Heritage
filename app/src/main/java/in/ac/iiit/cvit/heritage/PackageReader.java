@@ -141,6 +141,7 @@ public class PackageReader {
                         for(int j=0; j<keys.getLength(); j++){
                             if(keys.item(j).getNodeType() == Node.ELEMENT_NODE){
                                 Element key = (Element)keys.item(j);
+                                Log.v(LOGTAG, key.getNodeName() + " " + key.getTextContent());
                                 ///This interest point contains all the data relevant to particular interest point
                                 interestPoint.setMonument(key.getNodeName(), key.getTextContent());
                             }

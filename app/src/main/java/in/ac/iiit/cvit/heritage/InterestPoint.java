@@ -104,7 +104,7 @@ public class InterestPoint {
 
             return bitmap;
         } else {
-            Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher);
+            Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_monument_logo);
             return bitmap;
         }
 

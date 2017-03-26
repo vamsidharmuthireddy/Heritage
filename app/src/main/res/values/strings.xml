@@ -173,5 +173,6 @@
     <!--Others-->
     <string name="images_name_splitter" translatable="false">,</string>
     <string name="image_type" translatable="false">.JPG</string>
+    <string name="title_activity_maps">Map</string>
 
 </resources>
