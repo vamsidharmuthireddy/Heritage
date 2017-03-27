@@ -33,7 +33,7 @@ public class InterestPoint {
     private static final String imagesNameSplitter = ",";
 
 
-    private static final String LOGTAG = "Heritage";
+    private static final String LOGTAG = "InterestPoint";
 
     public InterestPoint() {
         monumentdetails = new HashMap<String, String>();
@@ -88,25 +88,22 @@ public class InterestPoint {
         packageName_en = packageName_en.toLowerCase().replace("\\s", "");
 
         String imageName = monumentdetails.get(imageTag);
-        //       Log.v("getImage","reached getImage");
-
+        Log.v(LOGTAG, "interestPointName is " + interestPointName);
 
         String image_path = dataLocation + packageName_en + "/" + imageName + imageType;
 
         File imageFile = new File(Environment.getExternalStorageDirectory(),image_path);
-        Log.v("getImage", Environment.getExternalStorageDirectory() + image_path);
+        Log.v(LOGTAG, Environment.getExternalStorageDirectory() + image_path);
         if(imageFile.exists()) {
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inPreferredConfig = Bitmap.Config.ARGB_8888;
             Bitmap bitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath(), options);
-            //            bitmap = bitmap.createScaledBitmap(bitmap, 627, 353, false);
-            Log.v("getImage", imageName + ".JPG");
+            //Log.v(LOGTAG, imageName + imageType);
 
             return bitmap;
-        } else {
-            Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_monument_logo);
-            return bitmap;
         }
+
+        return null;
 
     }
 
@@ -126,12 +123,19 @@ public class InterestPoint {
 
         String image_path = dataLocation + packageName_en + "/" + imageName + imageType;
 
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher);
+        File imageFile = new File(Environment.getExternalStorageDirectory(), image_path);
+        Log.v("getImage", Environment.getExternalStorageDirectory() + image_path);
+        if (imageFile.exists()) {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+            Bitmap bitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath(), options);
+            //            bitmap = bitmap.createScaledBitmap(bitmap, 627, 353, false);
+            Log.v("getImage", imageName + ".JPG");
 
+            return bitmap;
+        }
 
-        return bitmap;
+        return null;
 
 
     }

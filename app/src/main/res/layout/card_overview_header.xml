@@ -41,7 +41,7 @@
                     android:id="@+id/overview_intro_image"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:src="@mipmap/ic_overview_logo"
+                    android:src="@drawable/overview"
                     android:layout_centerInParent="true"
                     android:adjustViewBounds="true"
                     android:scaleType="fitCenter"

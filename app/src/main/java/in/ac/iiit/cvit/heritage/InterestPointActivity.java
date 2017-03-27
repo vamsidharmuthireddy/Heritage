@@ -1,6 +1,8 @@
 package in.ac.iiit.cvit.heritage;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -92,16 +94,29 @@ public class InterestPointActivity extends AppCompatActivity {
         imageView = (ImageView) findViewById(R.id.coordinatorlayout_imageview);
 
         text_card = (CardView) findViewById(R.id.monument_details_card);
-        textview_info = (TextView) text_card.findViewById(R.id.interestPoint_details);
+        textview_info = (TextView) text_card.findViewById(R.id.cardview_text);
         galleryButton = (FloatingActionButton) findViewById(R.id.gallery_button);
 
 
         if (interestPointType.equals(getString(R.string.monument))) {
+
+            Log.v(LOGTAG, "Entered Monuments");
             ImageNamesList = interestPoint.getMonumentImagePaths(packageName_en, interestPointName);
 
-            imageView.setImageBitmap(interestPoint.getMonumentImage(packageName_en, interestPointName, InterestPointActivity.this));
+            Bitmap setBitmap = interestPoint.getMonumentImage(packageName_en, interestPointName, InterestPointActivity.this);
+
+            if (setBitmap == null) {
+                imageView.setImageBitmap(((BitmapDrawable) getResources().getDrawable(R.drawable.monument)).getBitmap());
+                imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            } else {
+                imageView.setImageBitmap(setBitmap);
+                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            }
+
+
+
             textview_info.setText(interestPoint.getMonument(getString(R.string.interest_point_info)));
-            textview_info.setGravity(Gravity.CENTER);
+            textview_info.setGravity(Gravity.LEFT);
             galleryButton.setAlpha(0.60f);
             galleryButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -120,9 +135,18 @@ public class InterestPointActivity extends AppCompatActivity {
             });
 
         } else {
-            imageView.setImageBitmap(interestPoint.getKingImage(packageName, interestPointName, InterestPointActivity.this));
+            Log.v(LOGTAG, "Entered kings");
+            Bitmap setBitmap = interestPoint.getKingImage(packageName_en, interestPointName, InterestPointActivity.this);
+
+            if (setBitmap == null) {
+                imageView.setImageBitmap(((BitmapDrawable) getResources().getDrawable(R.drawable.king)).getBitmap());
+                imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            } else {
+                imageView.setImageBitmap(setBitmap);
+                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            }
             textview_info.setText(interestPoint.getKing(getString(R.string.king_info)));
-            textview_info.setGravity(Gravity.CENTER);
+            textview_info.setGravity(Gravity.LEFT);
             galleryButton.setVisibility(View.INVISIBLE);
         }
 

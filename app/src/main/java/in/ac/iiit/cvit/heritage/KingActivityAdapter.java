@@ -2,6 +2,7 @@ package in.ac.iiit.cvit.heritage;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -71,8 +72,15 @@ public class KingActivityAdapter extends RecyclerView.Adapter<KingActivityAdapte
         TextView textView = holder.textView;
 
         textView.setText(kingsList.get(position).getKing(context.getString(R.string.king_name)));
-        imageView.setImageBitmap(kingsList.get(position)
-                .getKingImage(packageName, context.getString(R.string.king_info), context));
+
+        Bitmap setBitmap = kingsList.get(position).getKingImage(packageName, context.getString(R.string.king_info), context);
+
+        if (setBitmap == null) {
+            imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        } else {
+            imageView.setImageBitmap(setBitmap);
+            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        }
 
     }
 

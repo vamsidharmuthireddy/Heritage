@@ -147,7 +147,7 @@ public class MonumentNearbyFragment extends Fragment implements SensorEventListe
 
             }
         });
-        Log.i(LOGTAG, "scroll yPosition = " + yPosition + " yIndex = " + yIndex + " itemOffset = " + itemOffset);
+        //Log.i(LOGTAG, "scroll yPosition = " + yPosition + " yIndex = " + yIndex + " itemOffset = " + itemOffset);
 
 
         String packageName_en = ((MonumentActivity) this.getActivity()).packageName_en;

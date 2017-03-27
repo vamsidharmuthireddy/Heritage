@@ -43,7 +43,7 @@
                     android:layout_centerInParent="true"
                     android:adjustViewBounds="true"
                     android:scaleType="fitCenter"
-                    android:src="@mipmap/ic_monument_logo"
+                    android:src="@drawable/monument"
                     android:elevation="@dimen/activity_elevation" />
 
             </RelativeLayout>

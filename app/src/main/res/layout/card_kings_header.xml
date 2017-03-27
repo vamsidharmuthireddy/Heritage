@@ -42,7 +42,7 @@
                 android:id="@+id/kings_intro_image"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:src="@mipmap/ic_king_logo"
+                android:src="@drawable/king"
                 android:layout_centerInParent="true"
                 android:adjustViewBounds="true"
                 android:scaleType="fitCenter"

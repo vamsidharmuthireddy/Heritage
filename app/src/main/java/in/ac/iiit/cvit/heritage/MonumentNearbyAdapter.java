@@ -2,6 +2,8 @@ package in.ac.iiit.cvit.heritage;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,8 +35,8 @@ public class MonumentNearbyAdapter extends RecyclerView.Adapter<MonumentNearbyAd
 
         public DataObjectHolder(View view) {
             super(view);
-            this.imageView = (ImageView) view.findViewById(R.id.cardview_image);
-            this.textView = (TextView) view.findViewById(R.id.cardview_text);
+            this.imageView = (ImageView) view.findViewById(R.id.cardview_monument_image);
+            this.textView = (TextView) view.findViewById(R.id.cardview_monument_text);
         }
     }
 
@@ -66,14 +68,16 @@ public class MonumentNearbyAdapter extends RecyclerView.Adapter<MonumentNearbyAd
 
         textView.setText(interestPoints.get(position).getMonument(context.getString(R.string.interest_point_title)));
 
-        imageView.setImageBitmap(interestPoints.get(position)
-                .getMonumentImage(packageName_en, context.getString(R.string.interest_point_title), context));
 
-
-        if (imageView.getDrawable() == context.getResources().getDrawable(R.drawable.monument)) {
-            imageView.setScaleType(ImageView.ScaleType.CENTER);
+        Bitmap setBitmap = interestPoints.get(position)
+                .getMonumentImage(packageName_en, holder.textView.getText().toString(), context);
+        if (setBitmap == null) {
+            imageView.setImageBitmap(((BitmapDrawable) context.getResources().getDrawable(R.drawable.monument)).getBitmap());
+            imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        } else {
+            imageView.setImageBitmap(setBitmap);
+            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         }
-
 
         setListeners(holder, position);
 

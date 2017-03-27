@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Environment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -49,6 +50,7 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
 
         private ImageView titleImage;
         private TextView title;
+        private CardView shortInfoCard;
         private TextView infoHeader;
         private Switch downloadSwitch;
         private ImageView revealButton;
@@ -62,6 +64,7 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
             this.infoHeader = (TextView) view.findViewById(R.id.heritage_site_info_header);
             this.downloadSwitch =(Switch) view.findViewById(R.id.download_switch);
             this.revealButton = (ImageView)view.findViewById(R.id.heritage_info_reveal_button);
+            //this.shortInfoCard = (CardView)view.findViewById(R.id.heritage_site_info_short);
             this.shortInfo = (TextView) view.findViewById(R.id.heritage_site_info_short);
             this.shortInfoParent = (LinearLayout) view.findViewById(R.id.heritage_site_info_short_parent);
         }
@@ -212,6 +215,7 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
                     new CardViewAnimator(context).collapseShortInfo(holder.shortInfo);
 
                     v.animate().rotation(0).setDuration(500).start();
+
 
                 }
                 else {

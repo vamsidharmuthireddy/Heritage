@@ -27,7 +27,9 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -37,28 +39,28 @@
         <activity
             android:name=".PackageContentActivity"
             android:parentActivityName=".MainActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".OverviewActivity"
-            android:parentActivityName=".PackageContentActivity"></activity>
+            android:parentActivityName=".PackageContentActivity" />
         <activity
             android:name=".KingActivity"
             android:parentActivityName=".PackageContentActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".MonumentActivity"
             android:parentActivityName=".PackageContentActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".InterestPointActivity"
-            android:parentActivityName=".MonumentActivity"></activity>
-        <activity android:name=".GalleryActivity"></activity>
-        <activity android:name=".FullScreenImageActivity"></activity>
+            android:parentActivityName=".MonumentActivity" />
+        <activity android:name=".GalleryActivity" />
+        <activity android:name=".FullScreenImageActivity" />
 
 
         <activity
             android:name=".MapsActivity"
-            android:label="@string/title_activity_maps"></activity>
+            android:label="@string/title_activity_maps" />
     </application>
 
 </manifest>

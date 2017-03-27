@@ -36,15 +36,19 @@
         <TextView
             android:id="@+id/heritage_site_title"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:layout_marginStart="@dimen/activity_sml_margin"
+            android:layout_marginEnd="@dimen/activity_sml_margin"
+            android:theme="@style/BlackTextWhiteBackground"
             />
 
         <Switch
             android:id="@+id/download_switch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="6"/>
+            android:layout_weight="6"
+            android:layout_alignParentEnd="true" />
 
     </LinearLayout>
 
@@ -58,13 +62,17 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:layout_marginStart="@dimen/activity_sml_margin"
+            android:layout_marginEnd="@dimen/activity_sml_margin"
+            android:theme="@style/BlackTextWhiteBackground"
             />
 
         <ImageButton
             android:id="@+id/heritage_info_reveal_button"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignParentRight="true"
+            android:layout_height="wrap_content"
+            android:scaleType="fitCenter"
+            android:layout_alignParentEnd="true"
             android:layout_weight="6"
             android:adjustViewBounds="false"
             android:background="@android:color/transparent"
@@ -81,10 +89,20 @@
         android:layout_height="wrap_content"
         android:animateLayoutChanges="true">
 <!--Don't make this view as gone! It will delay the animation-->
+        <!--
+                <include layout="@layout/card_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:id="@+id/heritage_site_info_short"
+                    android:layout_margin="@dimen/activity_sml_margin"/>
+                -->
         <TextView
             android:id="@+id/heritage_site_info_short"
             android:layout_width="match_parent"
-            android:layout_height="1dp"/>
+            android:layout_height="1dp"
+            android:theme="@style/BlackTextWhiteBackground" />
+
+
     </LinearLayout>
 
     </LinearLayout>
