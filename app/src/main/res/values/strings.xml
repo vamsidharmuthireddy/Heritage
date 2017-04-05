@@ -126,8 +126,11 @@
     <string name="home">Home</string>
     <string name="nearby">Nearby</string>
     <string name="places">Places</string>
-    <string name="gps_permission_request">Write External Storage permission allows us to do store app related data. Please allow this permission in App Settings."</string>
-    <string name="gps_permission_open_settings">Access to GPS location helps us in providing you a better experience. Please allow this permission in App Settings.</string>
+    <string name="all_permissions_open_settings">Please allow Heritage required permissions in App Settings</string>
+    <string name="gps_permission_request">GPS helps us in providing you a better experience. Please allow Heritage to access your device location.</string>
+    <string name="gps_permission_open_settings">Access to GPS helps us in providing you a better experience. Please allow this permission in App Settings.</string>
+    <string name="storage_permission_request">Write External Storage permission allows us to do store app related data. Please allow Heritage to access your device storage.</string>
+    <string name="storage_permission_open_settings">Write External Storage permission allows us to do store app related data. Please allow this permission in App Settings.</string>
     <string name="turnon_gps">Please, turn GPS ON for accurate data on Nearby places</string>
     <!--Home Tab
     <string name="home_golconda">

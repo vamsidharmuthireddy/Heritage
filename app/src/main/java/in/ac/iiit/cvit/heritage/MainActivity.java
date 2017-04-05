@@ -46,10 +46,14 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
 
     private static final String LOGTAG = "MainActivity";
 
-
+    private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
+    private static final int PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION = 2;
     private static final int PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 3;
     private static final int PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 4;
 
+    private boolean permissionRejected = false;
+    private boolean storageRequested = false;
+    private boolean locationRequested = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,16 +69,8 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setBackgroundColor(Color.WHITE);
         setSupportActionBar(toolbar);
-        //Setting permissions
-        if (checkPermission()) {
-            Log.i(LOGTAG,"PackagesDownloaderActivity has storage permission");
-            heritageSitesList = LoadPackage("heritagesite");
-            setRecyclerView();
 
-        } else {
-            requestPermission();
-        }
-
+        checkAllPermissions();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -200,10 +196,6 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
         return true;
     }
 
-
-
-
-
     /**
      * This method returns interest points of the chosen Heritage site by calling PackageReader class
      * @param packageName It is the name of the site that user wants to see
@@ -242,11 +234,33 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
         return heritageSites;
     }
 
+
+    private void checkAllPermissions() {
+        //Setting Location permissions
+        if (checkLocationPermission()) {
+            locationRequested = true;
+            Log.v(LOGTAG, "MainActivity has Location permission");
+        } else {
+            Log.v(LOGTAG, "MainActivity Requesting Location permission");
+            requestLocationPermission();
+        }
+        //Setting Storage permissions
+        if (checkStoragePermission()) {
+            storageRequested = true;
+            Log.v(LOGTAG, "MainActivity has storage permission");
+            heritageSitesList = LoadPackage("heritagesite");
+            setRecyclerView();
+        } else {
+            Log.v(LOGTAG, "MainActivity Requesting storage permission");
+            requestStoragePermission();
+        }
+    }
+
     /**
      * Checking if read/write permissions are set or not
      * @return
      */
-    protected boolean checkPermission() {
+    protected boolean checkStoragePermission() {
         int result = ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE);
         if (result == PackageManager.PERMISSION_GRANTED) {
             return true;
@@ -255,21 +269,27 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
         }
     }
 
+    protected boolean checkLocationPermission() {
+        int result = ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION);
+        if (result == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
-    /**
-     * if read/write permissions are not set, then request for them.
-     *
-     */
-    protected void requestPermission() {
+    protected void requestStoragePermission() {
 
         if (ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
-            Toast.makeText(this, "Write External Storage permission allows us to do store app related data. Please allow this permission in App Settings.", Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, getString(R.string.storage_permission_request), Toast.LENGTH_LONG).show();
 
+            Log.v(LOGTAG, "requestStoragePermission if");
             ActivityCompat.requestPermissions(MainActivity.this,
                     new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
 
 
         } else {
+            Log.v(LOGTAG, "requestStoragePermission else");
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 ActivityCompat.requestPermissions(MainActivity.this,
                         new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
@@ -277,52 +297,137 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
         }
     }
 
+    protected void requestLocationPermission() {
+
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.ACCESS_FINE_LOCATION)) {
+            //toast to be shown while requesting permissions
+            //Toast.makeText(this, getString(R.string.gps_permission_request), Toast.LENGTH_LONG).show();
+            Log.v(LOGTAG, "requestLocationPermission if");
+            ActivityCompat.requestPermissions(MainActivity.this,
+                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+
+        } else {
+            Log.v(LOGTAG, "requestLocationPermission else");
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                ActivityCompat.requestPermissions(MainActivity.this,
+                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+            }
+        }
+    }
+
+    /**
+     * if read/write permissions are not set, then request for them.
+     */
+
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        Log.v(LOGTAG, "requestCode = " + requestCode);
 
         switch (requestCode) {
-            case PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE:
+            case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION:
+                locationRequested = true;
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    Log.v(LOGTAG, "MainActivity has FINE GPS permission");
+                    permissionRejected = false;
+                } else {
+                    Log.v(LOGTAG, "MainActivity does not have FINE GPS permission");
+                    //Log.v(LOGTAG,"1");
+                    permissionRejected = true;
+                }
+                break;
+
+            case PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION:
+                locationRequested = true;
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    Log.v(LOGTAG, "MainActivity has COARSE GPS permission");
+                    permissionRejected = false;
+                } else {
+                    Log.v(LOGTAG, "MainActivity does not have COARSE GPS permission");
+                    permissionRejected = true;
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION)) {
+                        //Toast to be shown while re-directing to settings
+                        //Log.v(LOGTAG,"2 if");
+                        //openApplicationPermissions();
+                    } else {
+                        //Log.v(LOGTAG,"2 else");
+                        //openApplicationPermissions();
+                    }
+                }
+                break;
+
+
+            case PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE:
+                storageRequested = true;
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.v(LOGTAG, "MainActivity has READ storage permissions");
+                    permissionRejected = false;
                     heritageSitesList = LoadPackage("heritagesite");
                     setRecyclerView();
 
                 } else {
                     //openApplicationPermissions();
-                    Log.e("value", "Permission Denied, You cannot use local drive .");
+                    Log.v(LOGTAG, "MainActivity does not have READ storage permissions");
+                    //Log.v(LOGTAG,"3");
+                    permissionRejected = true;
 
                 }
+                break;
 
-            case PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE: {
+            case PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE:
+                storageRequested = true;
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
+                    Log.v(LOGTAG, "MainActivity has WRITE storage permissions");
+                    permissionRejected = false;
                 } else {
+                    Log.v(LOGTAG, "MainActivity does not have WRITE storage permissions");
+                    permissionRejected = true;
                     if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                        Toast.makeText(this, "Write External Storage permission allows us to do store images. Please allow this permission in App Settings.", Toast.LENGTH_LONG).show();
-                        openApplicationPermissions();
+                        //Log.v(LOGTAG,"4 if");
+                        //openApplicationPermissions();
                     } else {
-                        openApplicationPermissions();
+                        //Log.v(LOGTAG,"4 else");
+                        //openApplicationPermissions();
                     }
                 }
-            }
+                break;
+
         }
+
+        Log.v(LOGTAG, "permissionRejected = " + permissionRejected + " storageRequested = " + storageRequested + " locationRequested = " + locationRequested);
+        if (permissionRejected & storageRequested & locationRequested) {
+            //Log.v(LOGTAG, "5");
+            Log.v(LOGTAG, "openApplicationPermissions");
+            openApplicationPermissions();
+        }
+
     }
 
     private void openApplicationPermissions() {
+        Toast.makeText(this, getString(R.string.all_permissions_open_settings), Toast.LENGTH_LONG).show();
         final Intent intent_permissions = new Intent();
         intent_permissions.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
         intent_permissions.addCategory(Intent.CATEGORY_DEFAULT);
         intent_permissions.setData(Uri.parse("package:" + MainActivity.this.getPackageName()));
 
-        intent_permissions.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //Disabling the following flag solved the premature calling of onActivityResult(http://stackoverflow.com/a/30882399/4983204)
+        //if it doesnot work check here http://stackoverflow.com/a/22811103/4983204
+        //intent_permissions.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent_permissions.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
         intent_permissions.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
 
-        MainActivity.this.startActivity(intent_permissions);
+        MainActivity.this.startActivityForResult(intent_permissions, 100);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        Log.v(LOGTAG, "returned back from other activity " + requestCode + " " + resultCode);
+        checkAllPermissions();
 
 
-
-
+    }
 }

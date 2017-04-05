@@ -68,7 +68,7 @@ public class MonumentActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        //Setting permissions
+        //Setting Location permissions
         if (checkLocationPermission()) {
             Log.i(LOGTAG, "MonumentActivity has File Location permission");
             setViews();
