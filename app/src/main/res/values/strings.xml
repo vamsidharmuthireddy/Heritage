@@ -3,6 +3,8 @@
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="copyright">Copyright</string>
+    <string name="contact_us">Contact Us</string>
 
     <!--SplashscreenAcivity-->
     <string name="heritage_caps">HERITAGE</string>
@@ -41,7 +43,7 @@
 
     <!--OptionsActivity screen-->
     <string name="how_to_use">HOW TO USE</string>
-    <string name="language">LANGUAGE</string>
+    <string name="language">Language</string>
     <string name="select_a_language">Select a Language</string>
     <string name="english" translatable="false">en</string>
     <string name="telugu" translatable="false">te</string>
@@ -50,12 +52,6 @@
     <string name="available_languages_2" translatable="false">తెలుగు</string>
     <string name="available_languages_3" translatable="false">हिंदी</string>
 
-    <!--PackageListActivity screen
-    <string name="my_heritage_sites">My Heritage Sites</string>
-    <string name="download">Download</string>
-    <string name="my_packages_1">Golconda</string>
-    <string name="my_packages_2">Hampi</string>
-    -->
 
     <!--PackageDownloaderActivity screen-->
     <string name="available_for_download">Click to download</string>
@@ -85,6 +81,8 @@
     <string name="download_file">Download</string>
     <string name="locate_file">Locate</string>
     <string name="delete_package">Do you want to delete the package?</string>
+    <string name="selected_wrong_package">Please select the correct File</string>
+    <string name="download_this_place">Download this Place</string>
 
     <!--IntroPackageDownloader-->
     <string name="intro_package_download_url" translatable="false">http://preon.iiit.ac.in/~heritage/packages/introPackages/</string>
@@ -114,14 +112,23 @@
     <string name="image_count" translatable="false">image_count</string>
     <string name="all" translatable="false">all</string>
     <string name="specific" translatable="false">specific</string>
+    <string name="monumentList" translatable="false">monumenetList</string>
+    <string name="monumentList_en" translatable="false">monumenetList_en</string>
+    <string name="monumentList_bundle" translatable="false">monumenetList_bundle</string>
+    <string name="kingList" translatable="false">kingList</string>
+    <string name="kingList_en" translatable="false">kingList_en</string>
+    <string name="kingList_bundle" translatable="false">kingList_bundle</string>
+    <string name="imageNamesList" translatable="false">imagesNamesList</string>
 
 
-    <!--MainActivity-->
+    <!--MonumentActivity-->
     <string name="app_name">Heritage</string>
     <string name="home">Home</string>
     <string name="nearby">Nearby</string>
     <string name="places">Places</string>
-
+    <string name="gps_permission_request">Write External Storage permission allows us to do store app related data. Please allow this permission in App Settings."</string>
+    <string name="gps_permission_open_settings">Access to GPS location helps us in providing you a better experience. Please allow this permission in App Settings.</string>
+    <string name="turnon_gps">Please, turn GPS ON for accurate data on Nearby places</string>
     <!--Home Tab
     <string name="home_golconda">
         Golconda, also known as Golkonda, Golconda (Round shaped hill), or Golla konda (Shepherd\'s hill), is a citadel and fort in Southern India and was the capital of the medieval sultanate of the Qutub Shahi dynasty (c.1518–1687), is situated 11 kilometres (6.8 mi) west of Hyderabad. It is also a tehsil of Hyderabad district, Telangana, India. The region is known for the mines that have produced some of the world\'s most famous gems, including the Koh-i-Noor, the Hope Diamond and the Nassak Diamond.

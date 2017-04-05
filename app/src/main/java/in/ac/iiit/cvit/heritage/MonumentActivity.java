@@ -46,7 +46,7 @@ public class MonumentActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Log.v(LOGTAG, "onCreate()");
 
         final LocaleManager localeManager = new LocaleManager(MonumentActivity.this);
         localeManager.loadLocale();
@@ -60,29 +60,6 @@ public class MonumentActivity extends AppCompatActivity {
         sessionManager = new SessionManager();
         sessionManager.setSessionPreferences(MonumentActivity.this, getString(R.string.package_name), packageName);
 
-
-        //Setting permissions
-        if (checkPermission()) {
-            Log.i(LOGTAG, "MonumentActivity has File Location permission");
-            setViews();
-
-        } else {
-            requestPermission();
-        }
-
-        //monumentList = new PackageContentActivity().giveMonumentList();
-        monumentList = PackageContentActivity.monumentList;
-        monumentList_en = PackageContentActivity.monumentList_en;
-        //LoadPackage(packageName_en);
-        Log.v(LOGTAG, "size of monumentList is " + monumentList.size());
-
-
-    }
-
-
-    private void setViews() {
-
-
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(packageName.toUpperCase());
         toolbar.setTitleTextColor(ContextCompat.getColor(MonumentActivity.this, R.color.colorBlack));
@@ -91,6 +68,30 @@ public class MonumentActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
+        //Setting permissions
+        if (checkLocationPermission()) {
+            Log.i(LOGTAG, "MonumentActivity has File Location permission");
+            setViews();
+
+        } else {
+            requestLocationPermission();
+        }
+
+
+        Bundle bundle = getIntent().getBundleExtra(getString(R.string.monumentList_bundle));
+        monumentList = (ArrayList<InterestPoint>) bundle.getSerializable(getString(R.string.monumentList));
+        monumentList_en = (ArrayList<InterestPoint>) bundle.getSerializable(getString(R.string.monumentList_en));
+
+        //monumentList = PackageContentActivity.monumentList;
+        //monumentList_en = PackageContentActivity.monumentList_en;
+        //LoadPackage(packageName_en);
+        Log.v(LOGTAG, "size of monumentList is " + monumentList.size());
+
+
+    }
+
+
+    private void setViews() {
 
         //Setting up tabs "NEARBY", "PLACES"
         tabLayout = (TabLayout) findViewById(R.id.tab_layout);
@@ -167,16 +168,29 @@ public class MonumentActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        Log.v(LOGTAG, "onStart()");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.v(LOGTAG, "onResume()");
+    }
+
+    @Override
     public void onBackPressed() {
         Intent intent = new Intent(MonumentActivity.this, PackageContentActivity.class);
         intent.putExtra(getString(R.string.package_name), packageName);
         intent.putExtra(getString(R.string.package_name_en), packageName_en);
-
-        startActivity(intent);
-
+        Log.v(LOGTAG, "onBackPressed");
+//        startActivity(intent);
+//        finish();
+        super.onBackPressed();
     }
 
-    protected boolean checkPermission() {
+    protected boolean checkLocationPermission() {
         int result = ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION);
         if (result == PackageManager.PERMISSION_GRANTED) {
             return true;
@@ -185,10 +199,11 @@ public class MonumentActivity extends AppCompatActivity {
         }
     }
 
-    protected void requestPermission() {
+    protected void requestLocationPermission() {
 
         if (ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.ACCESS_FINE_LOCATION)) {
-            Toast.makeText(this, "Write External Storage permission allows us to do store app related data. Please allow this permission in App Settings.", Toast.LENGTH_LONG).show();
+            //toast to be shown while requesting permissions
+            Toast.makeText(this, getString(R.string.gps_permission_request), Toast.LENGTH_LONG).show();
 
             ActivityCompat.requestPermissions(MonumentActivity.this,
                     new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
@@ -215,7 +230,7 @@ public class MonumentActivity extends AppCompatActivity {
 
                 } else {
                     if (ActivityCompat.shouldShowRequestPermissionRationale(MonumentActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION)) {
-                        Toast.makeText(this, "Access to GPS location helps us in providing you a better experience. Please allow this permission in App Settings.", Toast.LENGTH_LONG).show();
+                        //Toast to be shown while re-directing to settings
                         openApplicationPermissions();
                     } else {
                         openApplicationPermissions();
@@ -226,6 +241,7 @@ public class MonumentActivity extends AppCompatActivity {
     }
 
     private void openApplicationPermissions() {
+        Toast.makeText(this, getString(R.string.gps_permission_open_settings), Toast.LENGTH_LONG).show();
         final Intent intent_permissions = new Intent();
         intent_permissions.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
         intent_permissions.addCategory(Intent.CATEGORY_DEFAULT);

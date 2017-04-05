@@ -2,8 +2,7 @@ package in.ac.iiit.cvit.heritage;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,6 +11,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -79,19 +81,38 @@ public class MonumentAllAdapter extends RecyclerView.Adapter<MonumentAllAdapter.
         textView.setText(interestPoints.get(position).getMonument(context.getString(R.string.interest_point_title)));
 
 
-        Bitmap setBitmap = interestPoints.get(position)
-                .getMonumentImage(packageName_en, holder.textView.getText().toString(), context);
+        String imagePath = interestPoints.get(position)
+                .getMonumentTitleImagePath(packageName_en, holder.textView.getText().toString(), context);
 
-        if (setBitmap == null) {
-            imageView.setImageBitmap(((BitmapDrawable) context.getResources().getDrawable(R.drawable.monument)).getBitmap());
-            imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        Log.v(LOGTAG, "imagePath = " + imagePath);
+
+        if (imagePath == null) {
+            Glide.with(context)
+                    .load(R.drawable.monument)
+                    .fitCenter()
+                    .into(imageView);
+            //    Log.v(LOGTAG,"imagepath is null");
+
         } else {
-            imageView.setImageBitmap(setBitmap);
-            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+
+//            imagePath = interestPoints.get(0).getMonumentTitleImagePath(packageName_en, holder.textView.getText().toString(), context);
+//            Log.v(LOGTAG, "changed imagePath = "+imagePath);
+            File file = new File(imagePath);
+            Uri uri = Uri.fromFile(file);
+            Glide.with(context)
+                    .load(uri)
+                    .asBitmap()
+                    .placeholder(R.drawable.monument)
+                    .centerCrop()
+                    .into(imageView);
+
+            //  holder.imageView.setImageURI(uri);
+            //    Log.v(LOGTAG,"imagepath is not null");
+            //    Log.v(LOGTAG,"uri = "+uri.toString());
         }
-
-
     }
+
 
     private void setListeners(DataObjectHolder _holder, int _position) {
 
@@ -141,5 +162,11 @@ public class MonumentAllAdapter extends RecyclerView.Adapter<MonumentAllAdapter.
     public int getItemCount() {
         return interestPoints.size();
     }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
 
 }

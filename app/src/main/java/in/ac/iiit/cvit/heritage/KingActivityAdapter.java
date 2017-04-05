@@ -73,7 +73,7 @@ public class KingActivityAdapter extends RecyclerView.Adapter<KingActivityAdapte
 
         textView.setText(kingsList.get(position).getKing(context.getString(R.string.king_name)));
 
-        Bitmap setBitmap = kingsList.get(position).getKingImage(packageName, context.getString(R.string.king_info), context);
+        Bitmap setBitmap = kingsList.get(position).getKingTitleImage(packageName, context.getString(R.string.king_info), context);
 
         if (setBitmap == null) {
             imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);

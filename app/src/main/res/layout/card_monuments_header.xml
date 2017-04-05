@@ -4,9 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginEnd="@dimen/activity_sml_margin"
-    android:layout_marginStart="@dimen/activity_sml_margin"
-    android:layout_marginTop="@dimen/activity_sml_margin"
+    android:layout_marginEnd="@dimen/activity_half_std_margin"
+    android:layout_marginStart="@dimen/activity_half_std_margin"
+    android:layout_marginTop="@dimen/activity_half_std_margin"
     card_view:cardCornerRadius="6dp"
     card_view:cardElevation="@dimen/activity_elevation">
 

@@ -19,10 +19,13 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/overview_content"
+            <include
+                layout="@layout/card_text"
+                android:id="@+id/overview_details_card"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/activity_half_std_margin"
+                android:elevation="@dimen/activity_elevation" />
 
 
         </LinearLayout>

@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.widget.Switch;
@@ -40,7 +41,7 @@ public class PackageLoader {
     private ProgressDialog progressDialog;
     private String temp;
     private Switch downloadSwitch;
-    private String basePackageName;
+    private String selectedPackageName;
     private String packageName;
     private String packageName_en;
 
@@ -73,7 +74,7 @@ public class PackageLoader {
     private File[] loadFileList(String directory) {
         File path = new File(directory);
 
-        Log.v("loadFileList", directory);
+        Log.v(LOGTAG, directory);
         if (path.exists()) {
             FilenameFilter filter = new FilenameFilter() {
                 public boolean accept(File dir, String filename) {
@@ -88,10 +89,10 @@ public class PackageLoader {
             File[] list = path.listFiles(filter);
 
             if (list != null) {
-                Log.v("loadFileList", "list is not null");
+                Log.v(LOGTAG, "list is not null");
                 return list;
             } else {
-                Log.v("loadFileList", "list is null");
+                Log.v(LOGTAG, "list is null");
                 return new File[0];
             }
 
@@ -109,6 +110,7 @@ public class PackageLoader {
     public void showFileListDialog(final String directory) {
         Dialog dialog = null;
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
 
         File[] tempFileList = loadFileList(directory);
 
@@ -150,7 +152,7 @@ public class PackageLoader {
                     temp = chosenFile.toString();
                     String filename = temp.substring(temp.lastIndexOf(File.separator) + 1);
                     Log.v(LOGTAG, filename);
-                    basePackageName = filename.substring(0, filename.indexOf(".")).toLowerCase();
+                    selectedPackageName = filename.substring(0, filename.indexOf(".")).toLowerCase();
 
                     new extractor().execute();
                 }
@@ -164,8 +166,16 @@ public class PackageLoader {
 
                 Log.v(LOGTAG, packageName_en + " package loading is canceled");
 
-                downloadSwitch.setChecked(false);
-                downloadSwitch.invalidate();
+                //downloadSwitch.setChecked(false);
+                //downloadSwitch.invalidate();
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        downloadSwitch.setChecked(false);
+                        downloadSwitch.invalidate();
+                    }
+                }, 100);
 
                 dialog.dismiss();
             }
@@ -204,7 +214,7 @@ public class PackageLoader {
         File baseLocal = Environment.getExternalStorageDirectory();
         File archive = new File(basePackageName);
         File destination = new File(baseLocal, EXTRACT_DIR);
-        Log.v("Extracted directory", destination.toString());
+        Log.v(LOGTAG, destination.toString());
 
         if (!destination.exists()) {
             destination.mkdirs();
@@ -269,7 +279,16 @@ public class PackageLoader {
             String chosenFileLocation = temp;
 
             ExtractPackage(chosenFileLocation);
-            return "Package Loading Completed";
+            String extractdPackagesLocation = Environment.getExternalStorageDirectory() + EXTRACT_DIR;
+            File[] extractedPackagesList = loadFileList(extractdPackagesLocation);
+            for (int i = 0; i < extractedPackagesList.length; i++) {
+                if (extractedPackagesList[i].toString().toLowerCase().equals(packageName_en) & extractedPackagesList[i].isDirectory()) {
+                    Log.v(LOGTAG, "Package loading completed");
+                    return "Package Loading Completed";
+                }
+            }
+            Log.v(LOGTAG, "Wrong Package");
+            return "Wrong Package";
         }
 
         protected void onProgressUpdate(String... progress) {
@@ -300,7 +319,7 @@ public class PackageLoader {
                         SessionManager sessionManager = new SessionManager();
                         sessionManager.setSessionPreferences(context, context.getString(R.string.package_name), packageName);
 
-                        Intent intent_monument_activity = new Intent(context, MonumentActivity.class);
+                        Intent intent_monument_activity = new Intent(context, PackageContentActivity.class);
                         intent_monument_activity.putExtra(context.getString(R.string.package_name), packageName);
                         intent_monument_activity.putExtra(context.getString(R.string.package_name_en), packageName_en);
                         context.startActivity(intent_monument_activity);
@@ -309,6 +328,36 @@ public class PackageLoader {
                 });
 
                 alertDialog.setMessage(context.getString(R.string.package_load_completed) + "\n" + context.getString(R.string.click_to_view));
+                alertDialog.show();
+
+            } else if (result.equals("Wrong Package")) {
+                Log.v(LOGTAG, packageName_en + " package loading is not complete");
+
+                downloadSwitch.setChecked(false);
+                downloadSwitch.invalidate();
+
+                String extractedName = context.getString(R.string.full_package_extracted_location) + temp.substring(temp.lastIndexOf(File.separator) + 1);
+                File extractedDir = new File(Environment.getExternalStorageDirectory(), extractedName);
+
+                Log.i(LOGTAG, extractedDir.getAbsolutePath() + " is going to be deleted");
+                if (extractedDir.isDirectory()) {
+                    String[] children = extractedDir.list();
+                    for (int i = 0; i < children.length; i++) {
+                        new File(extractedDir, children[i]).delete();
+                        //Log.v(LOGTAG, children[i]+" is deleted");
+                    }
+                    extractedDir.delete();
+                    Log.i(LOGTAG, extractedDir.getAbsolutePath() + " is deleted");
+                }
+
+                alertDialog.setPositiveButton(context.getString(R.string.ok), new DialogInterface.OnClickListener() {
+                    // do something when the button is clicked
+                    public void onClick(DialogInterface arg0, int arg1) {
+
+                    }
+                });
+
+                alertDialog.setMessage(context.getString(R.string.selected_wrong_package));
                 alertDialog.show();
 
             } else {

@@ -1,5 +1,6 @@
 package in.ac.iiit.cvit.heritage;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -17,8 +18,10 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -56,12 +59,12 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
         localeManager = new LocaleManager(MainActivity.this);
         localeManager.loadLocale();
         setContentView(R.layout.activity_main);
+
         language = Locale.getDefault().getLanguage();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setBackgroundColor(Color.WHITE);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setElevation(60.0f);
         //Setting permissions
         if (checkPermission()) {
             Log.i(LOGTAG,"PackagesDownloaderActivity has storage permission");
@@ -94,13 +97,15 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerview_heritage_sites);
         recyclerView.setHasFixedSize(true);
-        recyclerViewLayoutManager = new LinearLayoutManager(MainActivity.this);
+        recyclerViewLayoutManager = new PreLoadingLinearLayoutManager(MainActivity.this);
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
+        new PreLoadingLinearLayoutManager(MainActivity.this).setPages(2);
 
         //setting the view of the PLACES tab
         recyclerViewAdapter = new MainActivityRecyclerViewAdapter(heritageSitesList,
                 heritageSitesList_en, MainActivity.this, MainActivity.this);
         recyclerView.setAdapter(recyclerViewAdapter);
+        recyclerView.setHasFixedSize(true);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
 
@@ -116,6 +121,49 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
             }
         });
 
+    }
+
+
+    public static class PreLoadingLinearLayoutManager extends LinearLayoutManager {
+        private int mPages = 1;
+        private OrientationHelper mOrientationHelper;
+
+        public PreLoadingLinearLayoutManager(Context context) {
+            super(context);
+        }
+
+        public PreLoadingLinearLayoutManager(Context context, int orientation, boolean reverseLayout) {
+            super(context, orientation, reverseLayout);
+        }
+
+        public PreLoadingLinearLayoutManager(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+            super(context, attrs, defStyleAttr, defStyleRes);
+        }
+
+        @Override
+        public void setOrientation(final int orientation) {
+            super.setOrientation(orientation);
+            mOrientationHelper = null;
+        }
+
+        /**
+         * Set the number of pages of layout that will be preloaded off-screen,
+         * a page being a pixel measure equivalent to the on-screen size of the
+         * recycler view.
+         *
+         * @param pages the number of pages; can be {@code 0} to disable preloading
+         */
+        public void setPages(final int pages) {
+            this.mPages = pages;
+        }
+
+        @Override
+        protected int getExtraLayoutSpace(final RecyclerView.State state) {
+            if (mOrientationHelper == null) {
+                mOrientationHelper = OrientationHelper.createOrientationHelper(this, getOrientation());
+            }
+            return mOrientationHelper.getTotalSpace() * mPages;
+        }
     }
 
     @Override
@@ -143,11 +191,7 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
+        if (id == R.id.nav_language) {
 
         }
 

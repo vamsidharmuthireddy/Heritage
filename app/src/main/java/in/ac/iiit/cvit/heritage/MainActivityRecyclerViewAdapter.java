@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -12,6 +13,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
@@ -51,9 +54,9 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
         private ImageView titleImage;
         private TextView title;
         private CardView shortInfoCard;
-        private TextView infoHeader;
+        //       private TextView infoHeader;
         private Switch downloadSwitch;
-        private ImageView revealButton;
+        private ImageButton revealButton;
         private TextView shortInfo;
         private LinearLayout shortInfoParent;
 
@@ -61,9 +64,9 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
             super(view);
             this.titleImage = (ImageView) view.findViewById(R.id.heritage_site_title_image);
             this.title = (TextView) view.findViewById(R.id.heritage_site_title);
-            this.infoHeader = (TextView) view.findViewById(R.id.heritage_site_info_header);
-            this.downloadSwitch =(Switch) view.findViewById(R.id.download_switch);
-            this.revealButton = (ImageView)view.findViewById(R.id.heritage_info_reveal_button);
+            //           this.infoHeader = (TextView) view.findViewById(R.id.heritage_site_info_header);
+            this.downloadSwitch = (Switch) view.findViewById(R.id.download_switch);
+            this.revealButton = (ImageButton) view.findViewById(R.id.heritage_info_reveal_button);
             //this.shortInfoCard = (CardView)view.findViewById(R.id.heritage_site_info_short);
             this.shortInfo = (TextView) view.findViewById(R.id.heritage_site_info_short);
             this.shortInfoParent = (LinearLayout) view.findViewById(R.id.heritage_site_info_short_parent);
@@ -149,18 +152,34 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
 
 
         ImageView titleImage = holder.titleImage;
-        TextView title = holder.title;
-        TextView infoHeader = holder.infoHeader;
+        final TextView title = holder.title;
+        //       TextView infoHeader = holder.infoHeader;
         Switch downloadSwitch = holder.downloadSwitch;
-        final ImageView revealButton = holder.revealButton;
-        final TextView shortInfo = holder.shortInfo;
+        ImageButton revealButton = holder.revealButton;
+        TextView shortInfo = holder.shortInfo;
         LinearLayout shortInfoParent = holder.shortInfoParent;
+
+        /*
+        Palette.from(heritageSites.get(position).getHeritageSiteImage(packageName)).generate(new Palette.PaletteAsyncListener() {
+            @Override
+            public void onGenerated(Palette palette) {
+                // Get the "vibrant" color swatch based on the bitmap
+                Palette.Swatch vibrant = palette.getDarkVibrantSwatch();
+                if (vibrant != null) {
+                    // Set the background color of a layout based on the vibrant color
+                    Log.v(LOGTAG,"Inside pallet setter ");
+                    // Update the title TextView with the proper text color
+                    title.setTextColor(vibrant.getTitleTextColor());
+                }
+            }
+        });
+         */
 
 
 //settings the card contents for the recycler view
         title.setText(heritageSites.get(position).getHeritageSite(context.getString(R.string.interest_point_title)));
         titleImage.setImageBitmap(heritageSites.get(position).getHeritageSiteImage(packageName));
-        infoHeader.setText(context.getString(R.string.heritage_site_introduction));
+        //      infoHeader.setText(context.getString(R.string.heritage_site_introduction));
         downloadSwitch.setChecked(download_switch_state);
         shortInfo.setText(heritageSites.get(position).getHeritageSite(context.getString(R.string.interest_point_short_info)));
 
@@ -206,36 +225,32 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
         holder.revealButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.v(LOGTAG,v.getId()+" is clicked"+" position= "+position);
+                Log.v(LOGTAG, v.getId() + " button is clicked" + " position= " + position);
                 //Toast.makeText(context,tempNumber,Toast.LENGTH_SHORT);
 
                 if(isShortInfoVisible) {
                     //hiding the view
                     isShortInfoVisible = false;
-                    new CardViewAnimator(context).collapseShortInfo(holder.shortInfo);
-
-                    v.animate().rotation(0).setDuration(500).start();
-
-
+                    new CardViewAnimator(context).collapseShortInfo(holder.shortInfo, holder.revealButton);
+                    //v.animate().rotation(0).setDuration(500).start();
                 }
                 else {
                     //showing the view
                     isShortInfoVisible = true;
-                    new CardViewAnimator(context).expandShortInfo(holder.shortInfo, holder.shortInfoParent);
+                    new CardViewAnimator(context).expandShortInfo(holder.shortInfo, holder.revealButton, holder.shortInfoParent);
 
-                    v.animate().rotation(-180).setDuration(500).start();
-
+                    //v.animate().rotation(-180).setDuration(500).start();
                 }
+
+
             }
         });
 
 
-        holder.downloadSwitch.setOnClickListener(new View.OnClickListener() {
-
+        CompoundButton.OnCheckedChangeListener downloadButtonListener = new CompoundButton.OnCheckedChangeListener() {
 
             @Override
-            public void onClick(View v) {
-                boolean isChecked = ((Switch) v).isChecked();
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
                 final String packageName = holder.title.getText().toString().toUpperCase();
                 final String packageName_en = heritageSites_en.get(position)
@@ -243,15 +258,15 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
                         .toLowerCase()
                         .replace("\\s", "");
 
-                Log.v(LOGTAG, "Switch is " + isChecked);
+                Log.v(LOGTAG, "Switch = " + isChecked + " button press =" + holder.downloadSwitch.isPressed());
 
                 String sessionKey = context.getString(R.string.download_switch_state) + packageName_en;
                 SessionManager sessionManager = new SessionManager();
                 sessionManager.setSessionPreferences(context, sessionKey, isChecked);
 
-                if (isChecked) {
+                if (holder.downloadSwitch.isPressed() & isChecked) {
 
-                    //holder.downloadSwitch.setChecked(false);
+                    holder.downloadSwitch.setChecked(false);
 
                     new AlertDialog.Builder(context)
                             .setMessage(packageName + " : " + context.getString(R.string.do_you_want_to_download_the_package)
@@ -280,16 +295,30 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
                                     dialog.dismiss();
                                     Log.v(LOGTAG, packageName_en + " Alert box is closed");
 
-                                    holder.downloadSwitch.setChecked(false);
-                                    holder.downloadSwitch.invalidate();
+                                    //holder.downloadSwitch.setOnCheckedChangeListener(null);
+                                    //humanChecked = false;
+
+
+                                    final Handler handler = new Handler();
+                                    handler.postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            holder.downloadSwitch.setChecked(false);
+                                            holder.downloadSwitch.invalidate();
+                                        }
+                                    }, 100);
+
+
+                                    // holder.downloadSwitch.setChecked(false);
+                                    //holder.downloadSwitch.invalidate();
                                 }
                             })
                             .setCancelable(false)
                             .show();
 
-                } else {
+                } else if (holder.downloadSwitch.isPressed() & !isChecked) {
 
-                    //holder.downloadSwitch.setChecked(true);
+                    holder.downloadSwitch.setChecked(true);
                     //delete the package from the storage
                     new AlertDialog.Builder(context)
                             .setMessage(packageName + " : " + context.getString(R.string.delete_package))
@@ -307,7 +336,7 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
                                     if (compressedFile.exists()) {
                                         compressedFile.delete();
                                         Log.i(LOGTAG, compressedFile.getAbsolutePath() + " is deleted");
-                                    }
+                                        }
 
 
                                     String extractedName = context.getString(R.string.full_package_extracted_location) + packageName_en;
@@ -324,8 +353,19 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
                                     }
 
 
+                                    //holder.downloadSwitch.setChecked(false);
 
-                                    holder.downloadSwitch.setChecked(false);
+                                    //holder.downloadSwitch.setOnCheckedChangeListener(null);
+                                    // humanChecked = false;
+                                    //holder.downloadSwitch.setChecked(false);
+                                    final Handler handler = new Handler();
+                                    handler.postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            holder.downloadSwitch.setChecked(false);
+                                            holder.downloadSwitch.invalidate();
+                                        }
+                                    }, 100);
 
                                 }
                             })
@@ -335,7 +375,20 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
                                 public void onClick(DialogInterface arg0, int arg1) {
                                     //go back
                                     Log.i(LOGTAG, packageName_en + " is not deleted");
-                                    holder.downloadSwitch.setChecked(true);
+
+                                    //holder.downloadSwitch.setChecked(true);
+
+                                    //holder.downloadSwitch.setOnCheckedChangeListener(null);
+                                    // humanChecked = false;
+                                    //holder.downloadSwitch.setChecked(true);
+                                    final Handler handler = new Handler();
+                                    handler.postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            holder.downloadSwitch.setChecked(true);
+                                            holder.downloadSwitch.invalidate();
+                                        }
+                                    }, 100);
 
                                     new MainActivity().finish();
                                 }
@@ -345,12 +398,13 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
 
                 }
 
-                holder.downloadSwitch.invalidate();
+                //holder.downloadSwitch.invalidate();
                 //holder.title.invalidate();
 
-
             }
-        });
+        };
+
+        holder.downloadSwitch.setOnCheckedChangeListener(downloadButtonListener);
 
 
     }
@@ -361,4 +415,6 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
     public int getItemCount() {
         return heritageSites.size();
     }
+
+
 }

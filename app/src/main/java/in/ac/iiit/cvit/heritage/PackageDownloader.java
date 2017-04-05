@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.widget.Switch;
@@ -189,8 +190,17 @@ public class PackageDownloader extends AsyncTask<String, String, String> {
 
             Log.v(LOGTAG, packageName_en + " package download is complete");
 
-            downloadSwitch.setChecked(true);
-            downloadSwitch.invalidate();
+            //downloadSwitch.setChecked(true);
+            //downloadSwitch.invalidate();
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    downloadSwitch.setChecked(true);
+                    downloadSwitch.invalidate();
+                }
+            }, 100);
+
 
             alertDialog.setPositiveButton(context.getString(R.string.ok), new DialogInterface.OnClickListener() {
                 // do something when the button is clicked

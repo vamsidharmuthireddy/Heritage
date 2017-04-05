@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
@@ -31,12 +32,12 @@ public class PackageContentActivity extends AppCompatActivity {
     private String packageName_en;
     private Toolbar toolbar;
     private String language;
-    public static ArrayList<InterestPoint> monumentList;
-    public static ArrayList<String> ImageNamesList = new ArrayList<String>();
-    ;
-    public static ArrayList<InterestPoint> monumentList_en;
-    public static ArrayList<InterestPoint> kingsList;
-    public static ArrayList<InterestPoint> kingsList_en;
+    public ArrayList<InterestPoint> monumentList;
+    public ArrayList<String> ImageNamesList = new ArrayList<String>();
+
+    public ArrayList<InterestPoint> monumentList_en;
+    public ArrayList<InterestPoint> kingsList;
+    public ArrayList<InterestPoint> kingsList_en;
 
 
 
@@ -131,7 +132,8 @@ public class PackageContentActivity extends AppCompatActivity {
         CardView cardKings = (CardView)findViewById(R.id.kings_card);
         CardView cardMonuments = (CardView)findViewById(R.id.monuments_card);
         CardView cardOverview = (CardView) findViewById(R.id.overview_card);
-        CardView cardAllImages = (CardView) findViewById(R.id.allimages_card);
+        CardView cardGallery = (CardView) findViewById(R.id.gallery_card);
+        CardView cardMap = (CardView) findViewById(R.id.maps_card);
 
         cardOverview.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -153,7 +155,14 @@ public class PackageContentActivity extends AppCompatActivity {
                 Intent openKings = new Intent(PackageContentActivity.this, KingActivity.class);
                 openKings.putExtra(getString(R.string.package_name), packageName);
                 openKings.putExtra(getString(R.string.package_name_en), packageName_en);
+
+                Bundle bundle = new Bundle();
+                bundle.putSerializable(getString(R.string.kingList), (Serializable) kingsList);
+                bundle.putSerializable(getString(R.string.kingList_en), (Serializable) kingsList_en);
+
+                openKings.putExtra(getString(R.string.kingList_bundle), bundle);
                 startActivity(openKings);
+
             }
         });
 
@@ -165,11 +174,18 @@ public class PackageContentActivity extends AppCompatActivity {
                 Intent openMonuments = new Intent(PackageContentActivity.this, MonumentActivity.class);
                 openMonuments.putExtra(getString(R.string.package_name), packageName);
                 openMonuments.putExtra(getString(R.string.package_name_en), packageName_en);
+
+                Bundle bundle = new Bundle();
+                bundle.putSerializable(getString(R.string.monumentList), (Serializable) monumentList);
+                bundle.putSerializable(getString(R.string.monumentList_en), (Serializable) monumentList_en);
+
+                openMonuments.putExtra(getString(R.string.monumentList_bundle), bundle);
+
                 startActivity(openMonuments);
             }
         });
 
-        cardAllImages.setOnClickListener(new View.OnClickListener() {
+        cardGallery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.v(LOGTAG, "Clicked Gallery");
@@ -178,11 +194,19 @@ public class PackageContentActivity extends AppCompatActivity {
                 openGallery.putExtra(getString(R.string.package_name), packageName);
                 openGallery.putExtra(getString(R.string.package_name_en), packageName_en);
                 openGallery.putExtra(getString(R.string.image_count), getString(R.string.all));
+                openGallery.putStringArrayListExtra(getString(R.string.imageNamesList), ImageNamesList);
                 startActivity(openGallery);
 
             }
         });
 
+        cardMap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent openMap = new Intent(PackageContentActivity.this, MapsActivity.class);
+                startActivity(openMap);
+            }
+        });
 
 
     }
@@ -201,8 +225,9 @@ public class PackageContentActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         Intent intent = new Intent(PackageContentActivity.this, MainActivity.class);
-        startActivity(intent);
+//        startActivity(intent);
         finish();
+        super.onBackPressed();
     }
 
     public void getImageList() {

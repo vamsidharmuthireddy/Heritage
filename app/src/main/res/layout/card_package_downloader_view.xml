@@ -4,106 +4,139 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="@dimen/activity_sml_margin"
-    android:layout_marginStart="@dimen/activity_sml_margin"
-    android:layout_marginEnd="@dimen/activity_sml_margin"
+    android:layout_marginBottom="@dimen/activity_half_std_margin"
+    android:layout_marginEnd="@dimen/activity_half_std_margin"
+    android:layout_marginStart="@dimen/activity_half_std_margin"
+    android:layout_marginTop="@dimen/activity_half_std_margin"
     card_view:cardCornerRadius="4dp"
-    card_view:cardElevation="@dimen/activity_elevation"
-    >
-
-
-<LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-    <ImageView
-        android:id="@+id/heritage_site_title_image"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_margin="6dp"
-        android:padding="0dp"
-        android:scaleType="centerCrop"
-        tools:ignore="ContentDescription"
-        />
+    card_view:cardElevation="@dimen/activity_elevation">
 
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginRight="@dimen/activity_horizontal_margin">
-        <TextView
-            android:id="@+id/heritage_site_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginStart="@dimen/activity_sml_margin"
-            android:layout_marginEnd="@dimen/activity_sml_margin"
-            android:theme="@style/BlackTextWhiteBackground"
-            />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <Switch
-            android:id="@+id/download_switch"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="6"
-            android:layout_alignParentEnd="true" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginRight="@dimen/activity_horizontal_margin">
-        <TextView
-            android:id="@+id/heritage_site_info_header"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:layout_marginStart="@dimen/activity_sml_margin"
-            android:layout_marginEnd="@dimen/activity_sml_margin"
-            android:theme="@style/BlackTextWhiteBackground"
-            />
+            android:layout_marginEnd="@dimen/activity_std_padding"
+            android:layout_marginStart="@dimen/activity_std_padding"
+            android:layout_marginTop="@dimen/activity_std_padding"
+            android:orientation="vertical"
+            android:padding="0dp">
 
-        <ImageButton
-            android:id="@+id/heritage_info_reveal_button"
+            <ImageView
+                android:id="@+id/heritage_site_title_image"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:scaleType="centerCrop"
+                tools:ignore="ContentDescription" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_alignTop="@+id/heritage_site_title_image"
+                android:layout_gravity="top"
+                android:background="@drawable/scrim_top" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/heritage_site_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/activity_std_margin"
+                        android:layout_marginEnd="@dimen/activity_half_std_margin"
+                        android:layout_marginStart="@dimen/activity_half_std_margin"
+                        android:layout_marginTop="@dimen/activity_std_margin"
+                        android:layout_weight="1"
+                        android:theme="@style/WhiteTextTransparentBackground" />
+
+                    <ImageButton
+                        android:id="@+id/heritage_info_reveal_button"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginBottom="@dimen/activity_std_margin"
+                        android:layout_marginEnd="@dimen/activity_half_std_margin"
+                        android:layout_marginTop="@dimen/activity_std_margin"
+                        android:background="@android:color/transparent"
+                        android:scaleType="fitCenter"
+                        android:src="@mipmap/ic_information" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/heritage_site_info_short_parent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:animateLayoutChanges="true">
+
+                    <TextView
+                        android:id="@+id/heritage_site_info_short"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:paddingStart="@dimen/activity_half_std_margin"
+                        android:paddingEnd="@dimen/activity_half_std_margin"
+                        android:textColor="@color/colorWhite"
+                        android:textSize="@dimen/activity_xsmall_text" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:scaleType="fitCenter"
-            android:layout_alignParentEnd="true"
-            android:layout_weight="6"
-            android:adjustViewBounds="false"
-            android:background="@android:color/transparent"
-            android:cropToPadding="false"
-            android:elevation="6dp"
-            android:focusable="false"
-            android:foregroundGravity="center"
-            android:src="@drawable/ic_arrow_down" />
-    </LinearLayout>
+            android:layout_marginEnd="@dimen/activity_std_margin"
+            android:layout_marginStart="@dimen/activity_std_margin"
+            android:layout_marginTop="@dimen/activity_half_std_margin"
+            android:orientation="horizontal"
+            android:paddingBottom="0dp">
 
-    <LinearLayout
-        android:id="@+id/heritage_site_info_short_parent"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:animateLayoutChanges="true">
-<!--Don't make this view as gone! It will delay the animation-->
-        <!--
-                <include layout="@layout/card_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:id="@+id/heritage_site_info_short"
-                    android:layout_margin="@dimen/activity_sml_margin"/>
-                -->
-        <TextView
-            android:id="@+id/heritage_site_info_short"
+            <Switch
+                android:id="@+id/download_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/download_this_place"
+                android:textColor="@color/colorBlack"
+                android:textSize="@dimen/activity_xsmall_text" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:theme="@style/BlackTextWhiteBackground" />
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/activity_std_margin"
+            android:layout_marginStart="@dimen/activity_std_margin"
+            android:orientation="horizontal">
 
+            <!--
+            <TextView
+                android:id="@+id/heritage_site_info_header"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="@string/heritage_site_introduction"
+                android:textColor="@color/colorBlack"
+                android:textSize="@dimen/activity_xsmall_text"
+                android:theme="@style/BlackTextWhiteBackground"
+                />
+    -->
 
-    </LinearLayout>
+        </LinearLayout>
+
 
     </LinearLayout>
 </android.support.v7.widget.CardView>

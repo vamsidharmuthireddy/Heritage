@@ -3,6 +3,7 @@ package in.ac.iiit.cvit.heritage;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -182,6 +183,12 @@ public class IntroPackageDownloader extends AsyncTask<String, String, String> {
         swipeRefreshLayout = (SwipeRefreshLayout) activity.findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setRefreshing(false);
 
+        //RecyclerView recyclerView_main = (RecyclerView) activity.findViewById(R.id.recyclerview_heritage_sites);
+        //recyclerView_main.invalidate();
+
+        Intent intent_main_activity = new Intent(context, MainActivity.class);
+        context.startActivity(intent_main_activity);
+
 
         Toast.makeText(context, context.getString(R.string.content_refresh_completed), Toast.LENGTH_SHORT).show();
 
@@ -257,7 +264,7 @@ public class IntroPackageDownloader extends AsyncTask<String, String, String> {
         File baseLocal = Environment.getExternalStorageDirectory();
         File archive = new File(baseLocal, COMPRESSED_DIR + packageName_en);
         File destination = new File(baseLocal, EXTRACT_DIR);
-        Log.v("Extracted directory", destination.toString());
+        Log.v(LOGTAG, destination.toString());
 
 
         try {

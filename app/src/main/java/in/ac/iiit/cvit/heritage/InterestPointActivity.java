@@ -43,7 +43,7 @@ public class InterestPointActivity extends AppCompatActivity {
     private String packageName;
     private String packageName_en;
 
-    public static ArrayList<String> ImageNamesList = new ArrayList<String>();
+    public ArrayList<String> ImageNamesList = new ArrayList<String>();
 
     private static final String LOGTAG = "InterestPointActivity";
 
@@ -89,7 +89,6 @@ public class InterestPointActivity extends AppCompatActivity {
         collapsingToolbarLayout.setContentScrimColor(getResources().getColor(R.color.colorWhite));
         collapsingToolbarLayout.setCollapsedTitleTextColor(getResources().getColor(R.color.colorBlack));
 
-
         //setting up the interest point image as image in image view in co-ordinator layout
         imageView = (ImageView) findViewById(R.id.coordinatorlayout_imageview);
 
@@ -103,8 +102,8 @@ public class InterestPointActivity extends AppCompatActivity {
             Log.v(LOGTAG, "Entered Monuments");
             ImageNamesList = interestPoint.getMonumentImagePaths(packageName_en, interestPointName);
 
-            Bitmap setBitmap = interestPoint.getMonumentImage(packageName_en, interestPointName, InterestPointActivity.this);
-
+            Bitmap setBitmap = interestPoint.getMonumentTitleImage(packageName_en, interestPointName, InterestPointActivity.this);
+            Log.v(LOGTAG, "Title Image = " + interestPoint.getMonumentTitleImagePath(packageName_en, interestPointName, InterestPointActivity.this));
             if (setBitmap == null) {
                 imageView.setImageBitmap(((BitmapDrawable) getResources().getDrawable(R.drawable.monument)).getBitmap());
                 imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
@@ -129,6 +128,8 @@ public class InterestPointActivity extends AppCompatActivity {
                     openGallery.putExtra(getString(R.string.image_count), getString(R.string.interestpoint_name));
                     openGallery.putExtra(getString(R.string.interestpoint_name), interestPointName);
                     openGallery.putExtra(getString(R.string.interest_point_type), interestPointType);
+                    openGallery.putStringArrayListExtra(getString(R.string.imageNamesList), ImageNamesList);
+
                     startActivity(openGallery);
                     //finish();
                 }
@@ -136,7 +137,7 @@ public class InterestPointActivity extends AppCompatActivity {
 
         } else {
             Log.v(LOGTAG, "Entered kings");
-            Bitmap setBitmap = interestPoint.getKingImage(packageName_en, interestPointName, InterestPointActivity.this);
+            Bitmap setBitmap = interestPoint.getKingTitleImage(packageName_en, interestPointName, InterestPointActivity.this);
 
             if (setBitmap == null) {
                 imageView.setImageBitmap(((BitmapDrawable) getResources().getDrawable(R.drawable.king)).getBitmap());

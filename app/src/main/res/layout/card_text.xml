@@ -14,7 +14,7 @@
             android:id="@+id/cardview_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/activity_sml_margin"
+            android:layout_margin="@dimen/activity_half_std_margin"
             android:fadingEdge="horizontal"
             android:textColor="@color/colorBlack"
             android:textSize="@dimen/activity_small_text" />

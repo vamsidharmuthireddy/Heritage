@@ -7,6 +7,7 @@ import android.os.Environment;
 import android.util.Log;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -16,15 +17,15 @@ import java.util.List;
  * Created by HOME on 03-03-2017.
  */
 
-public class InterestPoint {
+public class InterestPoint implements Serializable {
     private int _id;
-    private HashMap<String, String> monumentdetails;
+    private HashMap<String, String> monumentDetails;
     private HashMap<String, String> royalDetails;
     private SessionManager sessionManager;
 
     private static final String dataLocation = "Android/data/in.ac.iiit.cvit.heritage/files/completePackages/extracted/";
 
-    private static final String imageType = ".JPG";
+    private static final String imageType = ".jpg";
     private static final String latitudeTag = "lat";
     private static final String longitudeTag = "long";
     private static final String imageTag = "image";
@@ -36,7 +37,7 @@ public class InterestPoint {
     private static final String LOGTAG = "InterestPoint";
 
     public InterestPoint() {
-        monumentdetails = new HashMap<String, String>();
+        monumentDetails = new HashMap<String, String>();
         royalDetails = new HashMap<String, String>();
     }
 
@@ -47,7 +48,7 @@ public class InterestPoint {
      * @param value It's the value in the relevant tag of the xml file
      */
     public void setMonument(String key, String value) {
-        monumentdetails.put(key, value);
+        monumentDetails.put(key, value);
     }
 
     /**
@@ -56,7 +57,7 @@ public class InterestPoint {
      * @return Value of the selected xml field
      */
     public String getMonument(String key) {
-        return monumentdetails.get(key);
+        return monumentDetails.get(key);
     }
 
     /**
@@ -83,17 +84,17 @@ public class InterestPoint {
      *
      * @return Image of Interest point in Bitmap data type
      */
-    public Bitmap getMonumentImage(String packageName_en, String interestPointName, Context context) {
+    public Bitmap getMonumentTitleImage(String packageName_en, String interestPointName, Context context) {
 
         packageName_en = packageName_en.toLowerCase().replace("\\s", "");
 
-        String imageName = monumentdetails.get(imageTag);
-        Log.v(LOGTAG, "interestPointName is " + interestPointName);
+        String imageName = monumentDetails.get(imageTag);
+        //Log.v(LOGTAG, "interestPointName is " + interestPointName);
 
-        String image_path = dataLocation + packageName_en + "/" + imageName + imageType;
+        String image_path = dataLocation + packageName_en + File.separator + imageName + imageType;
 
         File imageFile = new File(Environment.getExternalStorageDirectory(),image_path);
-        Log.v(LOGTAG, Environment.getExternalStorageDirectory() + image_path);
+        //Log.v(LOGTAG, imageFile.getAbsolutePath());
         if(imageFile.exists()) {
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inPreferredConfig = Bitmap.Config.ARGB_8888;
@@ -109,15 +110,40 @@ public class InterestPoint {
 
 
     /**
+     * This class is used to get the image path related to a particular interest point
+     *
+     * @return Image path of Interest point in String data type
+     */
+    public String getMonumentTitleImagePath(String packageName_en, String interestPointName, Context context) {
+
+        packageName_en = packageName_en.toLowerCase().replace("\\s", "");
+
+        String imageName = monumentDetails.get(imageTag);
+        //Log.v(LOGTAG, "interestPointName is " + interestPointName);
+
+        String image_path = dataLocation + packageName_en + File.separator + imageName + imageType;
+
+        File imageFile = new File(Environment.getExternalStorageDirectory(), image_path);
+        //Log.v(LOGTAG, imageFile.getAbsolutePath());
+        if (imageFile.exists()) {
+            return imageFile.getAbsolutePath();
+        }
+
+        return null;
+
+    }
+
+
+    /**
      * This class is used to get the image related to a particular interest point
      *
      * @return Image of Interest point in Bitmap data type
      */
-    public Bitmap getKingImage(String packageName_en, String interestPointName, Context context) {
+    public Bitmap getKingTitleImage(String packageName_en, String interestPointName, Context context) {
 
         packageName_en = packageName_en.toLowerCase().replace("\\s", "");
 
-        String imageName = monumentdetails.get(imageTag);
+        String imageName = monumentDetails.get(imageTag);
         //       Log.v("getImage","reached getImage");
 
 
@@ -154,7 +180,7 @@ public class InterestPoint {
 
 //        String[] image_names = {"a1", "a2", "a3", "a4", "a5"};
 
-        String allImages = monumentdetails.get(imagesTag);
+        String allImages = monumentDetails.get(imagesTag);
 
         //Log.v("getImages",interestPointName);
 
@@ -188,7 +214,7 @@ public class InterestPoint {
 
         packageName_en = packageName_en.toLowerCase().replace("\\s", "");
 
-        String allImages = monumentdetails.get(imagesTag);
+        String allImages = monumentDetails.get(imagesTag);
 
         //Log.v("getImages",interestPointName);
 
@@ -222,8 +248,8 @@ public class InterestPoint {
         double dLat, dLong;
         double sum;
 
-        pLat = Double.parseDouble(monumentdetails.get(latitudeTag));
-        pLong = Double.parseDouble(monumentdetails.get(longitudeTag));
+        pLat = Double.parseDouble(monumentDetails.get(latitudeTag));
+        pLong = Double.parseDouble(monumentDetails.get(longitudeTag));
 
 //        Log.d("InterestPoint:distance", "pLat="+ pLat);
 //        Log.d("InterestPoint:distance", "pLong="+ pLong);
@@ -262,8 +288,8 @@ public class InterestPoint {
 //         Log.d("giveAngle", "b="+ b);
 //         Log.d("giveAngle", "c="+ c);
 
-        pLat = Double.parseDouble(monumentdetails.get(latitudeTag));
-        pLong = Double.parseDouble(monumentdetails.get(longitudeTag));
+        pLat = Double.parseDouble(monumentDetails.get(latitudeTag));
+        pLong = Double.parseDouble(monumentDetails.get(longitudeTag));
         //        Log.d("InterestPoint:distance", "pLat="+ pLat);
         //        Log.d("InterestPoint:distance", "pLong="+ pLong);
 

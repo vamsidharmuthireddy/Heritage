@@ -2,8 +2,7 @@ package in.ac.iiit.cvit.heritage;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,6 +11,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -69,14 +72,33 @@ public class MonumentNearbyAdapter extends RecyclerView.Adapter<MonumentNearbyAd
         textView.setText(interestPoints.get(position).getMonument(context.getString(R.string.interest_point_title)));
 
 
-        Bitmap setBitmap = interestPoints.get(position)
-                .getMonumentImage(packageName_en, holder.textView.getText().toString(), context);
-        if (setBitmap == null) {
-            imageView.setImageBitmap(((BitmapDrawable) context.getResources().getDrawable(R.drawable.monument)).getBitmap());
-            imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        String imagePath = interestPoints.get(position)
+                .getMonumentTitleImagePath(packageName_en, holder.textView.getText().toString(), context);
+
+        if (imagePath == null) {
+            Glide.with(context)
+                    .load(R.drawable.monument)
+                    .fitCenter()
+                    .into(imageView);
+            //    Log.v(LOGTAG,"imagepath is null");
+
         } else {
-            imageView.setImageBitmap(setBitmap);
-            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+            File file = new File(imagePath);
+            Uri uri = Uri.fromFile(file);
+
+            Glide.with(context)
+                    .load(uri)
+                    .asBitmap()
+                    .placeholder(R.drawable.monument)
+//                    .crossFade()
+                    .centerCrop()
+                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                    .into(imageView);
+
+
+            //    Log.v(LOGTAG,"imagepath is not null");
+            //    Log.v(LOGTAG,"image uri = "+uri.toString());
         }
 
         setListeners(holder, position);
@@ -131,5 +153,8 @@ public class MonumentNearbyAdapter extends RecyclerView.Adapter<MonumentNearbyAd
         return interestPoints.size();
     }
 
-
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
 }

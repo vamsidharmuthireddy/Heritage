@@ -3,16 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="@dimen/activity_sml_margin"
-    android:layout_marginBottom="@dimen/activity_sml_margin"
-    android:layout_marginStart="@dimen/activity_std_margin"
-    android:layout_marginEnd="@dimen/activity_std_margin"
-    app:contentPadding="@dimen/activity_std_padding">
+    xmlns:card_view="http://schemas.android.com/tools"
+    android:layout_marginTop="@dimen/activity_half_std_margin"
+    android:layout_marginBottom="@dimen/activity_half_std_margin"
+    android:layout_marginStart="@dimen/activity_half_std_margin"
+    android:layout_marginEnd="@dimen/activity_half_std_margin"
+    app:contentPadding="@dimen/activity_std_padding"
+    card_view:cardElevation="@dimen/activity_elevation"
+    card_view:cardCornerRadius="4dp">
 
     <RelativeLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
         <ImageView
             android:id="@+id/cardview_monument_image"
@@ -20,7 +23,7 @@
             android:layout_height="200dp"
             android:layout_marginBottom="@dimen/activity_std_padding"
             android:src="@drawable/monument"
-            android:scaleType="centerCrop" />
+            android:scaleType="fitCenter" />
 
         <TextView
             android:id="@+id/cardview_monument_text"

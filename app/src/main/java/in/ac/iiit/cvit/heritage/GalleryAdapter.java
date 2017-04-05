@@ -1,141 +1,129 @@
 package in.ac.iiit.cvit.heritage;
 
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.animation.ViewPropertyAnimation;
+
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 /**
  * Created by HOME on 16-03-2017.
  */
 
-public class GalleryAdapter extends BaseAdapter {
+public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.DataObjectHolder> {
 
-    private Activity _activity;
+    private Activity activity;
     private Context context;
-    private ArrayList<String> _filePaths = new ArrayList<String>();
+    private ArrayList<String> ImageNamesList = new ArrayList<String>();
     private int imageWidth;
+
+    private ImageView galleryImage;
 
     private static final String LOGTAG = "GalleryAdapter";
 
-    public GalleryAdapter(Context _context, Activity activity, ArrayList<String> filePaths, int imageWidth) {
+    public class DataObjectHolder extends RecyclerView.ViewHolder {
+
+        private ImageView galleryImage;
+
+        public DataObjectHolder(View view) {
+            super(view);
+            this.galleryImage = (ImageView) view.findViewById(R.id.gallery_image);
+        }
+    }
+
+    public GalleryAdapter(Context _context, Activity _activity, ArrayList<String> filePaths, int imageWidth) {
         this.context = _context;
-        this._activity = activity;
-        this._filePaths = filePaths;
+        this.activity = _activity;
+        this.ImageNamesList = filePaths;
         this.imageWidth = imageWidth;
     }
 
+
+
     @Override
-    public int getCount() {
-        return this._filePaths.size();
+    public GalleryAdapter.DataObjectHolder onCreateViewHolder(ViewGroup parent, int i) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_gallery_image, parent, false);
+        DataObjectHolder dataObjectHolder = new DataObjectHolder(view);
+        return dataObjectHolder;
     }
 
     @Override
-    public Object getItem(int position) {
-        return this._filePaths.get(position);
-    }
+    public void onBindViewHolder(GalleryAdapter.DataObjectHolder viewHolder, int position) {
 
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
 
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        ImageView imageView;
-        if (convertView == null) {
-            imageView = new ImageView(_activity);
-        } else {
-            imageView = (ImageView) convertView;
+        ViewPropertyAnimation.Animator animationObject = new ViewPropertyAnimation.Animator() {
+            @Override
+            public void animate(View view) {
+                // if it's a custom view class, cast it here
+                // then find subviews and do the animations
+                // here, we just use the entire view for the fade animation
+                view.setAlpha(0f);
+
+                ObjectAnimator fadeAnim = ObjectAnimator.ofFloat(view, "alpha", 0f, 1f);
+                fadeAnim.setDuration(200);
+                fadeAnim.start();
+            }
+        };
+
+
+        File file = new File(ImageNamesList.get(position));
+        Uri uri = Uri.fromFile(file);
+        viewHolder.galleryImage.setLayoutParams(new GridView.LayoutParams(imageWidth, imageWidth));
+        viewHolder.galleryImage.setBackgroundColor(context.getResources().getColor(R.color.colorBlack));
+        Glide.with(context)
+                .load(uri)
+                .asBitmap()
+                //           .placeholder(R.drawable.monument)
+                .centerCrop()
+//                .crossFade(300)
+                .animate(animationObject)
+                .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                .into(viewHolder.galleryImage);
+/*
+        .into(new GlideDrawableImageViewTarget(viewHolder.galleryImage) {
+            @Override public void onResourceReady(GlideDrawable resource,
+                                                  GlideAnimation<? super GlideDrawable> animation) {
+                super.onResourceReady(resource, new GlideAnimator(context).getGlideAnimation(animation));
+            }
         }
-
-        // get screen dimensions
-        Bitmap image = decodeFile(_filePaths.get(position), imageWidth, imageWidth);
-
-        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        imageView.setLayoutParams(new GridView.LayoutParams(imageWidth, imageWidth));
-        imageView.setImageBitmap(image);
-
-        // image view click listener
-        //imageView.setOnClickListener(new OnImageClickListener(position));
+*/
 
         final int _position = position;
-        final ArrayList<String> ff = new ArrayList<String>(_filePaths);
-        imageView.setOnClickListener(new View.OnClickListener() {
+        final ArrayList<String> ff = new ArrayList<String>(ImageNamesList);
+        viewHolder.galleryImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(_activity, FullScreenImageActivity.class);
-                i.putExtra("position", _position);
+                Intent openFullScreenImage = new Intent(activity, FullScreenImageActivity.class);
+                openFullScreenImage.putExtra("position", _position);
+                openFullScreenImage.putStringArrayListExtra(context.getString(R.string.imageNamesList), ImageNamesList);
 
                 Log.v(LOGTAG, "clicked image is " + ff.get(_position));
-                _activity.startActivity(i);
+                activity.startActivity(openFullScreenImage);
             }
         });
 
-
-        return imageView;
     }
 
-    /*
-    class OnImageClickListener implements OnClickListener {
-
-        int _postion;
-
-        // constructor
-        public OnImageClickListener(int position) {
-            this._postion = position;
-        }
-
-        @Override
-        public void onClick(View v) {
-            // on selecting grid view image
-            // launch full screen activity
-            Intent i = new Intent(_activity, FullScreenViewActivity.class);
-            i.putExtra("position", _postion);
-            _activity.startActivity(i);
-        }
-
+    @Override
+    public int getItemCount() {
+        return this.ImageNamesList.size();
     }
-*/
-    /*
-     * Resizing image size
-     */
-    public static Bitmap decodeFile(String filePath, int WIDTH, int HIGHT) {
-        try {
 
-            File f = new File(filePath);
 
-            BitmapFactory.Options o = new BitmapFactory.Options();
-            o.inJustDecodeBounds = true;
-            BitmapFactory.decodeStream(new FileInputStream(f), null, o);
-
-            final int REQUIRED_WIDTH = WIDTH;
-            final int REQUIRED_HIGHT = HIGHT;
-            int scale = 1;
-            while (o.outWidth / scale / 2 >= REQUIRED_WIDTH
-                    && o.outHeight / scale / 2 >= REQUIRED_HIGHT)
-                scale *= 2;
-
-            BitmapFactory.Options o2 = new BitmapFactory.Options();
-            o2.inSampleSize = scale;
-            return BitmapFactory.decodeStream(new FileInputStream(f), null, o2);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 
 
 }

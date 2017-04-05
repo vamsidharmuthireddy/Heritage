@@ -59,7 +59,11 @@ public class KingActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        kingsList = PackageContentActivity.kingsList;
+
+        Bundle bundle = getIntent().getBundleExtra(getString(R.string.kingList_bundle));
+        kingsList = (ArrayList<InterestPoint>) bundle.getSerializable(getString(R.string.kingList));
+
+        // kingsList = PackageContentActivity.kingsList;
 
         setRecyclerView();
 
@@ -103,7 +107,9 @@ public class KingActivity extends AppCompatActivity {
         intent.putExtra(getString(R.string.package_name), packageName);
         intent.putExtra(getString(R.string.package_name_en), packageName_en);
 
-        startActivity(intent);
+//        startActivity(intent);
+        finish();
+        super.onBackPressed();
 
 
     }

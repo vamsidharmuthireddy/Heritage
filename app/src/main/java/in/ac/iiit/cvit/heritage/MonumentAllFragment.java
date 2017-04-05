@@ -3,7 +3,6 @@ package in.ac.iiit.cvit.heritage;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -39,11 +38,15 @@ public class MonumentAllFragment extends Fragment {
 
         recyclerView = (RecyclerView) root.findViewById(R.id.recyclerview_all_monuments);
         recyclerView.setHasFixedSize(true);
-        recyclerViewLayoutManager = new LinearLayoutManager(getActivity());
+        //recyclerViewLayoutManager = new LinearLayoutManager(getActivity());
+        recyclerViewLayoutManager = new MainActivity.PreLoadingLinearLayoutManager(getContext());
+        new MainActivity.PreLoadingLinearLayoutManager(getContext()).setPages(1);
+
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
 
         //setting the view of the PLACES tab
         recyclerViewAdapter = new MonumentAllAdapter(interestPoints, getContext(), packageName_en);
+        recyclerViewAdapter.setHasStableIds(true);
         recyclerView.setAdapter(recyclerViewAdapter);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.widget.TextView;
 
@@ -49,7 +50,9 @@ public class OverviewActivity extends AppCompatActivity {
 
         HeritageSite heritageSite = LoadPackage(packageName_en);
 
-        TextView overviewContent = (TextView) findViewById(R.id.overview_content);
+        CardView overviewCard = (CardView) findViewById(R.id.overview_details_card);
+
+        TextView overviewContent = (TextView) overviewCard.findViewById(R.id.cardview_text);
         overviewContent.setText(heritageSite.getHeritageSite(getString(R.string.interest_point_info)));
 
     }
@@ -70,8 +73,9 @@ public class OverviewActivity extends AppCompatActivity {
         Intent intent = new Intent(OverviewActivity.this, PackageContentActivity.class);
         intent.putExtra(getString(R.string.package_name), packageName);
         intent.putExtra(getString(R.string.package_name_en), packageName_en);
-        startActivity(intent);
-
+//        startActivity(intent);
+        finish();
+        super.onBackPressed();
 
     }
 
