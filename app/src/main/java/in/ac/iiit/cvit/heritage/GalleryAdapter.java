@@ -62,12 +62,16 @@ public class GalleryAdapter extends BaseAdapter {
         }
 
         // get screen dimensions
-        Bitmap image = decodeFile(_filePaths.get(position), imageWidth, imageWidth);
+        
+        imageDownload id = new imageDownload();
+        id.execute(_filePaths.get(position),imageWidth,imageWidth);
+        
+        /*Bitmap image = decodeFile(_filePaths.get(position), imageWidth, imageWidth);
 
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         imageView.setLayoutParams(new GridView.LayoutParams(imageWidth, imageWidth));
         imageView.setImageBitmap(image);
-
+        */
         // image view click listener
         //imageView.setOnClickListener(new OnImageClickListener(position));
 
@@ -136,6 +140,23 @@ public class GalleryAdapter extends BaseAdapter {
         }
         return null;
     }
-
+    
+    class imageDownload extends Asynctask<String,Void,Bitmap>{
+        
+         @Override
+        protected Bitmap doInBackground(String... params) {
+        
+            return decodeFile(params[0],Integer.parseInt(params[1]),Integer.parseInt(params[2]));
+        
+        }
+        
+        @Override
+        protected void onPostExecute(Bitmap aVoid) {
+            super.onPostExecute(aVoid);
+            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            imageView.setLayoutParams(new GridView.LayoutParams(imageWidth, imageWidth));
+            imageView.setImageBitmap(aVoid);
+        }
+    }
 
 }
