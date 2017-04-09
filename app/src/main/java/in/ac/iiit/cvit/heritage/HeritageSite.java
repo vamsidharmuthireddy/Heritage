@@ -1,8 +1,8 @@
 package in.ac.iiit.cvit.heritage;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Environment;
 import android.util.Log;
 
 import java.io.File;
@@ -17,8 +17,9 @@ public class HeritageSite {
     public static final String LOGTAG = "HeritageSite";
     private HashMap<String, String> heritageSitedetails;
     private SessionManager sessionManager;
+    private Context context;
 
-    private static final String dataLocation = "Android/data/in.ac.iiit.cvit.heritage/files/introPackages/extracted/";
+    private static final String dataLocation = "introPackages/extracted/";
 
     private static final String imageType = ".jpg";
     private static final String latitudeTag = "lat";
@@ -28,7 +29,8 @@ public class HeritageSite {
     private static final String shortInfoTag = "shortinfo";
 
 
-    public HeritageSite() {
+    public HeritageSite(Context _context) {
+        context = _context;
         heritageSitedetails = new HashMap<String, String>();
     }
 
@@ -61,7 +63,7 @@ public class HeritageSite {
         String image_path = dataLocation + imageName + imageType;
         //String image_path =  dataLocation+"golconda_1.jpg";
 
-        File imageFile = new File(Environment.getExternalStorageDirectory(),image_path);
+        File imageFile = new File(context.getFilesDir(), image_path);
         Log.v(LOGTAG, imageFile.getAbsolutePath());
         if(imageFile.exists()) {
             BitmapFactory.Options options = new BitmapFactory.Options();

@@ -5,6 +5,8 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="copyright">Copyright</string>
     <string name="contact_us">Contact Us</string>
+    <string name="feedback">Feedback</string>
+    <string name="communicate">Communicate</string>
 
     <!--SplashscreenAcivity-->
     <string name="heritage_caps">HERITAGE</string>
@@ -56,15 +58,15 @@
     <!--PackageDownloaderActivity screen-->
     <string name="available_for_download">Click to download</string>
     <string name="full_package_download_url" translatable="false">http://preon.iiit.ac.in/~heritage/packages/fullPackages/</string>
-    <string name="full_package_base_location" translatable="false">Android/data/in.ac.iiit.cvit.heritage/files/completePackages/</string>
+    <string name="full_package_base_location" translatable="false">completePackages/</string>
     <string name="extracted" translatable="false">extracted/</string>
     <string name="compressed" translatable="false">compressed/</string>
-    <string name="full_package_extracted_location" translatable="false">Android/data/in.ac.iiit.cvit.heritage/files/completePackages/extracted/</string>
-    <string name="full_package_compressed_location" translatable="false">Android/data/in.ac.iiit.cvit.heritage/files/completePackages/compressed/</string>
+    <string name="full_package_extracted_location" translatable="false">completePackages/extracted/</string>
+    <string name="full_package_compressed_location" translatable="false">completePackages/compressed/</string>
     <string name="package_format" translatable="false">.tar.gz</string>
     <string name="xml_extension" translatable="false">.xml</string>
-    <string name="downloading">Downloading the Package</string>
-    <string name="loading">Loading Package</string>
+    <string name="downloading">Downloading</string>
+    <string name="loading">Loading</string>
     <string name="download_update">Download Update</string>
     <string name="load_update">Load Update</string>
     <string name="package_download_completed">Package Download Completed</string>
@@ -86,9 +88,9 @@
 
     <!--IntroPackageDownloader-->
     <string name="intro_package_download_url" translatable="false">http://preon.iiit.ac.in/~heritage/packages/introPackages/</string>
-    <string name="intro_package_extracted_location" translatable="false">Android/data/in.ac.iiit.cvit.heritage/files/introPackages/extracted/</string>
-    <string name="intro_package_compressed_location" translatable="false">Android/data/in.ac.iiit.cvit.heritage/files/introPackages/compressed/</string>
-    <string name="intro_package_name" translatable="false">heritageSites</string>
+    <string name="intro_package_extracted_location" translatable="false">introPackages/extracted/</string>
+    <string name="intro_package_compressed_location" translatable="false">introPackages/compressed/</string>
+    <string name="intro_package_name" translatable="false">heritagesites</string>
     <string name="checking_for_packages">Checking for Packages</string>
     <string name="intro_package_update_message">Refresh Update</string>
     <string name="content_refresh_completed">Content refresh completed</string>
@@ -119,6 +121,7 @@
     <string name="kingList_en" translatable="false">kingList_en</string>
     <string name="kingList_bundle" translatable="false">kingList_bundle</string>
     <string name="imageNamesList" translatable="false">imagesNamesList</string>
+    <string name="location_list" translatable="false">locationList</string>
 
 
     <!--MonumentActivity-->

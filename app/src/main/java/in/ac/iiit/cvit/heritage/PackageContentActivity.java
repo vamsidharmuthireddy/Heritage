@@ -1,9 +1,10 @@
 package in.ac.iiit.cvit.heritage;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
@@ -39,7 +40,7 @@ public class PackageContentActivity extends AppCompatActivity {
     public ArrayList<InterestPoint> kingsList;
     public ArrayList<InterestPoint> kingsList_en;
 
-
+    private ProgressDialog loading = null;
 
     private final static String LOGTAG = "PackageContentActivity";
 
@@ -68,12 +69,49 @@ public class PackageContentActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        setListeners();
+//        setListeners();
 
-        LoadPackage(packageName_en);
+//        LoadPackage(packageName_en);
 
-
+        new loadActivityContent().execute();
     }
+
+
+    private class loadActivityContent extends AsyncTask<Void, Void, Void> {
+
+
+        private ProgressDialog progressDialog;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = new ProgressDialog(PackageContentActivity.this);
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progressDialog.setIndeterminate(false);
+            progressDialog.setProgress(0);
+            progressDialog.setMessage(getString(R.string.loading));
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+
+            setListeners();
+
+            LoadPackage(packageName_en);
+
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            progressDialog.dismiss();
+        }
+    }
+
 
     /**
      * This method returns interest points of the chosen Heritage site by calling PackageReader class
@@ -203,7 +241,13 @@ public class PackageContentActivity extends AppCompatActivity {
         cardMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent openMap = new Intent(PackageContentActivity.this, MapsActivity.class);
+                Intent openMap = new Intent(PackageContentActivity.this, MapsActivityGoogle.class);
+                openMap.putExtra(getString(R.string.location_list), getString(R.string.all));
+                Bundle bundle = new Bundle();
+                bundle.putSerializable(getString(R.string.monumentList), (Serializable) monumentList);
+                bundle.putSerializable(getString(R.string.monumentList_en), (Serializable) monumentList_en);
+
+                openMap.putExtra(getString(R.string.monumentList_bundle), bundle);
                 startActivity(openMap);
             }
         });
@@ -251,16 +295,15 @@ public class PackageContentActivity extends AppCompatActivity {
         Log.v(LOGTAG, "Total images are " + ImageNamesList.size());
 
         for (int i = 0; i < ImageNamesList.size(); i++) {
-            String imagepath = Environment.getExternalStorageDirectory()
+            String imagepath = getFilesDir()
                     + File.separator
                     + getString(R.string.full_package_extracted_location)
-                    + packageName_en + File.separator + ImageNamesList.get(i) + ".JPG";
+                    + packageName_en + File.separator + ImageNamesList.get(i) + ".jpg";
 
             ImageNamesList.set(i, imagepath);
 
-            //Log.v(LOGTAG,"ip is "+i+" and is " +ImageNamesList.get(i));
+            Log.v(LOGTAG, "ip is " + i + " and is " + ImageNamesList.get(i));
         }
-
 
     }
 

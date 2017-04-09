@@ -1,7 +1,6 @@
 package in.ac.iiit.cvit.heritage;
 
 import android.content.Context;
-import android.os.Environment;
 import android.util.Log;
 
 import org.w3c.dom.Document;
@@ -191,7 +190,7 @@ public class PackageReader {
      * It calls readTextFile and readContentsFromString to get the contents from heritage storage folder
      */
     private void readFromFile(){
-        File baseLocal = Environment.getExternalStorageDirectory();
+        File baseLocal = context.getFilesDir();
 
         File xmlfile = new File(baseLocal, dataLocation + packageName_en + "/" + xmlFile);
         //File xmlfile = new File(baseLocal, "Heritage/golconda_en.xml");

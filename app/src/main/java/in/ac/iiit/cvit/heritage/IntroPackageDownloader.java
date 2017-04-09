@@ -5,7 +5,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Environment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -96,7 +95,7 @@ public class IntroPackageDownloader extends AsyncTask<String, String, String> {
         String address = packageUrl + packageName_en;
         Log.i(LOGTAG, address);
         initializeDirectory();
-        File baseLocal = Environment.getExternalStorageDirectory();
+        File baseLocal = context.getFilesDir();
 
         try {
             //setting up the connection to download the package
@@ -114,6 +113,7 @@ public class IntroPackageDownloader extends AsyncTask<String, String, String> {
 
                 File archive = new File(baseLocal, COMPRESSED_DIR + packageName_en);
                 FileOutputStream archiveStream = new FileOutputStream(archive);
+                Log.v(LOGTAG, "download location " + archive.getAbsolutePath());
 
                 //getting the package
                 InputStream input = httpURLConnection.getInputStream();
@@ -242,7 +242,7 @@ public class IntroPackageDownloader extends AsyncTask<String, String, String> {
      * Creating the directories for the package i.e compressed, extracted
      */
     void initializeDirectory() {
-        File baseLocal = Environment.getExternalStorageDirectory();
+        File baseLocal = context.getFilesDir();
         //File baseLocal = context.getDir("Heritage",Context.MODE_PRIVATE);
         File extracted = new File(baseLocal, EXTRACT_DIR);
         if (!extracted.exists()) {
@@ -252,6 +252,8 @@ public class IntroPackageDownloader extends AsyncTask<String, String, String> {
         if (!compressed.exists()) {
             compressed.mkdirs();
         }
+        Log.v(LOGTAG, extracted.getAbsolutePath());
+        Log.v(LOGTAG, compressed.getAbsolutePath());
     }
 
     /**
@@ -259,12 +261,13 @@ public class IntroPackageDownloader extends AsyncTask<String, String, String> {
      *
      * @param basepackageName_en name of the tar file with extension
      */
-    void ExtractPackage(String basepackageName_en) {
-        String packageName_en = basepackageName_en + context.getString(R.string.package_format);
-        File baseLocal = Environment.getExternalStorageDirectory();
+    private void ExtractPackage(String basepackageName_en) {
+        String packageName_en = basepackageName_en.toLowerCase().replace("\\s", "") + context.getString(R.string.package_format);
+        File baseLocal = context.getFilesDir();
         File archive = new File(baseLocal, COMPRESSED_DIR + packageName_en);
         File destination = new File(baseLocal, EXTRACT_DIR);
-        Log.v(LOGTAG, destination.toString());
+        Log.v(LOGTAG, "compressed location " + archive.getAbsolutePath());
+        Log.v(LOGTAG, "extracted destination " + destination.toString());
 
 
         try {
@@ -279,7 +282,7 @@ public class IntroPackageDownloader extends AsyncTask<String, String, String> {
 
                 if (entry.isDirectory()) {
                     entry = tarArchiveInputStream.getNextTarEntry();
-                    // Log.i(LOGTAG, "Found directory " + entry.getName());
+                    Log.v(LOGTAG, "Found directory " + entry.getName());
                     continue;
                 }
 
@@ -292,12 +295,12 @@ public class IntroPackageDownloader extends AsyncTask<String, String, String> {
                 OutputStream out = new FileOutputStream(currfile);
                 IOUtils.copy(tarArchiveInputStream, out);
                 out.close();
-                //  Log.i(LOGTAG, entry.getName());
+                Log.v(LOGTAG, entry.getName());
                 entry = tarArchiveInputStream.getNextTarEntry();
             }
             tarArchiveInputStream.close();
         } catch (Exception e) {
-            //  Log.i(LOGTAG, e.toString());
+            Log.v(LOGTAG, e.toString());
         }
 
 

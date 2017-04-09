@@ -73,7 +73,7 @@ public class GalleryActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
 
         if (decider.equals(getString(R.string.all))) {
-            Log.v(LOGTAG, "Entered Gallery from PacakgeContentActivity");
+            Log.v(LOGTAG, "Entered Gallery from PackageContentActivity");
             ImageNamesList = getIntent().getStringArrayListExtra(getString(R.string.imageNamesList));
             toolbar.setTitle(packageName.toUpperCase());
         } else {

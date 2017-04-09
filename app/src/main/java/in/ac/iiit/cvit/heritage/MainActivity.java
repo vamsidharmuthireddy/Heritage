@@ -1,6 +1,7 @@
 package in.ac.iiit.cvit.heritage;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -15,6 +16,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -26,6 +28,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -51,7 +54,7 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
     private static final int PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 3;
     private static final int PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 4;
 
-    private boolean permissionRejected = false;
+    private int totalPermissions = 0;
     private boolean storageRequested = false;
     private boolean locationRequested = false;
 
@@ -116,6 +119,47 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
 
             }
         });
+
+        String EXTRACT_DIR = getString(R.string.intro_package_extracted_location);
+        File baseLocal = getFilesDir();
+        //File baseLocal = context.getDir("Heritage",Context.MODE_PRIVATE);
+        File extracted = new File(baseLocal, EXTRACT_DIR);
+        Log.v(LOGTAG, extracted.getAbsolutePath());
+        File list[] = extracted.listFiles();
+        if (list == null || list.length == 0) {
+            Log.v(LOGTAG, " No packages exist");
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setTitle("Check for available Heritage sites")
+                    .setMessage("Please turn on your internet and press OK to check for available Heritage sites")
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            IntroPackageDownloader introPackageDownloader
+                                    = new IntroPackageDownloader(MainActivity.this, MainActivity.this, recyclerViewAdapter);
+
+                            introPackageDownloader.execute(getString(R.string.intro_package_name));
+
+                        }
+                    })
+                    .setNegativeButton("Not Now", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    })
+                    .setCancelable(false);
+
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+
+
+        } else {
+
+            Log.v(LOGTAG, " Some packages exist");
+        }
+
+
+
 
     }
 
@@ -188,6 +232,15 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
         int id = item.getItemId();
 
         if (id == R.id.nav_language) {
+            Toast.makeText(MainActivity.this, "Language Change not available as of now!", Toast.LENGTH_SHORT).show();
+        }
+
+        if (id == R.id.nav_feedback) {
+            String url = "https://drive.google.com/open?id=1DgPNOHtPZmU-YpNPHhEfj5j-VYSZXwTrPgO6y12JJZ8";
+
+            Intent i = new Intent(Intent.ACTION_VIEW);
+            i.setData(Uri.parse(url));
+            startActivity(i);
 
         }
 
@@ -330,11 +383,11 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
                     Log.v(LOGTAG, "MainActivity has FINE GPS permission");
-                    permissionRejected = false;
+                    totalPermissions = totalPermissions + 1;
                 } else {
                     Log.v(LOGTAG, "MainActivity does not have FINE GPS permission");
                     //Log.v(LOGTAG,"1");
-                    permissionRejected = true;
+                    totalPermissions = totalPermissions - 1;
                 }
                 break;
 
@@ -343,10 +396,10 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
                     Log.v(LOGTAG, "MainActivity has COARSE GPS permission");
-                    permissionRejected = false;
+                    totalPermissions = totalPermissions + 1;
                 } else {
                     Log.v(LOGTAG, "MainActivity does not have COARSE GPS permission");
-                    permissionRejected = true;
+                    totalPermissions = totalPermissions - 1;
                     if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION)) {
                         //Toast to be shown while re-directing to settings
                         //Log.v(LOGTAG,"2 if");
@@ -363,7 +416,7 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
                 storageRequested = true;
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Log.v(LOGTAG, "MainActivity has READ storage permissions");
-                    permissionRejected = false;
+                    totalPermissions = totalPermissions + 1;
                     heritageSitesList = LoadPackage("heritagesite");
                     setRecyclerView();
 
@@ -371,7 +424,7 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
                     //openApplicationPermissions();
                     Log.v(LOGTAG, "MainActivity does not have READ storage permissions");
                     //Log.v(LOGTAG,"3");
-                    permissionRejected = true;
+                    totalPermissions = totalPermissions - 1;
 
                 }
                 break;
@@ -380,10 +433,10 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
                 storageRequested = true;
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Log.v(LOGTAG, "MainActivity has WRITE storage permissions");
-                    permissionRejected = false;
+                    totalPermissions = totalPermissions + 1;
                 } else {
                     Log.v(LOGTAG, "MainActivity does not have WRITE storage permissions");
-                    permissionRejected = true;
+                    totalPermissions = totalPermissions - 1;
                     if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
                         //Log.v(LOGTAG,"4 if");
                         //openApplicationPermissions();
@@ -396,8 +449,8 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
 
         }
 
-        Log.v(LOGTAG, "permissionRejected = " + permissionRejected + " storageRequested = " + storageRequested + " locationRequested = " + locationRequested);
-        if (permissionRejected & storageRequested & locationRequested) {
+        Log.v(LOGTAG, "totalPermissions = " + totalPermissions + " storageRequested = " + storageRequested + " locationRequested = " + locationRequested);
+        if (totalPermissions <= 0 & storageRequested & locationRequested) {
             //Log.v(LOGTAG, "5");
             Log.v(LOGTAG, "openApplicationPermissions");
             openApplicationPermissions();

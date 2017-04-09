@@ -1,7 +1,6 @@
 package in.ac.iiit.cvit.heritage;
 
 import android.content.Context;
-import android.os.Environment;
 import android.util.Log;
 
 import org.w3c.dom.Document;
@@ -119,7 +118,7 @@ public class HeritageSiteReader {
                     if(heritagesite.item(i).getNodeType() == Node.ELEMENT_NODE){
 
                         //We are creating an interest point object to store all the relevant data available
-                        heritageSite = new HeritageSite();
+                        heritageSite = new HeritageSite(context);
 
                         //getting a list of all the child elements
                         NodeList keys = heritagesite.item(i).getChildNodes();
@@ -158,7 +157,7 @@ public class HeritageSiteReader {
      * It calls readTextFile and readContentsFromString to get the contents from heritage storage folder
      */
     private void readFromFile(){
-        File baseLocal = Environment.getExternalStorageDirectory();
+        File baseLocal = context.getFilesDir();
 
         File xmlfile = new File(baseLocal, dataLocation + "/" + xmlFile);
 

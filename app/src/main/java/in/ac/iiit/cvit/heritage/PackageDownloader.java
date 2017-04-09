@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Environment;
 import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -100,7 +99,7 @@ public class PackageDownloader extends AsyncTask<String, String, String> {
         String address = packageUrl + packageName_en;
         Log.i(LOGTAG, address);
         initializeDirectory();
-        File baseLocal = Environment.getExternalStorageDirectory();
+        File baseLocal = context.getFilesDir();
 
         try {
             //setting up the connection to download the package
@@ -245,7 +244,7 @@ public class PackageDownloader extends AsyncTask<String, String, String> {
      * Creating the directories for the package i.e compressed, extracted
      */
     void initializeDirectory() {
-        File baseLocal = Environment.getExternalStorageDirectory();
+        File baseLocal = context.getFilesDir();
         //File baseLocal = context.getDir("Heritage",Context.MODE_PRIVATE);
         File extracted = new File(baseLocal, EXTRACT_DIR);
         if (!extracted.exists()) {
@@ -264,7 +263,7 @@ public class PackageDownloader extends AsyncTask<String, String, String> {
      */
     void ExtractPackage(String basepackageName_en) {
         String packageName_en = basepackageName_en + context.getString(R.string.package_format);
-        File baseLocal = Environment.getExternalStorageDirectory();
+        File baseLocal = context.getFilesDir();
         File archive = new File(baseLocal, COMPRESSED_DIR + packageName_en);
         File destination = new File(baseLocal, EXTRACT_DIR);
         Log.v("Extracted directory", destination.toString());

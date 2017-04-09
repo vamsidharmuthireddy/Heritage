@@ -51,5 +51,12 @@ dependencies {
     compile 'com.android.volley:volley:1.0.0'
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
+    compile 'com.mapbox.mapboxsdk:mapbox-java-core:2.0.0'
+    compile 'com.mapbox.mapboxsdk:mapbox-java-geojson:2.0.0'
+    compile 'com.mapbox.mapboxsdk:mapbox-java-services:2.0.0'
+    compile 'com.mapbox.mapboxsdk:mapbox-java-services-rx:2.0.0'
+    compile 'com.mapbox.mapboxsdk:mapbox-android-services:2.0.0'
+    compile 'com.mapbox.mapboxsdk:mapbox-android-telemetry:2.0.0'
+    compile 'com.mapbox.mapboxsdk:mapbox-android-ui:2.0.0'
     testCompile 'junit:junit:4.12'
 }

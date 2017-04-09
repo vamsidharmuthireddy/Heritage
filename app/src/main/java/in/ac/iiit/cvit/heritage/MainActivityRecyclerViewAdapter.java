@@ -129,15 +129,15 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
                 .getStringSessionPreferences(
                         context, context.getString(R.string.package_name), context.getString(R.string.default_package_value));
 
-        String packageName_en =
-                heritageSites_en.get(position).getHeritageSite(context.getString(R.string.interest_point_title));
+        String packageName_en = heritageSites_en.get(position)
+                .getHeritageSite(context.getString(R.string.interest_point_title)).toLowerCase().replace("\\s", "");
         String switchKey = context.getString(R.string.download_switch_state) + packageName_en.toLowerCase().replace("\\s", "");
-        ;
+
         boolean download_switch_state;
         //download_switch_state = sessionManager.getBooleanSessionPreferences(context, switchKey, false);
 
         String EXTRACT_DIR = context.getString(R.string.full_package_extracted_location);
-        File baseLocal = Environment.getExternalStorageDirectory();
+        File baseLocal = context.getFilesDir();
         //File baseLocal = context.getDir("Heritage",Context.MODE_PRIVATE);
         File extracted = new File(baseLocal, EXTRACT_DIR + packageName_en);
         if (extracted.exists()) {
@@ -149,7 +149,8 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
             sessionManager.setSessionPreferences(context, context.getString(R.string.download_switch_state), false);
             Log.v(LOGTAG, packageName_en + " does not exists");
         }
-
+        Log.v(LOGTAG, "my path " + extracted.getAbsolutePath());
+        Log.v(LOGTAG, "system path " + context.getFilesDir().getAbsolutePath());
 
         ImageView titleImage = holder.titleImage;
         final TextView title = holder.title;
@@ -231,15 +232,61 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
                 if(isShortInfoVisible) {
                     //hiding the view
                     isShortInfoVisible = false;
-                    new CardViewAnimator(context).collapseShortInfo(holder.shortInfo, holder.revealButton);
+                    //new CardViewAnimator(context).collapseShortInfo(holder.shortInfo, holder.revealButton);
                     //v.animate().rotation(0).setDuration(500).start();
+
+
                 }
                 else {
                     //showing the view
                     isShortInfoVisible = true;
-                    new CardViewAnimator(context).expandShortInfo(holder.shortInfo, holder.revealButton, holder.shortInfoParent);
-
+                    //new CardViewAnimator(context).expandShortInfo(holder.shortInfo, holder.revealButton, holder.shortInfoParent);
                     //v.animate().rotation(-180).setDuration(500).start();
+/*                    Log.v(LOGTAG,"info button clicked");
+                    try {
+                        Log.v(LOGTAG,"trying to inflate popup");
+                        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                        View popupLayout = inflater.inflate(R.layout.layout_popup, (ViewGroup) activity.findViewById(R.id.popup_element));
+                        TextView popupText = (TextView)popupLayout.findViewById(R.id.popup_text);
+                        popupText.setText(heritageSites.get(position).getHeritageSite(context.getString(R.string.interest_point_short_info)));
+                        int width = holder.titleImage.getWidth()
+                                - (int)context.getResources().getDimension(R.dimen.activity_half_std_margin)
+                                - (int)context.getResources().getDimension(R.dimen.activity_std_padding);
+                        PopupWindow popupWindow = new PopupWindow(context);
+                        popupWindow.setWidth(width);
+                        popupWindow.setHeight(LinearLayout.LayoutParams.WRAP_CONTENT);
+                        popupWindow.setFocusable(true);
+                        popupWindow.setContentView(popupLayout);
+                        //pw.showAtLocation(v, Gravity.CENTER_HORIZONTAL,0,0);
+                        popupWindow.showAsDropDown(holder.title,0,0);
+                        popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+                            @Override
+                            public void onDismiss() {
+                                isShortInfoVisible = false;
+                            }
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+*/
+                    AlertDialog.Builder alertBuilder = new AlertDialog.Builder(activity);
+                    alertBuilder.setMessage(heritageSites.get(position).getHeritageSite(context.getString(R.string.interest_point_short_info)));
+                    alertBuilder.setTitle(holder.title.getText());
+                    alertBuilder.setPositiveButton(R.string.close_dialog, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            isShortInfoVisible = false;
+                        }
+                    });
+                    alertBuilder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
+                            isShortInfoVisible = false;
+                        }
+                    });
+                    AlertDialog alertDialog = alertBuilder.create();
+                    alertDialog.show();
                 }
 
 
@@ -332,7 +379,7 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
                                     String compressName = context.getString(R.string.full_package_compressed_location)
                                             + packageName_en + context.getString(R.string.package_format);
 
-                                    File compressedFile = new File(Environment.getExternalStorageDirectory(), compressName);
+                                    File compressedFile = new File(context.getFilesDir(), compressName);
                                     if (compressedFile.exists()) {
                                         compressedFile.delete();
                                         Log.i(LOGTAG, compressedFile.getAbsolutePath() + " is deleted");
@@ -340,7 +387,7 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
 
 
                                     String extractedName = context.getString(R.string.full_package_extracted_location) + packageName_en;
-                                    File extractedDir = new File(Environment.getExternalStorageDirectory(), extractedName);
+                                    File extractedDir = new File(context.getFilesDir(), extractedName);
 
                                     if (extractedDir.isDirectory()) {
                                         String[] children = extractedDir.list();

@@ -1,6 +1,7 @@
 package in.ac.iiit.cvit.heritage;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -9,10 +10,12 @@ import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -21,18 +24,24 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks
+import java.util.ArrayList;
+import java.util.Locale;
+
+public class MapsActivityGoogle extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks
         , GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
-    private static final String LOGTAG = "MapsActivity";
+    private static final String LOGTAG = "MapsActivityGoogle";
 
     private GoogleMap googleMap;
     private MapView mapView;
@@ -54,17 +63,116 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private BroadcastReceiver gpsBroadcastReceiver;
 
 
+    private SessionManager sessionManager;
+    private String packageName;
+    public String packageName_en;
+    public String interestPointName;
+    public String interestPointType;
+    private Toolbar toolbar;
+    private String language;
+    public ArrayList<InterestPoint> monumentList;
+    public ArrayList<InterestPoint> monumentList_en;
+    public static String decider = new String();
+    public ArrayList<Double> latitudeList = new ArrayList<Double>();
+    public ArrayList<Double> longitudeList = new ArrayList<Double>();
+    public ArrayList<String> titleList = new ArrayList<String>();
+
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private static final int PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
+
+        final LocaleManager localeManager = new LocaleManager(MapsActivityGoogle.this);
+        localeManager.loadLocale();
+        language = Locale.getDefault().getLanguage();
+
+        setContentView(R.layout.activity_maps_google);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        packageName = getIntent().getStringExtra(getString(R.string.package_name));
+        packageName_en = getIntent().getStringExtra(getString(R.string.package_name_en));
+        decider = getIntent().getStringExtra(getString(R.string.location_list));
+        sessionManager = new SessionManager();
+        sessionManager.setSessionPreferences(MapsActivityGoogle.this, getString(R.string.package_name), packageName);
+
+        if (decider.equals(getString(R.string.all))) {
+            Log.v(LOGTAG, "Entered Gallery from PackageContentActivity");
+
+            Bundle bundle = getIntent().getBundleExtra(getString(R.string.monumentList_bundle));
+            monumentList = (ArrayList<InterestPoint>) bundle.getSerializable(getString(R.string.monumentList));
+            monumentList_en = (ArrayList<InterestPoint>) bundle.getSerializable(getString(R.string.monumentList_en));
+        } else {
+            Log.v(LOGTAG, "Entered Gallery from InterestPointActivity");
+            interestPointName = getIntent().getStringExtra(getString(R.string.interestpoint_name));
+            interestPointType = getIntent().getStringExtra(getString(R.string.interest_point_type));
+            toolbar.setTitle(interestPointName.toUpperCase());
+            Log.v(LOGTAG, "clicked interest point is " + interestPointName.toUpperCase());
+        }
+
+//        getLocationList();
+        initializeMapClients();
+
+        new loadActivityContent().execute();
+    }
+
+    private class loadActivityContent extends AsyncTask<Void, Void, Void> {
+        private ProgressDialog progressDialog;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = new ProgressDialog(MapsActivityGoogle.this);
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progressDialog.setIndeterminate(false);
+            progressDialog.setProgress(0);
+            progressDialog.setMessage(getString(R.string.loading));
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            getLocationList();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            progressDialog.dismiss();
+        }
+    }
+
+    public void getLocationList() {
+
+        String name[] = new String[1000];
+        Double lat[] = new Double[1000];
+        Double lon[] = new Double[1000];
+        for (int i = 0; i < monumentList.size(); i++) {
+
+            InterestPoint monument = monumentList.get(i);
+
+            name[i] = monument.getMonument(getString(R.string.interest_point_title));
+            lat[i] = Double.parseDouble(monument.getMonument(getString(R.string.interest_point_latitude)));
+            lon[i] = Double.parseDouble(monument.getMonument(getString(R.string.interest_point_longitude)));
+
+            if (name[i] != null && lat[i] != null && lon[i] != null) {
+                titleList.add(name[i]);
+                latitudeList.add(lat[i]);
+                longitudeList.add(lon[i]);
+            }
+
+        }
+
+
+    }
+
+
+    private void initializeMapClients() {
         mGoogleApiClient = null;
         createLocationClients();
 
@@ -76,7 +184,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 if (!broadcastLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
                         && !broadcastLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
                     locationEnabled = false;
-                    //Toast.makeText(MapsActivity.this, getString(R.string.turnon_gps), Toast.LENGTH_LONG).show();
+                    //Toast.makeText(MapsActivityGoogle.this, getString(R.string.turnon_gps), Toast.LENGTH_LONG).show();
                 }
                 Log.v(LOGTAG, "Broadcast Manager ");
             }
@@ -87,17 +195,80 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
                 && !locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
             locationEnabled = false;
-            Toast.makeText(MapsActivity.this, getString(R.string.turnon_gps), Toast.LENGTH_LONG).show();
+            Toast.makeText(MapsActivityGoogle.this, getString(R.string.turnon_gps), Toast.LENGTH_LONG).show();
         } else {
             locationEnabled = true;
         }
 
-
-
-
-
     }
 
+    private class placeMarkers extends AsyncTask<Void, MarkerOptions, LatLngBounds.Builder> {
+        private ProgressDialog progressDialog;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = new ProgressDialog(MapsActivityGoogle.this);
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progressDialog.setIndeterminate(false);
+            progressDialog.setProgress(0);
+            progressDialog.setMessage(getString(R.string.loading));
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+        }
+
+        @Override
+        protected LatLngBounds.Builder doInBackground(Void... params) {
+            double latSum = 0;
+            double lonSum = 0;
+            LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
+            for (int i = 0; i < titleList.size(); i++) {
+
+                int hue = (int) (Math.random() * 360 + 0);
+                LatLng interestPointLocation = new LatLng(latitudeList.get(i), longitudeList.get(i));
+
+                MarkerOptions markerOptions = new MarkerOptions();
+                markerOptions.position(interestPointLocation)
+                        .title(titleList.get(i))
+                        .icon(BitmapDescriptorFactory.defaultMarker());
+
+                //googleMap.addMarker(markerOptions);
+                publishProgress(markerOptions);
+
+                latSum = latSum + latitudeList.get(i);
+                lonSum = lonSum + longitudeList.get(i);
+                //googleMap.moveCamera(CameraUpdateFactory.newLatLng(interestPointLocation));
+
+                boundsBuilder.include(interestPointLocation);
+            }
+
+
+            return boundsBuilder;
+        }
+
+
+        protected void onProgressUpdate(MarkerOptions... options) {
+            // super.onProgressUpdate(values);
+            googleMap.addMarker(options[0]);
+        }
+
+        @Override
+        protected void onPostExecute(LatLngBounds.Builder boundsBuilder) {
+            //super.onPostExecute(aVoid);
+            progressDialog.dismiss();
+
+            LatLngBounds bounds = boundsBuilder.build();
+            //Change the padding as per needed
+            int width = getResources().getDisplayMetrics().widthPixels;
+            int height = getResources().getDisplayMetrics().heightPixels;
+            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, width, width, 15);
+            //using height takes the markers out of view
+            //CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds,width, height, 15);
+            googleMap.animateCamera(cameraUpdate);
+
+
+        }
+    }
 
     /**
      * Manipulates the map once available.
@@ -122,14 +293,39 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
         }
-
         googleMap.setMyLocationEnabled(true);
+        new placeMarkers().execute();
+/*
+        double latSum = 0;
+        double lonSum = 0;
+        LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
+        for(int i=0;i<titleList.size();i++){
 
-        this.googleMap.addMarker(new MarkerOptions()
-                .position(sydney)
-                .title("Marker in Sydney")
-        );
-        this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+            int hue = (int )(Math.random() * 360 + 0);
+            LatLng interestPointLocation = new LatLng(latitudeList.get(i),longitudeList.get(i));
+
+            googleMap.addMarker(new MarkerOptions()
+            .position(interestPointLocation)
+            .title(titleList.get(i))
+            .icon(BitmapDescriptorFactory.defaultMarker()));
+
+            latSum = latSum + latitudeList.get(i);
+            lonSum = lonSum + longitudeList.get(i);
+            //googleMap.moveCamera(CameraUpdateFactory.newLatLng(interestPointLocation));
+
+            boundsBuilder.include(interestPointLocation);
+        }
+
+        LatLngBounds bounds = boundsBuilder.build();
+        //Change the padding as per needed
+        int width = getResources().getDisplayMetrics().widthPixels;
+        int height = getResources().getDisplayMetrics().heightPixels;
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds,width, width, 15);
+        //using height takes the markers out of view
+        //CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds,width, height, 15);
+        googleMap.animateCamera(cameraUpdate);
+*/
+        //googleMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(latSum, lonSum)));
     }
 
 
@@ -158,6 +354,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onPause() {
         super.onPause();
+        Log.v(LOGTAG, "onPause");
         //Disconnect from API onPause()
         if (mGoogleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
@@ -173,7 +370,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void createLocationClients() {
         if (mGoogleApiClient == null) {
-            mGoogleApiClient = new GoogleApiClient.Builder(MapsActivity.this)
+            mGoogleApiClient = new GoogleApiClient.Builder(MapsActivityGoogle.this)
                     .addConnectionCallbacks(this)
                     .addOnConnectionFailedListener(this)
                     .addApi(LocationServices.API)
@@ -192,8 +389,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onConnected(Bundle bundle) {
         Log.v(LOGTAG, "Running onConnected");
-        if (ActivityCompat.checkSelfPermission(MapsActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(MapsActivity.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(MapsActivityGoogle.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(MapsActivityGoogle.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -216,10 +413,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             currentLongitude = location.getLongitude();
             Log.v(LOGTAG, "OnConnected currentLatitude = " + currentLatitude + " currentLongitude = " + currentLongitude + " accuracy = " + location.getAccuracy());
 
-            this.googleMap.addMarker(new MarkerOptions()
-                    .position(new LatLng(17.383186, 78.401838))
-                    .title("Marker in me")
-            );
         }
 
         boolean mRequestingLocationUpdates = true;
@@ -230,8 +423,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     protected void startLocationUpdates() {
         //Log.d(LOGTAG, "Calling startLocationUpdates");
-        if (ActivityCompat.checkSelfPermission(MapsActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(MapsActivity.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(MapsActivityGoogle.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(MapsActivityGoogle.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -258,7 +451,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (connectionResult.hasResolution()) {
             try {
                 // Start an Activity that tries to resolve the error
-                connectionResult.startResolutionForResult(MapsActivity.this, CONNECTION_FAILURE_RESOLUTION_REQUEST);
+                connectionResult.startResolutionForResult(MapsActivityGoogle.this, CONNECTION_FAILURE_RESOLUTION_REQUEST);
                     /*
                      * Thrown if Google Play services canceled the original
                      * PendingIntent

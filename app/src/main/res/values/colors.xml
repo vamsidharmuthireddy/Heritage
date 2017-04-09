@@ -26,7 +26,7 @@
     <color name="translucent_scrim_bottom">#4B000000</color>
     <color name="translucent_scrim_bottom_center">#25000000</color>
 
-    <color name="translucent_background">#64000000</color>
+    <color name="translucent_background">#96000000</color>
 
 
 </resources>

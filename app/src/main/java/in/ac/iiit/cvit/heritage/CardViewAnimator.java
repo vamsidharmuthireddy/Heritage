@@ -154,6 +154,12 @@ public class CardViewAnimator extends CardView {
     }
 
 
+    public void interestpointFabReveal() {
 
+    }
+
+    public void interestpointFabHide() {
+
+    }
 
 }

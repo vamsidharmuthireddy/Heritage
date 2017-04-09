@@ -81,11 +81,14 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.DataObje
 
 
         File file = new File(ImageNamesList.get(position));
+
         Uri uri = Uri.fromFile(file);
         viewHolder.galleryImage.setLayoutParams(new GridView.LayoutParams(imageWidth, imageWidth));
         viewHolder.galleryImage.setBackgroundColor(context.getResources().getColor(R.color.colorBlack));
+        Log.v(LOGTAG, "file name " + file.getAbsolutePath());
+        Log.v(LOGTAG, "uri " + uri.toString());
         Glide.with(context)
-                .load(uri)
+                .load(file)
                 .asBitmap()
                 //           .placeholder(R.drawable.monument)
                 .centerCrop()
@@ -101,6 +104,8 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.DataObje
             }
         }
 */
+
+        //viewHolder.galleryImage.setImageURI(uri);
 
         final int _position = position;
         final ArrayList<String> ff = new ArrayList<String>(ImageNamesList);

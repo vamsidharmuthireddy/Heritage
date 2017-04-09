@@ -100,7 +100,7 @@ public class InterestPointActivity extends AppCompatActivity {
         if (interestPointType.equals(getString(R.string.monument))) {
 
             Log.v(LOGTAG, "Entered Monuments");
-            ImageNamesList = interestPoint.getMonumentImagePaths(packageName_en, interestPointName);
+            ImageNamesList = interestPoint.getMonumentImagePaths(InterestPointActivity.this, packageName_en, interestPointName);
 
             Bitmap setBitmap = interestPoint.getMonumentTitleImage(packageName_en, interestPointName, InterestPointActivity.this);
             Log.v(LOGTAG, "Title Image = " + interestPoint.getMonumentTitleImagePath(packageName_en, interestPointName, InterestPointActivity.this));
@@ -122,7 +122,7 @@ public class InterestPointActivity extends AppCompatActivity {
                 public void onClick(View v) {
 
                     Intent openGallery = new Intent(InterestPointActivity.this, GalleryActivity.class);
-                    //                   Intent openGallery = new Intent(InterestPointActivity.this, MapsActivity.class);
+                    //                   Intent openGallery = new Intent(InterestPointActivity.this, MapsActivityGoogle.class);
                     openGallery.putExtra(getString(R.string.package_name), packageName);
                     openGallery.putExtra(getString(R.string.package_name_en), packageName_en);
                     openGallery.putExtra(getString(R.string.image_count), getString(R.string.interestpoint_name));

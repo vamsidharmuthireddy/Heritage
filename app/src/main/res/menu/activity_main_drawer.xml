@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:checkableBehavior="single">
+    <group android:checkableBehavior="none">
         <item
             android:id="@+id/nav_language"
             android:icon="@mipmap/ic_change_language"
@@ -9,8 +9,9 @@
 
     </group>
 
-    <item android:title="Communicate">
+    <item android:title="@string/communicate">
         <menu>
+            <!--
             <item
                 android:id="@+id/nav_about_us"
                 android:icon="@mipmap/ic_about_us"
@@ -23,7 +24,11 @@
                 android:id="@+id/navy_contact_us"
                 android:icon="@mipmap/ic_contact_us"
                 android:title="@string/contact_us" />
-
+-->
+            <item
+                android:id="@+id/nav_feedback"
+                android:icon="@mipmap/ic_feedback"
+                android:title="@string/feedback" />
 
         </menu>
     </item>

@@ -3,7 +3,6 @@ package in.ac.iiit.cvit.heritage;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Environment;
 import android.util.Log;
 
 import java.io.File;
@@ -23,7 +22,7 @@ public class InterestPoint implements Serializable {
     private HashMap<String, String> royalDetails;
     private SessionManager sessionManager;
 
-    private static final String dataLocation = "Android/data/in.ac.iiit.cvit.heritage/files/completePackages/extracted/";
+    private static final String dataLocation = "completePackages/extracted/";
 
     private static final String imageType = ".jpg";
     private static final String latitudeTag = "lat";
@@ -37,9 +36,12 @@ public class InterestPoint implements Serializable {
     private static final String LOGTAG = "InterestPoint";
 
     public InterestPoint() {
+        //Don't take context in constructor. This class will not be serializable
         monumentDetails = new HashMap<String, String>();
         royalDetails = new HashMap<String, String>();
+
     }
+
 
     /**
      * This method sets the interest point(monument) details
@@ -93,7 +95,7 @@ public class InterestPoint implements Serializable {
 
         String image_path = dataLocation + packageName_en + File.separator + imageName + imageType;
 
-        File imageFile = new File(Environment.getExternalStorageDirectory(),image_path);
+        File imageFile = new File(context.getFilesDir(), image_path);
         //Log.v(LOGTAG, imageFile.getAbsolutePath());
         if(imageFile.exists()) {
             BitmapFactory.Options options = new BitmapFactory.Options();
@@ -123,7 +125,7 @@ public class InterestPoint implements Serializable {
 
         String image_path = dataLocation + packageName_en + File.separator + imageName + imageType;
 
-        File imageFile = new File(Environment.getExternalStorageDirectory(), image_path);
+        File imageFile = new File(context.getFilesDir(), image_path);
         //Log.v(LOGTAG, imageFile.getAbsolutePath());
         if (imageFile.exists()) {
             return imageFile.getAbsolutePath();
@@ -149,8 +151,8 @@ public class InterestPoint implements Serializable {
 
         String image_path = dataLocation + packageName_en + "/" + imageName + imageType;
 
-        File imageFile = new File(Environment.getExternalStorageDirectory(), image_path);
-        Log.v("getImage", Environment.getExternalStorageDirectory() + image_path);
+        File imageFile = new File(context.getFilesDir(), image_path);
+        Log.v("getImage", imageFile.getAbsolutePath());
         if (imageFile.exists()) {
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inPreferredConfig = Bitmap.Config.ARGB_8888;
@@ -174,7 +176,7 @@ public class InterestPoint implements Serializable {
      *
      * @return Images of Interest point in Bitmap Array data type
      */
-    public ArrayList<Bitmap> getMonumentImages(String packageName_en, String interestPointName) {
+    public ArrayList<Bitmap> getMonumentImages(Context context, String packageName_en, String interestPointName) {
 
         packageName_en = packageName_en.toLowerCase().replace("\\s", "");
 
@@ -195,7 +197,7 @@ public class InterestPoint implements Serializable {
 //            Log.v("getImages",imageName);
             String image_path = dataLocation + packageName_en + "/" + imageName + imageType;
 
-            File imageFile = new File(Environment.getExternalStorageDirectory(),image_path);
+            File imageFile = new File(context.getFilesDir(), image_path);
             if (imageFile.exists()) {
                 BitmapFactory.Options options = new BitmapFactory.Options();
                 options.inPreferredConfig = Bitmap.Config.ARGB_8888;
@@ -210,7 +212,7 @@ public class InterestPoint implements Serializable {
     }
 
 
-    public ArrayList<String> getMonumentImagePaths(String packageName_en, String interestPointName) {
+    public ArrayList<String> getMonumentImagePaths(Context context, String packageName_en, String interestPointName) {
 
         packageName_en = packageName_en.toLowerCase().replace("\\s", "");
 
@@ -224,7 +226,7 @@ public class InterestPoint implements Serializable {
 
         for (int i = 0; i < imagesList.size(); i++) {
 
-            String image_path = Environment.getExternalStorageDirectory() + File.separator
+            String image_path = context.getFilesDir() + File.separator
                     + dataLocation + packageName_en + File.separator + imagesList.get(i) + imageType;
 
             imagesList.set(i, image_path);

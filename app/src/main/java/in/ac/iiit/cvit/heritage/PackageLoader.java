@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Environment;
 import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -211,7 +210,7 @@ public class PackageLoader {
      */
     void ExtractPackage(String basePackageName) {
         String packageName = basePackageName;
-        File baseLocal = Environment.getExternalStorageDirectory();
+        File baseLocal = context.getFilesDir();
         File archive = new File(basePackageName);
         File destination = new File(baseLocal, EXTRACT_DIR);
         Log.v(LOGTAG, destination.toString());
@@ -279,10 +278,16 @@ public class PackageLoader {
             String chosenFileLocation = temp;
 
             ExtractPackage(chosenFileLocation);
-            String extractdPackagesLocation = Environment.getExternalStorageDirectory() + EXTRACT_DIR;
+            String extractdPackagesLocation = context.getFilesDir() + File.separator + EXTRACT_DIR;
+            Log.v(LOGTAG, "extracted location " + extractdPackagesLocation);
             File[] extractedPackagesList = loadFileList(extractdPackagesLocation);
             for (int i = 0; i < extractedPackagesList.length; i++) {
-                if (extractedPackagesList[i].toString().toLowerCase().equals(packageName_en) & extractedPackagesList[i].isDirectory()) {
+                Log.v(LOGTAG, "list " + extractedPackagesList[i].getAbsolutePath());
+                String extractedPackageName = extractedPackagesList[i].toString();
+                extractedPackageName = extractedPackageName.substring(extractedPackageName.lastIndexOf(File.separator) + 1);
+                Log.v(LOGTAG, "extracted name " + extractedPackageName);
+                if (extractedPackageName.equals(packageName_en) & extractedPackagesList[i].isDirectory()) {
+                    Log.v(LOGTAG, "extracted location = " + extractdPackagesLocation);
                     Log.v(LOGTAG, "Package loading completed");
                     return "Package Loading Completed";
                 }
@@ -337,7 +342,7 @@ public class PackageLoader {
                 downloadSwitch.invalidate();
 
                 String extractedName = context.getString(R.string.full_package_extracted_location) + temp.substring(temp.lastIndexOf(File.separator) + 1);
-                File extractedDir = new File(Environment.getExternalStorageDirectory(), extractedName);
+                File extractedDir = new File(context.getFilesDir(), extractedName);
 
                 Log.i(LOGTAG, extractedDir.getAbsolutePath() + " is going to be deleted");
                 if (extractedDir.isDirectory()) {
