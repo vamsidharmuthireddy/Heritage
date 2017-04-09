@@ -23,8 +23,6 @@ import com.bumptech.glide.request.animation.ViewPropertyAnimation;
 import java.io.File;
 import java.util.ArrayList;
 
-import static android.R.attr.width;
-
 /**
  * Created by HOME on 16-03-2017.
  */
@@ -127,10 +125,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.DataObje
                 int startX = v.getWidth() / 2;
                 int startY = v.getHeight() / 2;
                 Bitmap clickedImage = BitmapFactory.decodeFile(ff.get(position));
-
                 ActivityOptions options = ActivityOptions.makeThumbnailScaleUpAnimation(v, clickedImage, startX, startY);
-
-
                 activity.startActivity(openFullScreenImage, options.toBundle());
             }
         });
