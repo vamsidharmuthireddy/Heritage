@@ -2,6 +2,7 @@ package in.ac.iiit.cvit.heritage;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -162,8 +163,13 @@ public class InterestPointActivity extends AppCompatActivity {
                     openGallery.putExtra(getString(R.string.interestpoint_name), interestPointName);
                     openGallery.putExtra(getString(R.string.interest_point_type), interestPointType);
                     openGallery.putStringArrayListExtra(getString(R.string.imageNamesList), ImageNamesList);
-
-                    startActivity(openGallery);
+                    //startActivity(openGallery);
+                    int startX = (int) v.getX();
+                    int startY = (int) v.getY();
+                    int width = v.getWidth();
+                    int height = v.getHeight();
+                    ActivityOptions options = ActivityOptions.makeScaleUpAnimation(v, startX, startY, width, height);
+                    startActivity(openGallery, options.toBundle());
                     //finish();
                 }
             });
@@ -180,9 +186,13 @@ public class InterestPointActivity extends AppCompatActivity {
                     Bundle bundle = new Bundle();
                     bundle.putSerializable(getString(R.string.monument_bundle), (Serializable) interestPoint);
                     openMap.putExtras(bundle);
-
-
-                    startActivity(openMap);
+                    //startActivity(openMap);
+                    int startX = (int) v.getX();
+                    int startY = (int) v.getY();
+                    int width = v.getWidth();
+                    int height = v.getHeight();
+                    ActivityOptions options = ActivityOptions.makeScaleUpAnimation(v, startX, startY, width, height);
+                    startActivity(openMap, options.toBundle());
                 }
             });
 

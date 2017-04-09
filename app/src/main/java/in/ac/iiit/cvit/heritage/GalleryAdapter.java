@@ -2,8 +2,11 @@ package in.ac.iiit.cvit.heritage;
 
 import android.animation.ObjectAnimator;
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -62,7 +65,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.DataObje
     }
 
     @Override
-    public void onBindViewHolder(GalleryAdapter.DataObjectHolder viewHolder, int position) {
+    public void onBindViewHolder(GalleryAdapter.DataObjectHolder viewHolder, final int position) {
 
 
         ViewPropertyAnimation.Animator animationObject = new ViewPropertyAnimation.Animator() {
@@ -115,9 +118,18 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.DataObje
                 Intent openFullScreenImage = new Intent(activity, FullScreenImageActivity.class);
                 openFullScreenImage.putExtra("position", _position);
                 openFullScreenImage.putStringArrayListExtra(context.getString(R.string.imageNamesList), ImageNamesList);
-
                 Log.v(LOGTAG, "clicked image is " + ff.get(_position));
-                activity.startActivity(openFullScreenImage);
+
+                //activity.startActivity(openFullScreenImage);
+
+                int startX = v.getWidth() / 2;
+                int startY = v.getHeight() / 2;
+                Bitmap clickedImage = BitmapFactory.decodeFile(ff.get(position));
+
+                ActivityOptions options = ActivityOptions.makeThumbnailScaleUpAnimation(v, clickedImage, startX, startY);
+
+
+                activity.startActivity(openFullScreenImage, options.toBundle());
             }
         });
 

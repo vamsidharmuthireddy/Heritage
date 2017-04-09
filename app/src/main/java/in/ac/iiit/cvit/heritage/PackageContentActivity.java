@@ -1,5 +1,6 @@
 package in.ac.iiit.cvit.heritage;
 
+import android.app.ActivityOptions;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -108,17 +109,13 @@ public class PackageContentActivity extends AppCompatActivity {
             progressDialog.setProgress(0);
             progressDialog.setMessage(getString(R.string.loading));
             progressDialog.setCancelable(false);
-            progressDialog.show();
+            //progressDialog.show();
         }
 
         @Override
         protected Void doInBackground(Void... params) {
-
             setListeners();
-
             LoadPackage(packageName_en);
-
-
             return null;
         }
 
@@ -198,7 +195,13 @@ public class PackageContentActivity extends AppCompatActivity {
                 Intent openOverview = new Intent(PackageContentActivity.this, OverviewActivity.class);
                 openOverview.putExtra(getString(R.string.package_name), packageName);
                 openOverview.putExtra(getString(R.string.package_name_en), packageName_en);
-                startActivity(openOverview);
+                //startActivity(openOverview);
+                int startX = (int) v.getX();
+                int startY = (int) v.getY();
+                int width = v.getWidth();
+                int height = v.getHeight();
+                ActivityOptions options = ActivityOptions.makeScaleUpAnimation(v, startX, startY, width, height);
+                startActivity(openOverview, options.toBundle());
             }
         });
 
@@ -214,9 +217,14 @@ public class PackageContentActivity extends AppCompatActivity {
                 Bundle bundle = new Bundle();
                 bundle.putSerializable(getString(R.string.kingList), (Serializable) kingsList);
                 bundle.putSerializable(getString(R.string.kingList_en), (Serializable) kingsList_en);
-
                 openKings.putExtra(getString(R.string.kingList_bundle), bundle);
-                startActivity(openKings);
+                //startActivity(openKings);
+                int startX = (int) v.getX();
+                int startY = (int) v.getY();
+                int width = v.getWidth();
+                int height = v.getHeight();
+                ActivityOptions options = ActivityOptions.makeScaleUpAnimation(v, startX, startY, width, height);
+                startActivity(openKings, options.toBundle());
 
             }
         });
@@ -233,10 +241,16 @@ public class PackageContentActivity extends AppCompatActivity {
                 Bundle bundle = new Bundle();
                 bundle.putSerializable(getString(R.string.monumentList), (Serializable) monumentList);
                 bundle.putSerializable(getString(R.string.monumentList_en), (Serializable) monumentList_en);
-
                 openMonuments.putExtra(getString(R.string.monumentList_bundle), bundle);
+                //startActivity(openMonuments);
+                int startX = (int) v.getX();
+                int startY = (int) v.getY();
+                int width = v.getWidth();
+                int height = v.getHeight();
+                ActivityOptions options = ActivityOptions.makeScaleUpAnimation(v, startX, startY, width, height);
+                startActivity(openMonuments, options.toBundle());
 
-                startActivity(openMonuments);
+
             }
         });
 
@@ -250,7 +264,13 @@ public class PackageContentActivity extends AppCompatActivity {
                 openGallery.putExtra(getString(R.string.package_name_en), packageName_en);
                 openGallery.putExtra(getString(R.string.image_count), getString(R.string.all));
                 openGallery.putStringArrayListExtra(getString(R.string.imageNamesList), ImageNamesList);
-                startActivity(openGallery);
+                //startActivity(openGallery);
+                int startX = (int) v.getX();
+                int startY = (int) v.getY();
+                int width = v.getWidth();
+                int height = v.getHeight();
+                ActivityOptions options = ActivityOptions.makeScaleUpAnimation(v, startX, startY, width, height);
+                startActivity(openGallery, options.toBundle());
 
             }
         });
@@ -263,9 +283,14 @@ public class PackageContentActivity extends AppCompatActivity {
                 Bundle bundle = new Bundle();
                 bundle.putSerializable(getString(R.string.monumentList), (Serializable) monumentList);
                 bundle.putSerializable(getString(R.string.monumentList_en), (Serializable) monumentList_en);
-
                 openMap.putExtra(getString(R.string.monumentList_bundle), bundle);
-                startActivity(openMap);
+                //startActivity(openMap);
+                int startX = (int) v.getX();
+                int startY = (int) v.getY();
+                int width = v.getWidth();
+                int height = v.getHeight();
+                ActivityOptions options = ActivityOptions.makeScaleUpAnimation(v, startX, startY, width, height);
+                startActivity(openMap, options.toBundle());
             }
         });
 

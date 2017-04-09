@@ -1,6 +1,7 @@
 package in.ac.iiit.cvit.heritage;
 
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -216,7 +217,13 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
                     Intent openPackageContent = new Intent(context, PackageContentActivity.class);
                     openPackageContent.putExtra(context.getString(R.string.package_name), packageName);
                     openPackageContent.putExtra(context.getString(R.string.package_name_en), packageName_en);
-                    context.startActivity(openPackageContent);
+
+                    int startX = (int) v.getX();
+                    int startY = (int) v.getY();
+                    int width = v.getWidth();
+                    int height = v.getHeight();
+                    ActivityOptions options = ActivityOptions.makeScaleUpAnimation(v, startX, startY, width, height);
+                    context.startActivity(openPackageContent, options.toBundle());
                 } else {
                     Toast.makeText(context, "Please download this package to view more", Toast.LENGTH_LONG).show();
                 }
@@ -240,35 +247,6 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
                 else {
                     //showing the view
                     isShortInfoVisible = true;
-                    //new CardViewAnimator(context).expandShortInfo(holder.shortInfo, holder.revealButton, holder.shortInfoParent);
-                    //v.animate().rotation(-180).setDuration(500).start();
-/*                    Log.v(LOGTAG,"info button clicked");
-                    try {
-                        Log.v(LOGTAG,"trying to inflate popup");
-                        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                        View popupLayout = inflater.inflate(R.layout.layout_popup, (ViewGroup) activity.findViewById(R.id.popup_element));
-                        TextView popupText = (TextView)popupLayout.findViewById(R.id.popup_text);
-                        popupText.setText(heritageSites.get(position).getHeritageSite(context.getString(R.string.interest_point_short_info)));
-                        int width = holder.titleImage.getWidth()
-                                - (int)context.getResources().getDimension(R.dimen.activity_half_std_margin)
-                                - (int)context.getResources().getDimension(R.dimen.activity_std_padding);
-                        PopupWindow popupWindow = new PopupWindow(context);
-                        popupWindow.setWidth(width);
-                        popupWindow.setHeight(LinearLayout.LayoutParams.WRAP_CONTENT);
-                        popupWindow.setFocusable(true);
-                        popupWindow.setContentView(popupLayout);
-                        //pw.showAtLocation(v, Gravity.CENTER_HORIZONTAL,0,0);
-                        popupWindow.showAsDropDown(holder.title,0,0);
-                        popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
-                            @Override
-                            public void onDismiss() {
-                                isShortInfoVisible = false;
-                            }
-                        });
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-*/
                     AlertDialog.Builder alertBuilder = new AlertDialog.Builder(activity);
                     alertBuilder.setMessage(heritageSites.get(position).getHeritageSite(context.getString(R.string.interest_point_short_info)));
                     alertBuilder.setTitle(holder.title.getText());

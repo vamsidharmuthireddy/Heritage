@@ -1,5 +1,6 @@
 package in.ac.iiit.cvit.heritage;
 
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -103,7 +104,13 @@ public class KingActivityAdapter extends RecyclerView.Adapter<KingActivityAdapte
                 openKing.putExtra(context.getString(R.string.interestpoint_name), interestPointTitle);
                 openKing.putExtra(context.getString(R.string.package_name_en), packageName_en);
                 openKing.putExtra(context.getString(R.string.interest_point_type), context.getString(R.string.king));
-                context.startActivity(openKing);
+                //context.startActivity(openKing);
+                int startX = (int) v.getX();
+                int startY = (int) v.getY();
+                int width = v.getWidth();
+                int height = v.getHeight();
+                ActivityOptions options = ActivityOptions.makeScaleUpAnimation(v, startX, startY, width, height);
+                context.startActivity(openKing, options.toBundle());
 
             }
         });
