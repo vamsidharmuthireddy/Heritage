@@ -39,7 +39,12 @@ public class MonumentActivity extends AppCompatActivity {
 
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private static final int PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION = 2;
+    private static final int PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 3;
+    private static final int PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 4;
 
+    private int totalPermissions = 0;
+    private boolean storageRequested = false;
+    private boolean locationRequested = false;
 
     private final static String LOGTAG = "MonumentActivity";
 
@@ -68,15 +73,7 @@ public class MonumentActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        //Setting Location permissions
-        if (checkLocationPermission()) {
-            Log.i(LOGTAG, "MonumentActivity has File Location permission");
-            setViews();
-
-        } else {
-            requestLocationPermission();
-        }
-
+        checkAllPermissions();
 
         Bundle bundle = getIntent().getBundleExtra(getString(R.string.monumentList_bundle));
         monumentList = (ArrayList<InterestPoint>) bundle.getSerializable(getString(R.string.monumentList));
@@ -190,6 +187,40 @@ public class MonumentActivity extends AppCompatActivity {
         super.onBackPressed();
     }
 
+    private void checkAllPermissions() {
+        //Setting Location permissions
+        if (checkLocationPermission()) {
+            locationRequested = true;
+            Log.v(LOGTAG, "MonumentActivity has Location permission");
+        } else {
+            Log.v(LOGTAG, "MonumentActivity Requesting Location permission");
+            requestLocationPermission();
+        }
+        //Setting Storage permissions
+        if (checkStoragePermission()) {
+            storageRequested = true;
+            Log.v(LOGTAG, "MonumentActivity has storage permission");
+            setViews();
+        } else {
+            Log.v(LOGTAG, "MonumentActivity Requesting storage permission");
+            requestStoragePermission();
+        }
+    }
+
+    /**
+     * Checking if read/write permissions are set or not
+     *
+     * @return
+     */
+    protected boolean checkStoragePermission() {
+        int result = ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE);
+        if (result == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     protected boolean checkLocationPermission() {
         int result = ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION);
         if (result == PackageManager.PERMISSION_GRANTED) {
@@ -199,16 +230,36 @@ public class MonumentActivity extends AppCompatActivity {
         }
     }
 
+    protected void requestStoragePermission() {
+
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            //Toast.makeText(this, getString(R.string.storage_permission_request), Toast.LENGTH_LONG).show();
+
+            Log.v(LOGTAG, "requestStoragePermission if");
+            ActivityCompat.requestPermissions(MonumentActivity.this,
+                    new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
+
+
+        } else {
+            Log.v(LOGTAG, "requestStoragePermission else");
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                ActivityCompat.requestPermissions(MonumentActivity.this,
+                        new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
+            }
+        }
+    }
+
     protected void requestLocationPermission() {
 
         if (ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.ACCESS_FINE_LOCATION)) {
             //toast to be shown while requesting permissions
-            Toast.makeText(this, getString(R.string.gps_permission_request), Toast.LENGTH_LONG).show();
-
+            //Toast.makeText(this, getString(R.string.gps_permission_request), Toast.LENGTH_LONG).show();
+            Log.v(LOGTAG, "requestLocationPermission if");
             ActivityCompat.requestPermissions(MonumentActivity.this,
                     new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
 
         } else {
+            Log.v(LOGTAG, "requestLocationPermission else");
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 ActivityCompat.requestPermissions(MonumentActivity.this,
                         new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
@@ -216,42 +267,118 @@ public class MonumentActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * if read/write permissions are not set, then request for them.
+     */
+
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        Log.v(LOGTAG, "requestCode = " + requestCode);
 
         switch (requestCode) {
             case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION:
-            case PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION: {
+                locationRequested = true;
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                    Log.i(LOGTAG, "MonumentActivity has File Location permission");
+                    Log.v(LOGTAG, "PackageContentActivity has FINE GPS permission");
+                    totalPermissions = totalPermissions + 1;
+                } else {
+                    Log.v(LOGTAG, "PackageContentActivity does not have FINE GPS permission");
+                    //Log.v(LOGTAG,"1");
+                    totalPermissions = totalPermissions - 1;
+                }
+                break;
+
+            case PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION:
+                locationRequested = true;
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    Log.v(LOGTAG, "PackageContentActivity has COARSE GPS permission");
+                    totalPermissions = totalPermissions + 1;
+                } else {
+                    Log.v(LOGTAG, "PackageContentActivity does not have COARSE GPS permission");
+                    totalPermissions = totalPermissions - 1;
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(MonumentActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION)) {
+                        //Toast to be shown while re-directing to settings
+                        //Log.v(LOGTAG,"2 if");
+                        //openApplicationPermissions();
+                    } else {
+                        //Log.v(LOGTAG,"2 else");
+                        //openApplicationPermissions();
+                    }
+                }
+                break;
+
+
+            case PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE:
+                storageRequested = true;
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.v(LOGTAG, "PackageContentActivity has READ storage permissions");
+                    totalPermissions = totalPermissions + 1;
                     setViews();
 
                 } else {
-                    if (ActivityCompat.shouldShowRequestPermissionRationale(MonumentActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION)) {
-                        //Toast to be shown while re-directing to settings
-                        openApplicationPermissions();
+                    //openApplicationPermissions();
+                    Log.v(LOGTAG, "PackageContentActivity does not have READ storage permissions");
+                    //Log.v(LOGTAG,"3");
+                    totalPermissions = totalPermissions - 1;
+
+                }
+                break;
+
+            case PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE:
+                storageRequested = true;
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.v(LOGTAG, "PackageContentActivity has WRITE storage permissions");
+                    totalPermissions = totalPermissions + 1;
+                } else {
+                    Log.v(LOGTAG, "PackageContentActivity does not have WRITE storage permissions");
+                    totalPermissions = totalPermissions - 1;
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(MonumentActivity.this, android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                        //Log.v(LOGTAG,"4 if");
+                        //openApplicationPermissions();
                     } else {
-                        openApplicationPermissions();
+                        //Log.v(LOGTAG,"4 else");
+                        //openApplicationPermissions();
                     }
                 }
-            }
+                break;
+
         }
+
+        Log.v(LOGTAG, "totalPermissions = " + totalPermissions + " storageRequested = " + storageRequested + " locationRequested = " + locationRequested);
+        if (totalPermissions <= 0 & storageRequested & locationRequested) {
+            //Log.v(LOGTAG, "5");
+            Log.v(LOGTAG, "openApplicationPermissions");
+            openApplicationPermissions();
+        }
+
     }
 
     private void openApplicationPermissions() {
-        Toast.makeText(this, getString(R.string.gps_permission_open_settings), Toast.LENGTH_LONG).show();
+        Toast.makeText(this, getString(R.string.all_permissions_open_settings), Toast.LENGTH_LONG).show();
         final Intent intent_permissions = new Intent();
         intent_permissions.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
         intent_permissions.addCategory(Intent.CATEGORY_DEFAULT);
         intent_permissions.setData(Uri.parse("package:" + MonumentActivity.this.getPackageName()));
 
-        intent_permissions.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //Disabling the following flag solved the premature calling of onActivityResult(http://stackoverflow.com/a/30882399/4983204)
+        //if it doesnot work check here http://stackoverflow.com/a/22811103/4983204
+        //intent_permissions.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent_permissions.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
         intent_permissions.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
 
-        MonumentActivity.this.startActivity(intent_permissions);
+        MonumentActivity.this.startActivityForResult(intent_permissions, 100);
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        Log.v(LOGTAG, "returned back from other activity " + requestCode + " " + resultCode);
+        checkAllPermissions();
+    }
+
 
 }

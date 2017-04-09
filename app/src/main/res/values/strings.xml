@@ -116,12 +116,13 @@
     <string name="specific" translatable="false">specific</string>
     <string name="monumentList" translatable="false">monumenetList</string>
     <string name="monumentList_en" translatable="false">monumenetList_en</string>
-    <string name="monumentList_bundle" translatable="false">monumenetList_bundle</string>
+    <string name="monumentList_bundle" translatable="false">monumentList_bundle</string>
+    <string name="monument_bundle" translatable="false">monument_bundle</string>
     <string name="kingList" translatable="false">kingList</string>
     <string name="kingList_en" translatable="false">kingList_en</string>
     <string name="kingList_bundle" translatable="false">kingList_bundle</string>
     <string name="imageNamesList" translatable="false">imagesNamesList</string>
-    <string name="location_list" translatable="false">locationList</string>
+    <string name="location_count" translatable="false">locationList</string>
 
 
     <!--MonumentActivity-->

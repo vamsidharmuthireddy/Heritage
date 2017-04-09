@@ -2,11 +2,16 @@ package in.ac.iiit.cvit.heritage;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -18,6 +23,7 @@ import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,6 +59,13 @@ public class GalleryActivity extends AppCompatActivity {
 
     // supported file formats
     public static final List<String> FILE_EXTN = Arrays.asList("jpg", "jpeg", "png");
+
+
+    private static final int PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 3;
+    private static final int PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 4;
+
+    private int totalPermissions = 0;
+    private boolean storageRequested = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -95,7 +108,9 @@ public class GalleryActivity extends AppCompatActivity {
 
 
         // Initializing Grid View
-        setGridView();
+        //setGridView();
+
+        checkAllPermissions();
 
     }
 
@@ -255,5 +270,133 @@ public class GalleryActivity extends AppCompatActivity {
         finish();
         super.onBackPressed();
     }
+
+
+    private void checkAllPermissions() {
+        //Setting Storage permissions
+        if (checkStoragePermission()) {
+            storageRequested = true;
+            Log.v(LOGTAG, "GalleryActivity has storage permission");
+            setGridView();
+        } else {
+            Log.v(LOGTAG, "GalleryActivity Requesting storage permission");
+            requestStoragePermission();
+        }
+    }
+
+    /**
+     * Checking if read/write permissions are set or not
+     *
+     * @return
+     */
+    protected boolean checkStoragePermission() {
+        int result = ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE);
+        if (result == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    protected void requestStoragePermission() {
+
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            //Toast.makeText(this, getString(R.string.storage_permission_request), Toast.LENGTH_LONG).show();
+
+            Log.v(LOGTAG, "requestStoragePermission if");
+            ActivityCompat.requestPermissions(GalleryActivity.this,
+                    new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
+
+
+        } else {
+            Log.v(LOGTAG, "requestStoragePermission else");
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                ActivityCompat.requestPermissions(GalleryActivity.this,
+                        new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
+            }
+        }
+    }
+
+    /**
+     * if read/write permissions are not set, then request for them.
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        Log.v(LOGTAG, "requestCode = " + requestCode);
+
+        switch (requestCode) {
+
+            case PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE:
+                storageRequested = true;
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.v(LOGTAG, "GalleryActivity has READ storage permissions");
+                    totalPermissions = totalPermissions + 1;
+                    setGridView();
+
+                } else {
+                    //openApplicationPermissions();
+                    Log.v(LOGTAG, "GalleryActivity does not have READ storage permissions");
+                    //Log.v(LOGTAG,"3");
+                    totalPermissions = totalPermissions - 1;
+
+                }
+                break;
+
+            case PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE:
+                storageRequested = true;
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.v(LOGTAG, "GalleryActivity has WRITE storage permissions");
+                    totalPermissions = totalPermissions + 1;
+                } else {
+                    Log.v(LOGTAG, "GalleryActivity does not have WRITE storage permissions");
+                    totalPermissions = totalPermissions - 1;
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(GalleryActivity.this, android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                        //Log.v(LOGTAG,"4 if");
+                        //openApplicationPermissions();
+                    } else {
+                        //Log.v(LOGTAG,"4 else");
+                        //openApplicationPermissions();
+                    }
+                }
+                break;
+
+        }
+
+        Log.v(LOGTAG, "totalPermissions = " + totalPermissions + " storageRequested = " + storageRequested);
+        if (totalPermissions <= 0 & storageRequested) {
+            //Log.v(LOGTAG, "5");
+            Log.v(LOGTAG, "openApplicationPermissions");
+            openApplicationPermissions();
+        }
+
+    }
+
+    private void openApplicationPermissions() {
+        Toast.makeText(this, getString(R.string.all_permissions_open_settings), Toast.LENGTH_LONG).show();
+        final Intent intent_permissions = new Intent();
+        intent_permissions.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        intent_permissions.addCategory(Intent.CATEGORY_DEFAULT);
+        intent_permissions.setData(Uri.parse("package:" + GalleryActivity.this.getPackageName()));
+
+        //Disabling the following flag solved the premature calling of onActivityResult(http://stackoverflow.com/a/30882399/4983204)
+        //if it doesnot work check here http://stackoverflow.com/a/22811103/4983204
+        //intent_permissions.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent_permissions.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        intent_permissions.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+
+        GalleryActivity.this.startActivityForResult(intent_permissions, 100);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        Log.v(LOGTAG, "returned back from other activity " + requestCode + " " + resultCode);
+        checkAllPermissions();
+    }
+
+
+
 
 }

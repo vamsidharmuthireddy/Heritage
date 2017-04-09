@@ -15,7 +15,6 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -68,10 +67,10 @@ public class MapsActivityGoogle extends FragmentActivity implements OnMapReadyCa
     public String packageName_en;
     public String interestPointName;
     public String interestPointType;
-    private Toolbar toolbar;
     private String language;
     public ArrayList<InterestPoint> monumentList;
     public ArrayList<InterestPoint> monumentList_en;
+    private InterestPoint monument;
     public static String decider = new String();
     public ArrayList<Double> latitudeList = new ArrayList<Double>();
     public ArrayList<Double> longitudeList = new ArrayList<Double>();
@@ -95,7 +94,7 @@ public class MapsActivityGoogle extends FragmentActivity implements OnMapReadyCa
 
         packageName = getIntent().getStringExtra(getString(R.string.package_name));
         packageName_en = getIntent().getStringExtra(getString(R.string.package_name_en));
-        decider = getIntent().getStringExtra(getString(R.string.location_list));
+        decider = getIntent().getStringExtra(getString(R.string.location_count));
         sessionManager = new SessionManager();
         sessionManager.setSessionPreferences(MapsActivityGoogle.this, getString(R.string.package_name), packageName);
 
@@ -109,7 +108,11 @@ public class MapsActivityGoogle extends FragmentActivity implements OnMapReadyCa
             Log.v(LOGTAG, "Entered Gallery from InterestPointActivity");
             interestPointName = getIntent().getStringExtra(getString(R.string.interestpoint_name));
             interestPointType = getIntent().getStringExtra(getString(R.string.interest_point_type));
-            toolbar.setTitle(interestPointName.toUpperCase());
+
+            monument = new InterestPoint();
+            Bundle bundle = getIntent().getExtras();
+            monument = (InterestPoint) bundle.getSerializable(getString(R.string.monument_bundle));
+
             Log.v(LOGTAG, "clicked interest point is " + interestPointName.toUpperCase());
         }
 
@@ -136,7 +139,13 @@ public class MapsActivityGoogle extends FragmentActivity implements OnMapReadyCa
 
         @Override
         protected Void doInBackground(Void... params) {
-            getLocationList();
+            if (decider.equals(getString(R.string.all))) {
+                getLocationList();
+            } else {
+                titleList.add(interestPointName);
+                latitudeList.add(Double.parseDouble(monument.getMonument(getString(R.string.interest_point_latitude))));
+                longitudeList.add(Double.parseDouble(monument.getMonument(getString(R.string.interest_point_longitude))));
+            }
             return null;
         }
 

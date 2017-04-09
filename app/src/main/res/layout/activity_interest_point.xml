@@ -74,16 +74,44 @@
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 
+
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/gallery_button"
+        android:id="@+id/reveal_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:background="@color/colorWhite"
-        android:layout_gravity="right|bottom"
+        android:layout_gravity="end|bottom"
+        android:elevation="@dimen/activity_elevation"
+        android:scaleType="fitCenter"
+        android:src="@mipmap/ic_reveal"
+        app:backgroundTint="@color/colorBlack" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/gallery_button"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:background="@color/colorWhite"
+        android:layout_gravity="end|bottom"
         android:elevation="@dimen/activity_elevation"
         android:scaleType="fitCenter"
         android:src="@drawable/ic_gallery_icon_white"
         app:backgroundTint="@color/colorBlack" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/maps_button"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:background="@color/colorWhite"
+        android:layout_gravity="end|bottom"
+        android:elevation="@dimen/activity_elevation"
+        android:scaleType="fitCenter"
+        android:src="@mipmap/ic_maps_white"
+        app:backgroundTint="@color/colorBlack" />
+
 
 </android.support.design.widget.CoordinatorLayout>
