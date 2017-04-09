@@ -23,6 +23,8 @@ import com.bumptech.glide.request.animation.ViewPropertyAnimation;
 import java.io.File;
 import java.util.ArrayList;
 
+import static android.R.attr.width;
+
 /**
  * Created by HOME on 16-03-2017.
  */
