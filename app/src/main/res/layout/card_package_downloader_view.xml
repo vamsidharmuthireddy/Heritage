@@ -64,8 +64,8 @@
 
                     <ImageButton
                         android:id="@+id/heritage_info_reveal_button"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
                         android:layout_marginBottom="@dimen/activity_std_margin"
                         android:layout_marginEnd="@dimen/activity_half_std_margin"
                         android:layout_marginTop="@dimen/activity_std_margin"

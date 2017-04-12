@@ -1,5 +1,9 @@
 package in.ac.iiit.cvit.heritage;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.Context;
@@ -12,6 +16,7 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
@@ -44,6 +49,13 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
     private int expandedPosition = -1;
 
     private Boolean isShortInfoVisible = false;
+
+    private Boolean revealButtonDown = false;
+
+    final Float animationdownScale = 0.9f;
+    final Float animationUpScale = 1.25f;
+    final Float animationNormalScale = 1.0f;
+    final int animationScaleTime = 250;
 
     /**
      * Provide a reference to the views for each data item
@@ -227,6 +239,120 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
                 } else {
                     Toast.makeText(context, "Please download this package to view more", Toast.LENGTH_LONG).show();
                 }
+            }
+        });
+
+        holder.revealButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(final View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        revealButtonDown = true;
+                        //Log.v(LOGTAG,"scale in up is "+galleryButton.getScaleX());
+                        Log.v(LOGTAG, "Gallary Down Animation " + revealButtonDown);
+                        holder.revealButton.clearAnimation();
+                        holder.revealButton.animate().scaleX(animationdownScale).scaleY(animationdownScale)
+                                .setDuration(animationScaleTime / 2)
+                                .setListener(new AnimatorListenerAdapter() {
+                                    @Override
+                                    public void onAnimationCancel(Animator animation) {
+                                        super.onAnimationCancel(animation);
+                                        Log.v(LOGTAG, "INFO DOWN animation CANCEL");
+                                    }
+
+                                    @Override
+                                    public void onAnimationStart(Animator animation) {
+                                        super.onAnimationStart(animation);
+                                        Log.v(LOGTAG, "INFO DOWN animation START");
+                                    }
+
+                                    @Override
+                                    public void onAnimationEnd(Animator animation) {
+                                        super.onAnimationEnd(animation);
+                                        Log.v(LOGTAG, "INFO DOWN animation End " + revealButtonDown);
+                                    }
+                                })
+                                .start();
+
+                        return true;
+
+                    case MotionEvent.ACTION_UP:
+                        revealButtonDown = false;
+                        //Log.v(LOGTAG,"scale in down is "+galleryButton.getScaleX());
+                        Log.v(LOGTAG, "Gallary UP Triggered " + revealButtonDown);
+                        holder.revealButton.animate().scaleX(animationUpScale).scaleY(animationUpScale)
+                                .setDuration(animationScaleTime / 2)
+                                .setListener(new AnimatorListenerAdapter() {
+                                    @Override
+                                    public void onAnimationCancel(Animator animation) {
+                                        super.onAnimationCancel(animation);
+                                        Log.v(LOGTAG, "Gallery UP animation CANCEL");
+                                    }
+
+                                    @Override
+                                    public void onAnimationStart(Animator animation) {
+                                        super.onAnimationStart(animation);
+                                        Log.v(LOGTAG, "Gallery UP animation START");
+                                    }
+
+                                    @Override
+                                    public void onAnimationEnd(Animator animation) {
+                                        super.onAnimationEnd(animation);
+                                        Log.v(LOGTAG, "Gallary UP animation End " + revealButtonDown);
+                                        if (!revealButtonDown) {
+                                            Log.v(LOGTAG, "Gallary Last Animation " + revealButtonDown);
+
+                                            int startX = (int) v.getX();
+                                            int startY = (int) v.getY();
+                                            int width = v.getWidth();
+                                            int height = v.getHeight();
+                                            final ActivityOptions options = ActivityOptions.makeScaleUpAnimation(v, startX, startY, width, height);
+                                            PropertyValuesHolder scalex = PropertyValuesHolder.ofFloat(View.SCALE_X, animationNormalScale);
+                                            PropertyValuesHolder scaley = PropertyValuesHolder.ofFloat(View.SCALE_Y, animationNormalScale);
+                                            ObjectAnimator anim = ObjectAnimator.ofPropertyValuesHolder(holder.revealButton, scalex, scaley);
+                                            //anim.setRepeatCount(1);
+                                            //anim.setRepeatMode(ValueAnimator.REVERSE);
+                                            anim.setDuration(animationScaleTime / 2);
+                                            anim.addListener(new AnimatorListenerAdapter() {
+                                                @Override
+                                                public void onAnimationEnd(Animator animation) {
+                                                    super.onAnimationEnd(animation);
+
+                                                    //startActivity(openGallery, options.toBundle());
+                                                    if (!holder.revealButton.hasTransientState()) {
+                                                        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(activity);
+                                                        alertBuilder.setMessage(heritageSites.get(position).getHeritageSite(context.getString(R.string.interest_point_short_info)));
+                                                        alertBuilder.setTitle(holder.title.getText());
+                                                        alertBuilder.setPositiveButton(R.string.close_dialog, new DialogInterface.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(DialogInterface dialog, int which) {
+                                                                dialog.dismiss();
+                                                                isShortInfoVisible = false;
+                                                            }
+                                                        });
+                                                        alertBuilder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                                                            @Override
+                                                            public void onDismiss(DialogInterface dialog) {
+                                                                isShortInfoVisible = false;
+                                                            }
+                                                        });
+                                                        AlertDialog alertDialog = alertBuilder.create();
+                                                        alertDialog.show();
+                                                    }
+                                                }
+                                            });
+                                            anim.start();
+
+
+                                        }
+                                    }
+                                })
+                                .start();
+                        return true;
+
+                }
+
+                return false;
             }
         });
 

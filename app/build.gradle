@@ -58,5 +58,6 @@ dependencies {
     compile 'com.mapbox.mapboxsdk:mapbox-android-services:2.0.0'
     compile 'com.mapbox.mapboxsdk:mapbox-android-telemetry:2.0.0'
     compile 'com.mapbox.mapboxsdk:mapbox-android-ui:2.0.0'
+    compile 'com.github.amlcurran.showcaseview:library:5.4.3'
     testCompile 'junit:junit:4.12'
 }

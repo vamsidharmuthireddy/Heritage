@@ -2,6 +2,8 @@ package in.ac.iiit.cvit.heritage;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -20,6 +22,7 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -69,6 +72,14 @@ public class InterestPointActivity extends AppCompatActivity {
 
     private static final String LOGTAG = "InterestPointActivity";
     private Boolean visible = false;
+    private Boolean revealButtonDown = false;
+    private Boolean galleryButtonDown = false;
+    private Boolean mapsButtonDown = false;
+
+    final Float animationdownScale = 0.9f;
+    final Float animationUpScale = 1.25f;
+    final Float animationNormalScale = 1.0f;
+    final int animationScaleTime = 250;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,8 +138,8 @@ public class InterestPointActivity extends AppCompatActivity {
         revealButton = (FloatingActionButton) findViewById(R.id.reveal_button);
         mapsButton = (FloatingActionButton) findViewById(R.id.maps_button);
 
-
     }
+
 
     private void setListeners() {
 
@@ -139,7 +150,7 @@ public class InterestPointActivity extends AppCompatActivity {
             ImageNamesList = interestPoint.getMonumentImagePaths(InterestPointActivity.this, packageName_en, interestPointName);
 
             Bitmap setBitmap = interestPoint.getMonumentTitleImage(packageName_en, interestPointName, InterestPointActivity.this);
-            Log.v(LOGTAG, "Title Image = " + interestPoint.getMonumentTitleImagePath(packageName_en, interestPointName, InterestPointActivity.this));
+            //Log.v(LOGTAG, "Title Image = " + interestPoint.getMonumentTitleImagePath(packageName_en, interestPointName, InterestPointActivity.this));
             if (setBitmap == null) {
                 imageView.setImageBitmap(((BitmapDrawable) getResources().getDrawable(R.drawable.monument)).getBitmap());
                 imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
@@ -151,91 +162,413 @@ public class InterestPointActivity extends AppCompatActivity {
             textview_info.setText(interestPoint.getMonument(getString(R.string.interest_point_info)));
             textview_info.setGravity(Gravity.LEFT);
 
-            galleryButton.setOnClickListener(new View.OnClickListener() {
+
+            final View.OnTouchListener galleryTouchListener = new View.OnTouchListener() {
                 @Override
-                public void onClick(View v) {
+                public boolean onTouch(final View v, MotionEvent event) {
+                    switch (event.getAction()) {
+                        case MotionEvent.ACTION_DOWN:
+                            galleryButtonDown = true;
+                            //Log.v(LOGTAG,"scale in up is "+galleryButton.getScaleX());
+                            Log.v(LOGTAG, "Gallary Down Animation " + galleryButtonDown);
+                            galleryButton.clearAnimation();
+                            galleryButton.animate().scaleX(animationdownScale).scaleY(animationdownScale)
+                                    .setDuration(animationScaleTime / 2)
+                                    .setListener(new AnimatorListenerAdapter() {
+                                        @Override
+                                        public void onAnimationCancel(Animator animation) {
+                                            super.onAnimationCancel(animation);
+                                            Log.v(LOGTAG, "Gallery DOWN animation CANCEL");
+                                        }
 
-                    Intent openGallery = new Intent(InterestPointActivity.this, GalleryActivity.class);
-                    //                   Intent openGallery = new Intent(InterestPointActivity.this, MapsActivityGoogle.class);
-                    openGallery.putExtra(getString(R.string.package_name), packageName);
-                    openGallery.putExtra(getString(R.string.package_name_en), packageName_en);
-                    openGallery.putExtra(getString(R.string.image_count), getString(R.string.interestpoint_name));
-                    openGallery.putExtra(getString(R.string.interestpoint_name), interestPointName);
-                    openGallery.putExtra(getString(R.string.interest_point_type), interestPointType);
-                    openGallery.putStringArrayListExtra(getString(R.string.imageNamesList), ImageNamesList);
-                    //startActivity(openGallery);
-                    int startX = (int) v.getX();
-                    int startY = (int) v.getY();
-                    int width = v.getWidth();
-                    int height = v.getHeight();
-                    ActivityOptions options = ActivityOptions.makeScaleUpAnimation(v, startX, startY, width, height);
-                    startActivity(openGallery, options.toBundle());
-                    //finish();
-                }
-            });
+                                        @Override
+                                        public void onAnimationStart(Animator animation) {
+                                            super.onAnimationStart(animation);
+                                            Log.v(LOGTAG, "Gallery DOWN animation START");
+                                        }
 
-            mapsButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent openMap = new Intent(InterestPointActivity.this, MapsActivityGoogle.class);
-                    openMap.putExtra(getString(R.string.package_name), packageName);
-                    openMap.putExtra(getString(R.string.package_name_en), packageName_en);
-                    openMap.putExtra(getString(R.string.interestpoint_name), interestPointName);
-                    openMap.putExtra(getString(R.string.interest_point_type), interestPointType);
-                    openMap.putExtra(getString(R.string.location_count), getString(R.string.specific));
-                    Bundle bundle = new Bundle();
-                    bundle.putSerializable(getString(R.string.monument_bundle), (Serializable) interestPoint);
-                    openMap.putExtras(bundle);
-                    //startActivity(openMap);
-                    int startX = (int) v.getX();
-                    int startY = (int) v.getY();
-                    int width = v.getWidth();
-                    int height = v.getHeight();
-                    ActivityOptions options = ActivityOptions.makeScaleUpAnimation(v, startX, startY, width, height);
-                    startActivity(openMap, options.toBundle());
-                }
-            });
+                                        @Override
+                                        public void onAnimationEnd(Animator animation) {
+                                            super.onAnimationEnd(animation);
+                                            Log.v(LOGTAG, "Gallary DOWN animation End " + galleryButtonDown);
+                                        }
+                                    })
+                                    .start();
+                            return true;
 
-            revealButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+                        case MotionEvent.ACTION_UP:
+                            galleryButtonDown = false;
+                            //Log.v(LOGTAG,"scale in down is "+galleryButton.getScaleX());
+                            Log.v(LOGTAG, "Gallary UP Triggered " + galleryButtonDown);
+                            galleryButton.animate().scaleX(animationUpScale).scaleY(animationUpScale)
+                                    .setDuration(animationScaleTime / 2)
+                                    .setListener(new AnimatorListenerAdapter() {
+                                        @Override
+                                        public void onAnimationCancel(Animator animation) {
+                                            super.onAnimationCancel(animation);
+                                            Log.v(LOGTAG, "Gallery UP animation CANCEL");
+                                        }
 
-                    if (!visible) {
-                        visible = true;
-                        revealButton.animate().rotation(-90).setDuration(500).start();
-                        int margin = (int) getResources().getDimension(R.dimen.activity_std_margin);
-                        int width = revealButton.getWidth() + margin;
-                        Log.v(LOGTAG, galleryButton.getWidth() + " " + revealButton.getWidth() + " " + margin);
-                        galleryButton.setVisibility(View.VISIBLE);
-                        galleryButton.setAlpha(0.0f);
-                        galleryButton.animate().translationX(0 - width).alpha(1.0f).setDuration(500).setListener(null);
-                        mapsButton.setVisibility(View.VISIBLE);
-                        mapsButton.setAlpha(0.0f);
-                        mapsButton.animate().translationX(0 - 2 * width).alpha(1.0f).setDuration(500).setListener(null);
+                                        @Override
+                                        public void onAnimationStart(Animator animation) {
+                                            super.onAnimationStart(animation);
+                                            Log.v(LOGTAG, "Gallery UP animation START");
+                                        }
 
-                    } else {
-                        visible = false;
-                        revealButton.animate().rotation(0).setDuration(500).start();
-                        galleryButton.setAlpha(1.0f);
-                        galleryButton.animate().translationX(0).alpha(0.0f).setDuration(500)
-                                .setListener(new AnimatorListenerAdapter() {
-                                    @Override
-                                    public void onAnimationEnd(Animator animation) {
-                                        super.onAnimationEnd(animation);
-                                        galleryButton.setVisibility(View.GONE);
-                                    }
-                                });
-                        mapsButton.animate().translationX(0).alpha(0.0f).setDuration(500)
-                                .setListener(new AnimatorListenerAdapter() {
-                                    @Override
-                                    public void onAnimationEnd(Animator animation) {
-                                        super.onAnimationEnd(animation);
-                                        mapsButton.setVisibility(View.GONE);
-                                    }
-                                });
+                                        @Override
+                                        public void onAnimationEnd(Animator animation) {
+                                            super.onAnimationEnd(animation);
+                                            Log.v(LOGTAG, "Gallary UP animation End " + galleryButtonDown);
+                                            if (!galleryButtonDown) {
+                                                Log.v(LOGTAG, "Gallary Last Animation " + galleryButtonDown);
+
+                                                final Intent openGallery = new Intent(InterestPointActivity.this, GalleryActivity.class);
+                                                openGallery.putExtra(getString(R.string.package_name), packageName);
+                                                openGallery.putExtra(getString(R.string.package_name_en), packageName_en);
+                                                openGallery.putExtra(getString(R.string.image_count), getString(R.string.interestpoint_name));
+                                                openGallery.putExtra(getString(R.string.interestpoint_name), interestPointName);
+                                                openGallery.putExtra(getString(R.string.interest_point_type), interestPointType);
+                                                openGallery.putStringArrayListExtra(getString(R.string.imageNamesList), ImageNamesList);
+                                                int startX = (int) v.getX();
+                                                int startY = (int) v.getY();
+                                                int width = v.getWidth();
+                                                int height = v.getHeight();
+                                                final ActivityOptions options = ActivityOptions.makeScaleUpAnimation(v, startX, startY, width, height);
+                                                PropertyValuesHolder scalex = PropertyValuesHolder.ofFloat(View.SCALE_X, animationNormalScale);
+                                                PropertyValuesHolder scaley = PropertyValuesHolder.ofFloat(View.SCALE_Y, animationNormalScale);
+                                                ObjectAnimator anim = ObjectAnimator.ofPropertyValuesHolder(galleryButton, scalex, scaley);
+                                                //anim.setRepeatCount(1);
+                                                //anim.setRepeatMode(ValueAnimator.REVERSE);
+                                                anim.setDuration(animationScaleTime / 2);
+                                                anim.addListener(new AnimatorListenerAdapter() {
+                                                    @Override
+                                                    public void onAnimationEnd(Animator animation) {
+                                                        super.onAnimationEnd(animation);
+
+                                                        //startActivity(openGallery, options.toBundle());
+                                                        if (!galleryButton.hasTransientState()) {
+                                                            startActivity(openGallery, options.toBundle());
+                                                        }
+                                                    }
+                                                });
+                                                anim.start();
+
+
+                                            }
+                                        }
+                                    })
+                                    .start();
+                            return true;
                     }
+
+
+                    return false;//does not recognise any other touch events
+                }
+            };
+
+            galleryButton.setOnTouchListener(galleryTouchListener);
+
+            final View.OnTouchListener mapTouchListener = new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(final View v, MotionEvent event) {
+                    switch (event.getAction()) {
+                        case MotionEvent.ACTION_DOWN:
+                            mapsButtonDown = true;
+                            //Log.v(LOGTAG,"scale in up is "+galleryButton.getScaleX());
+                            Log.v(LOGTAG, "Map Down Animation " + mapsButtonDown);
+                            mapsButton.clearAnimation();
+                            mapsButton.animate().scaleX(animationdownScale).scaleY(animationdownScale)
+                                    .setDuration(animationScaleTime / 2)
+                                    .setListener(new AnimatorListenerAdapter() {
+                                        @Override
+                                        public void onAnimationStart(Animator animation) {
+                                            super.onAnimationStart(animation);
+                                            Log.v(LOGTAG, "Map DOWN animation START");
+                                        }
+
+                                        @Override
+                                        public void onAnimationCancel(Animator animation) {
+                                            super.onAnimationCancel(animation);
+                                            Log.v(LOGTAG, "Map DOWN animation CANCEL");
+                                        }
+
+                                        @Override
+                                        public void onAnimationEnd(Animator animation) {
+                                            super.onAnimationEnd(animation);
+                                            Log.v(LOGTAG, "Map DOWN animation END " + mapsButtonDown);
+                                            //mapsButton.animate().cancel();
+                                        }
+                                    })
+                                    .start();
+                            return true;
+                        //break;
+
+                        case MotionEvent.ACTION_UP:
+                            mapsButtonDown = false;
+                            //Log.v(LOGTAG,"scale in down is "+galleryButton.getScaleX());
+                            Log.v(LOGTAG, "Map UP Animation " + mapsButtonDown);
+                            mapsButton.animate().scaleX(animationUpScale).scaleY(animationUpScale)
+                                    .setDuration(animationScaleTime / 2)
+                                    .setListener(new AnimatorListenerAdapter() {
+                                        @Override
+                                        public void onAnimationCancel(Animator animation) {
+                                            super.onAnimationCancel(animation);
+                                            Log.v(LOGTAG, "Map UP animation CANCEL");
+                                        }
+
+                                        @Override
+                                        public void onAnimationStart(Animator animation) {
+                                            super.onAnimationStart(animation);
+                                            Log.v(LOGTAG, "Map UP animation START");
+                                        }
+
+                                        @Override
+                                        public void onAnimationEnd(Animator animation) {
+                                            super.onAnimationEnd(animation);
+                                            Log.v(LOGTAG, "Map UP animation END " + mapsButtonDown);
+                                            if (!mapsButtonDown) {
+                                                Log.v(LOGTAG, "Map Last Animation " + mapsButtonDown);
+                                                final Intent openMap = new Intent(InterestPointActivity.this, MapsActivityGoogle.class);
+                                                openMap.putExtra(getString(R.string.package_name), packageName);
+                                                openMap.putExtra(getString(R.string.package_name_en), packageName_en);
+                                                openMap.putExtra(getString(R.string.interestpoint_name), interestPointName);
+                                                openMap.putExtra(getString(R.string.interest_point_type), interestPointType);
+                                                openMap.putExtra(getString(R.string.location_count), getString(R.string.specific));
+                                                Bundle bundle = new Bundle();
+                                                bundle.putSerializable(getString(R.string.monument_bundle), (Serializable) interestPoint);
+                                                openMap.putExtras(bundle);
+                                                int startX = (int) v.getX();
+                                                int startY = (int) v.getY();
+                                                int width = v.getWidth();
+                                                int height = v.getHeight();
+                                                final ActivityOptions options = ActivityOptions.makeScaleUpAnimation(v, startX, startY, width, height);
+                                                PropertyValuesHolder scalex = PropertyValuesHolder.ofFloat(View.SCALE_X, animationNormalScale);
+                                                PropertyValuesHolder scaley = PropertyValuesHolder.ofFloat(View.SCALE_Y, animationNormalScale);
+                                                ObjectAnimator anim = ObjectAnimator.ofPropertyValuesHolder(mapsButton, scalex, scaley);
+                                                //anim.setRepeatCount(1);
+                                                //anim.setRepeatMode(ValueAnimator.REVERSE);
+                                                anim.setDuration(animationScaleTime / 2);
+
+                                                anim.addListener(new AnimatorListenerAdapter() {
+                                                    @Override
+                                                    public void onAnimationEnd(Animator animation) {
+                                                        super.onAnimationEnd(animation);
+
+                                                        if (!mapsButton.hasTransientState()) {
+                                                            startActivity(openMap, options.toBundle());
+                                                        }
+
+                                                    }
+                                                });
+                                                anim.start();
+                                            }
+                                        }
+                                    })
+                                    .start();
+                            return true;
+                    }
+
+
+                    return false;//does not recognise any other touch events
+                }
+            };
+
+            mapsButton.setOnTouchListener(mapTouchListener);
+
+            revealButton.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    switch (event.getAction()) {
+                        case MotionEvent.ACTION_DOWN:
+                            revealButtonDown = true;
+                            //Log.v(LOGTAG,"scale in up is "+galleryButton.getScaleX());
+                            Log.v(LOGTAG, "Reveal DOWN animation " + revealButtonDown);
+
+                            galleryButton.clearAnimation();
+                            mapsButton.clearAnimation();
+                            revealButton.clearAnimation();
+                            revealButton.animate().scaleX(animationdownScale).scaleY(animationdownScale)
+                                    .setDuration(animationScaleTime / 2)
+                                    .setListener(new AnimatorListenerAdapter() {
+                                        @Override
+                                        public void onAnimationCancel(Animator animation) {
+                                            super.onAnimationCancel(animation);
+                                            Log.v(LOGTAG, "Reveal DOWN animation CANCEL");
+                                        }
+
+                                        @Override
+                                        public void onAnimationStart(Animator animation) {
+                                            super.onAnimationStart(animation);
+                                            Log.v(LOGTAG, "Reveal DOWN animation START");
+                                        }
+
+                                        @Override
+                                        public void onAnimationEnd(Animator animation) {
+                                            super.onAnimationEnd(animation);
+                                            Log.v(LOGTAG, "Reveal DOWN animation END " + revealButtonDown);
+                                        }
+                                    })
+                                    .start();
+                            return true;
+                        // break;
+
+                        case MotionEvent.ACTION_UP:
+                            revealButtonDown = false;
+                            //Log.v(LOGTAG,"scale in down is "+galleryButton.getScaleX());
+                            Log.v(LOGTAG, "Reveal UP animation " + revealButtonDown);
+                            revealButton.animate().scaleX(animationUpScale).scaleY(animationUpScale)
+                                    .setDuration(animationScaleTime / 2)
+                                    .setListener(new AnimatorListenerAdapter() {
+                                        @Override
+                                        public void onAnimationCancel(Animator animation) {
+                                            super.onAnimationCancel(animation);
+                                            Log.v(LOGTAG, "Reveal UP animation CANCEL");
+                                        }
+
+                                        @Override
+                                        public void onAnimationStart(Animator animation) {
+                                            super.onAnimationStart(animation);
+                                            Log.v(LOGTAG, "Reveal UP animation START");
+                                        }
+
+                                        @Override
+                                        public void onAnimationEnd(Animator animation) {
+                                            super.onAnimationEnd(animation);
+                                            Log.v(LOGTAG, "Reveal UP animation END " + revealButtonDown);
+                                            if (!revealButtonDown) {
+                                                Log.v(LOGTAG, "Reveal Last Animation " + revealButtonDown);
+                                                PropertyValuesHolder scalex = PropertyValuesHolder.ofFloat(View.SCALE_X, animationNormalScale);
+                                                PropertyValuesHolder scaley = PropertyValuesHolder.ofFloat(View.SCALE_Y, animationNormalScale);
+                                                ObjectAnimator anim = ObjectAnimator.ofPropertyValuesHolder(revealButton, scalex, scaley);
+                                                //anim.setRepeatCount(1);
+                                                //anim.setRepeatMode(ValueAnimator.REVERSE);
+                                                anim.setDuration(animationScaleTime / 2);
+                                                anim.start();
+
+                                                float buttonRotation = revealButton.getRotation();
+                                                Log.v(LOGTAG, "revealButton rotation = " + buttonRotation);
+                                                float targetRotation;
+                                                if (buttonRotation == 0) {
+                                                    targetRotation = -90;
+                                                    int margin = (int) getResources().getDimension(R.dimen.activity_std_margin);
+                                                    int width = revealButton.getWidth() + margin;
+                                                    Log.v(LOGTAG, galleryButton.getWidth() + " " + revealButton.getWidth() + " " + margin);
+                                                    galleryButton.setVisibility(View.VISIBLE);
+                                                    galleryButton.setOnTouchListener(null);
+                                                    galleryButton.setAlpha(0.0f);
+                                                    galleryButton.animate().translationX(0 - width).alpha(1.0f).setDuration(animationScaleTime)
+                                                            .setListener(new AnimatorListenerAdapter() {
+                                                                @Override
+                                                                public void onAnimationCancel(Animator animation) {
+                                                                    super.onAnimationCancel(animation);
+                                                                    Log.v(LOGTAG, "GALLERY VISIBLE TRANSITION CANCEL");
+                                                                }
+
+                                                                @Override
+                                                                public void onAnimationStart(Animator animation) {
+                                                                    super.onAnimationStart(animation);
+                                                                    Log.v(LOGTAG, "GALLERY VISIBLE TRANSITION START");
+                                                                }
+
+                                                                @Override
+                                                                public void onAnimationEnd(Animator animation) {
+                                                                    super.onAnimationEnd(animation);
+                                                                    galleryButton.setOnTouchListener(galleryTouchListener);
+                                                                    Log.v(LOGTAG, "GALLERY VISIBLE TRANSITION END");
+                                                                }
+                                                            })
+                                                            .start();
+                                                    mapsButton.setVisibility(View.VISIBLE);
+                                                    mapsButton.setAlpha(0.0f);
+                                                    mapsButton.setOnTouchListener(null);
+                                                    mapsButton.animate().translationX(0 - 2 * width).alpha(1.0f).setDuration(animationScaleTime)
+                                                            .setListener(new AnimatorListenerAdapter() {
+                                                                @Override
+                                                                public void onAnimationCancel(Animator animation) {
+                                                                    super.onAnimationCancel(animation);
+                                                                    Log.v(LOGTAG, "MAP VISIBLE TRANSITION CANCEL");
+                                                                }
+
+                                                                @Override
+                                                                public void onAnimationStart(Animator animation) {
+                                                                    super.onAnimationStart(animation);
+                                                                    Log.v(LOGTAG, "MAP VISIBLE TRANSITION START");
+                                                                }
+
+                                                                @Override
+                                                                public void onAnimationEnd(Animator animation) {
+                                                                    super.onAnimationEnd(animation);
+                                                                    mapsButton.setOnTouchListener(mapTouchListener);
+                                                                    Log.v(LOGTAG, "MAP VISIBLE TRANSITION END");
+                                                                }
+                                                            })
+                                                            .start();
+
+                                                } else {
+                                                    targetRotation = 0;
+                                                    galleryButton.setAlpha(1.0f);
+                                                    galleryButton.setOnTouchListener(null);
+                                                    galleryButton.animate().translationX(0).alpha(0.0f).setDuration(animationScaleTime)
+                                                            .setListener(new AnimatorListenerAdapter() {
+                                                                @Override
+                                                                public void onAnimationCancel(Animator animation) {
+                                                                    super.onAnimationCancel(animation);
+                                                                    Log.v(LOGTAG, "GALLERY GONE TRANSITION CANCEL");
+                                                                }
+
+                                                                @Override
+                                                                public void onAnimationStart(Animator animation) {
+                                                                    super.onAnimationStart(animation);
+                                                                    Log.v(LOGTAG, "GALLERY GONE TRANSITION START");
+                                                                }
+
+                                                                @Override
+                                                                public void onAnimationEnd(Animator animation) {
+                                                                    super.onAnimationEnd(animation);
+                                                                    galleryButton.setVisibility(View.GONE);
+                                                                    Log.v(LOGTAG, "GALLERY GONE TRANSITION END");
+                                                                }
+                                                            })
+                                                            .start();
+                                                    mapsButton.setAlpha(1.0f);
+                                                    mapsButton.setOnTouchListener(null);
+                                                    mapsButton.animate().translationX(0).alpha(0.0f).setDuration(animationScaleTime)
+                                                            .setListener(new AnimatorListenerAdapter() {
+                                                                @Override
+                                                                public void onAnimationCancel(Animator animation) {
+                                                                    super.onAnimationCancel(animation);
+                                                                    Log.v(LOGTAG, "MAPS GONE TRANSITION CANCEL");
+                                                                }
+
+                                                                @Override
+                                                                public void onAnimationStart(Animator animation) {
+                                                                    super.onAnimationStart(animation);
+                                                                    Log.v(LOGTAG, "MAPS GONE TRANSITION START");
+                                                                }
+
+                                                                @Override
+                                                                public void onAnimationEnd(Animator animation) {
+                                                                    super.onAnimationEnd(animation);
+                                                                    mapsButton.setVisibility(View.GONE);
+                                                                    Log.v(LOGTAG, "MAPS GONE TRANSITION END");
+                                                                }
+                                                            })
+                                                            .start();
+                                                }
+                                                ObjectAnimator rotate = ObjectAnimator.ofFloat(revealButton, View.ROTATION, targetRotation);
+                                                rotate.setDuration(animationScaleTime).start();
+                                            }
+                                        }
+                                    })
+                                    .start();
+                            return true;
+                    }
+
+
+                    return false;//does not recognise any other touch events while processing one
                 }
             });
+
 
 
 
@@ -308,7 +641,7 @@ public class InterestPointActivity extends AppCompatActivity {
             InterestPoint interestPoint;
             for (int i = 0; i < interestPointsList.size(); i++) {
                 interestPoint = interestPointsList.get(i);
-                Log.v(LOGTAG, "Available titles are " + interestPoint.getMonument(getString(R.string.interest_point_title)).toLowerCase());
+                //Log.v(LOGTAG, "Available titles are " + interestPoint.getMonument(getString(R.string.interest_point_title)).toLowerCase());
                 if (interestPoint.getMonument(getString(R.string.interest_point_title)).toLowerCase().equals(interestPointName)) {
                     return interestPoint;
                 }
@@ -317,12 +650,12 @@ public class InterestPointActivity extends AppCompatActivity {
             interestPointsList = reader.getKingsList();
 
             Log.v(LOGTAG, "clicked point is " + interestPointName);
-            Log.v(LOGTAG, "interestPointsList size is " + interestPointsList.size());
+            //Log.v(LOGTAG, "interestPointsList size is " + interestPointsList.size());
 
             InterestPoint interestPoint;
             for (int i = 0; i < interestPointsList.size(); i++) {
                 interestPoint = interestPointsList.get(i);
-                Log.v(LOGTAG, "Available titles are " + interestPoint.getKing(getString(R.string.king_name)).toLowerCase());
+                //Log.v(LOGTAG, "Available titles are " + interestPoint.getKing(getString(R.string.king_name)).toLowerCase());
                 if (interestPoint.getKing(getString(R.string.king_name)).toLowerCase().equals(interestPointName)) {
                     return interestPoint;
                 }
