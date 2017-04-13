@@ -27,6 +27,10 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.amlcurran.showcaseview.ShowcaseView;
+import com.github.amlcurran.showcaseview.targets.Target;
+import com.github.amlcurran.showcaseview.targets.ViewTarget;
+
 import java.io.File;
 import java.util.ArrayList;
 
@@ -34,7 +38,8 @@ import java.util.ArrayList;
  * Created by HOME on 06-03-2017.
  */
 
-public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainActivityRecyclerViewAdapter.DataObjectHolder> {
+public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainActivityRecyclerViewAdapter.DataObjectHolder>
+        implements View.OnClickListener {
     /**
      * This is the Recycler view Adapter for the contents in MainActivity
      */
@@ -46,16 +51,26 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
     private ArrayList<HeritageSite> heritageSites_en;
     private static final String LOGTAG = "MainActivityAdapter";
 
-    private int expandedPosition = -1;
+    private DataObjectHolder holder;
 
     private Boolean isShortInfoVisible = false;
 
-    private Boolean revealButtonDown = false;
+    private Boolean shortInfoButtonDown = false;
 
     final Float animationdownScale = 0.9f;
     final Float animationUpScale = 1.25f;
     final Float animationNormalScale = 1.0f;
     final int animationScaleTime = 250;
+
+    private ShowcaseView showcaseView;
+    private Target viewTarget[];
+    private String demoContent[];
+    private String demoTitle[];
+    private int demoNumber = 0;
+
+
+
+
 
     /**
      * Provide a reference to the views for each data item
@@ -67,9 +82,9 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
         private ImageView titleImage;
         private TextView title;
         private CardView shortInfoCard;
-        //       private TextView infoHeader;
+        private TextView downloadSwitchText;
         private Switch downloadSwitch;
-        private ImageButton revealButton;
+        private ImageButton shortInfoButton;
         private TextView shortInfo;
         private LinearLayout shortInfoParent;
 
@@ -77,9 +92,9 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
             super(view);
             this.titleImage = (ImageView) view.findViewById(R.id.heritage_site_title_image);
             this.title = (TextView) view.findViewById(R.id.heritage_site_title);
-            //           this.infoHeader = (TextView) view.findViewById(R.id.heritage_site_info_header);
+            this.downloadSwitchText = (TextView) view.findViewById(R.id.download_switch_text);
             this.downloadSwitch = (Switch) view.findViewById(R.id.download_switch);
-            this.revealButton = (ImageButton) view.findViewById(R.id.heritage_info_reveal_button);
+            this.shortInfoButton = (ImageButton) view.findViewById(R.id.heritage_info_reveal_button);
             //this.shortInfoCard = (CardView)view.findViewById(R.id.heritage_site_info_short);
             this.shortInfo = (TextView) view.findViewById(R.id.heritage_site_info_short);
             this.shortInfoParent = (LinearLayout) view.findViewById(R.id.heritage_site_info_short_parent);
@@ -113,20 +128,23 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
 
     /**
      * Whenever contents of the screen are changed, this method is called
-     * @param holder
+     * @param _holder
      * @param position
      */
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(DataObjectHolder holder, int position) {
+    public void onBindViewHolder(DataObjectHolder _holder, int position) {
 
-        Log.v(LOGTAG, "position = " + position);
+        holder = _holder;
+        //Log.v(LOGTAG, "position = " + position);
 
         setViews(holder, position);
 
         setListeners(holder, position);
 
-
+        if (position == 0) {
+            setShowCaseViews(holder, position);
+        }
     }
 
 
@@ -156,44 +174,29 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
         if (extracted.exists()) {
             download_switch_state = true;
             sessionManager.setSessionPreferences(context, context.getString(R.string.download_switch_state), true);
-            Log.v(LOGTAG, packageName_en + " already exists");
+            //Log.v(LOGTAG, packageName_en + " already exists");
         } else {
             download_switch_state = false;
             sessionManager.setSessionPreferences(context, context.getString(R.string.download_switch_state), false);
-            Log.v(LOGTAG, packageName_en + " does not exists");
+            //  Log.v(LOGTAG, packageName_en + " does not exists");
         }
-        Log.v(LOGTAG, "my path " + extracted.getAbsolutePath());
-        Log.v(LOGTAG, "system path " + context.getFilesDir().getAbsolutePath());
+        //Log.v(LOGTAG, "my path " + extracted.getAbsolutePath());
+        //Log.v(LOGTAG, "system path " + context.getFilesDir().getAbsolutePath());
 
         ImageView titleImage = holder.titleImage;
         final TextView title = holder.title;
-        //       TextView infoHeader = holder.infoHeader;
+        TextView downloadSwitchText = holder.downloadSwitchText;
         Switch downloadSwitch = holder.downloadSwitch;
-        ImageButton revealButton = holder.revealButton;
+        ImageButton shortInfoButton = holder.shortInfoButton;
         TextView shortInfo = holder.shortInfo;
         LinearLayout shortInfoParent = holder.shortInfoParent;
-
-        /*
-        Palette.from(heritageSites.get(position).getHeritageSiteImage(packageName)).generate(new Palette.PaletteAsyncListener() {
-            @Override
-            public void onGenerated(Palette palette) {
-                // Get the "vibrant" color swatch based on the bitmap
-                Palette.Swatch vibrant = palette.getDarkVibrantSwatch();
-                if (vibrant != null) {
-                    // Set the background color of a layout based on the vibrant color
-                    Log.v(LOGTAG,"Inside pallet setter ");
-                    // Update the title TextView with the proper text color
-                    title.setTextColor(vibrant.getTitleTextColor());
-                }
-            }
-        });
-         */
 
 
 //settings the card contents for the recycler view
         title.setText(heritageSites.get(position).getHeritageSite(context.getString(R.string.interest_point_title)));
         titleImage.setImageBitmap(heritageSites.get(position).getHeritageSiteImage(packageName));
-        //      infoHeader.setText(context.getString(R.string.heritage_site_introduction));
+        downloadSwitchText.setText(context.getString(R.string.download_this_place));
+        //downloadSwitchText.setHeight(switchHeight);
         downloadSwitch.setChecked(download_switch_state);
         shortInfo.setText(heritageSites.get(position).getHeritageSite(context.getString(R.string.interest_point_short_info)));
 
@@ -242,16 +245,16 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
             }
         });
 
-        holder.revealButton.setOnTouchListener(new View.OnTouchListener() {
+        holder.shortInfoButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(final View v, MotionEvent event) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        revealButtonDown = true;
+                        shortInfoButtonDown = true;
                         //Log.v(LOGTAG,"scale in up is "+galleryButton.getScaleX());
-                        Log.v(LOGTAG, "Gallary Down Animation " + revealButtonDown);
-                        holder.revealButton.clearAnimation();
-                        holder.revealButton.animate().scaleX(animationdownScale).scaleY(animationdownScale)
+                        Log.v(LOGTAG, "Gallary Down Animation " + shortInfoButtonDown);
+                        holder.shortInfoButton.clearAnimation();
+                        holder.shortInfoButton.animate().scaleX(animationdownScale).scaleY(animationdownScale)
                                 .setDuration(animationScaleTime / 2)
                                 .setListener(new AnimatorListenerAdapter() {
                                     @Override
@@ -269,7 +272,7 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
                                     @Override
                                     public void onAnimationEnd(Animator animation) {
                                         super.onAnimationEnd(animation);
-                                        Log.v(LOGTAG, "INFO DOWN animation End " + revealButtonDown);
+                                        Log.v(LOGTAG, "INFO DOWN animation End " + shortInfoButtonDown);
                                     }
                                 })
                                 .start();
@@ -277,10 +280,10 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
                         return true;
 
                     case MotionEvent.ACTION_UP:
-                        revealButtonDown = false;
+                        shortInfoButtonDown = false;
                         //Log.v(LOGTAG,"scale in down is "+galleryButton.getScaleX());
-                        Log.v(LOGTAG, "Gallary UP Triggered " + revealButtonDown);
-                        holder.revealButton.animate().scaleX(animationUpScale).scaleY(animationUpScale)
+                        Log.v(LOGTAG, "Gallary UP Triggered " + shortInfoButtonDown);
+                        holder.shortInfoButton.animate().scaleX(animationUpScale).scaleY(animationUpScale)
                                 .setDuration(animationScaleTime / 2)
                                 .setListener(new AnimatorListenerAdapter() {
                                     @Override
@@ -298,9 +301,9 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
                                     @Override
                                     public void onAnimationEnd(Animator animation) {
                                         super.onAnimationEnd(animation);
-                                        Log.v(LOGTAG, "Gallary UP animation End " + revealButtonDown);
-                                        if (!revealButtonDown) {
-                                            Log.v(LOGTAG, "Gallary Last Animation " + revealButtonDown);
+                                        Log.v(LOGTAG, "Gallary UP animation End " + shortInfoButtonDown);
+                                        if (!shortInfoButtonDown) {
+                                            Log.v(LOGTAG, "Gallary Last Animation " + shortInfoButtonDown);
 
                                             int startX = (int) v.getX();
                                             int startY = (int) v.getY();
@@ -309,7 +312,7 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
                                             final ActivityOptions options = ActivityOptions.makeScaleUpAnimation(v, startX, startY, width, height);
                                             PropertyValuesHolder scalex = PropertyValuesHolder.ofFloat(View.SCALE_X, animationNormalScale);
                                             PropertyValuesHolder scaley = PropertyValuesHolder.ofFloat(View.SCALE_Y, animationNormalScale);
-                                            ObjectAnimator anim = ObjectAnimator.ofPropertyValuesHolder(holder.revealButton, scalex, scaley);
+                                            ObjectAnimator anim = ObjectAnimator.ofPropertyValuesHolder(holder.shortInfoButton, scalex, scaley);
                                             //anim.setRepeatCount(1);
                                             //anim.setRepeatMode(ValueAnimator.REVERSE);
                                             anim.setDuration(animationScaleTime / 2);
@@ -319,7 +322,7 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
                                                     super.onAnimationEnd(animation);
 
                                                     //startActivity(openGallery, options.toBundle());
-                                                    if (!holder.revealButton.hasTransientState()) {
+                                                    if (!holder.shortInfoButton.hasTransientState()) {
                                                         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(activity);
                                                         alertBuilder.setMessage(heritageSites.get(position).getHeritageSite(context.getString(R.string.interest_point_short_info)));
                                                         alertBuilder.setTitle(holder.title.getText());
@@ -356,7 +359,7 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
             }
         });
 
-        holder.revealButton.setOnClickListener(new View.OnClickListener() {
+        holder.shortInfoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.v(LOGTAG, v.getId() + " button is clicked" + " position= " + position);
@@ -365,7 +368,7 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
                 if(isShortInfoVisible) {
                     //hiding the view
                     isShortInfoVisible = false;
-                    //new CardViewAnimator(context).collapseShortInfo(holder.shortInfo, holder.revealButton);
+                    //new CardViewAnimator(context).collapseShortInfo(holder.shortInfo, holder.shortInfoButton);
                     //v.animate().rotation(0).setDuration(500).start();
 
 
@@ -561,6 +564,60 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
     }
 
 
+    private void setShowCaseViews(DataObjectHolder _holder, int _position) {
+        final DataObjectHolder holder = _holder;
+        final int position = _position;
+        Log.v(LOGTAG, "Current demo number is initial");
+        viewTarget = new ViewTarget[10];
+        viewTarget[0] = new ViewTarget(holder.titleImage);
+        viewTarget[1] = new ViewTarget(holder.shortInfoButton);
+        viewTarget[2] = new ViewTarget(holder.downloadSwitch);
+
+        demoContent = new String[10];
+        demoContent[0] = context.getString(R.string.showcase_title_image_content);
+        demoContent[1] = context.getString(R.string.showcase_short_info_button_content);
+        demoContent[2] = context.getString(R.string.showcase_download_button_content);
+
+        demoTitle = new String[10];
+        demoTitle[0] = context.getString(R.string.showcase_title_image_title);
+        demoTitle[1] = context.getString(R.string.showcase_short_info_button_title);
+        demoTitle[2] = context.getString(R.string.showcase_download_button_title);
+        //viewTarget = new ViewTarget(activity.findViewById(R.id.drawer_layout));
+
+
+        String initialTitle = context.getString(R.string.showcase_main_activity_title);
+        String initialContent = context.getString(R.string.showcase_main_activity_content);
+
+        showcaseView = new ShowcaseView.Builder(activity)
+                .blockAllTouches()
+                .setContentTitle(initialTitle)
+                .setContentText(initialContent)
+                .setTarget(Target.NONE)
+                .withNewStyleShowcase()
+                .setOnClickListener(this)
+                .setStyle(R.style.CustomShowcaseTheme3)
+                .build();
+
+        showcaseView.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
+        showcaseView.setButtonText("I changed");
+        showcaseView.setShowcase(Target.NONE, true);
+        showcaseView.show();
+    }
+
+    @Override
+    public void onClick(View v) {
+        Log.v(LOGTAG, "onClick");
+        if (viewTarget[demoNumber] != null && demoContent[demoNumber] != null && demoTitle[demoNumber] != null) {
+            Log.v(LOGTAG, "Current demo number is " + demoNumber);
+            showcaseView.setShowcase(viewTarget[demoNumber], true);
+            showcaseView.setContentTitle(demoContent[demoNumber]);
+            showcaseView.setContentText(demoContent[demoNumber]);
+            demoNumber++;
+        } else {
+            showcaseView.hide();
+        }
+
+    }
 
     @Override
     public int getItemCount() {

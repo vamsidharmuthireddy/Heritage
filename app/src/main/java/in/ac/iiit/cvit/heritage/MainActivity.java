@@ -86,6 +86,7 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
 
         Log.v(LOGTAG,"End of onCreate in MainActivity");
 
+
     }
 
     /**
@@ -157,9 +158,6 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
 
             Log.v(LOGTAG, " Some packages exist");
         }
-
-
-
 
     }
 

@@ -28,6 +28,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.amlcurran.showcaseview.ShowcaseView;
+import com.github.amlcurran.showcaseview.targets.Target;
+import com.github.amlcurran.showcaseview.targets.ViewTarget;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -36,7 +40,7 @@ import java.util.Locale;
  * Created by HOME on 13-03-2017.
  */
 
-public class InterestPointActivity extends AppCompatActivity {
+public class InterestPointActivity extends AppCompatActivity implements View.OnClickListener {
 
     /**
      * When an interest point is clicked, this class is called.
@@ -80,6 +84,12 @@ public class InterestPointActivity extends AppCompatActivity {
     final Float animationUpScale = 1.25f;
     final Float animationNormalScale = 1.0f;
     final int animationScaleTime = 250;
+
+    private ShowcaseView showcaseView;
+    private Target viewTarget[];
+    private String demoContent[];
+    private String demoTitle[];
+    private int demoNumber = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -685,6 +695,7 @@ public class InterestPointActivity extends AppCompatActivity {
             Log.v(LOGTAG, "InterestPointActivity has storage permission");
             setViews();
             setListeners();
+            setShowCaseViews();
         } else {
             Log.v(LOGTAG, "InterestPointActivity Requesting storage permission");
             requestStoragePermission();
@@ -802,6 +813,7 @@ public class InterestPointActivity extends AppCompatActivity {
                     totalPermissions = totalPermissions + 1;
                     setViews();
                     setListeners();
+                    setShowCaseViews();
 
                 } else {
                     //openApplicationPermissions();
@@ -866,6 +878,54 @@ public class InterestPointActivity extends AppCompatActivity {
     }
 
 
+    private void setShowCaseViews() {
+
+        Log.v(LOGTAG, "Current demo number is initial");
+        viewTarget = new ViewTarget[10];
+        viewTarget[0] = new ViewTarget(revealButton);
+
+        demoContent = new String[10];
+        demoContent[0] = getString(R.string.showcase_reveal_button_content);
+
+        demoTitle = new String[10];
+        demoTitle[0] = getString(R.string.showcase_reveal_button_title);
+
+        String initialTitle = getString(R.string.showcase_interest_activity_title);
+        String initialContent = getString(R.string.showcase_interest_activity_content);
+
+        showcaseView = new ShowcaseView.Builder(InterestPointActivity.this)
+                .blockAllTouches()
+                .setContentTitle(initialTitle)
+                .setContentText(initialContent)
+                .setTarget(Target.NONE)
+                .withNewStyleShowcase()
+                .setOnClickListener(this)
+                .setStyle(R.style.CustomShowcaseTheme3)
+                .build();
+
+
+        showcaseView.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
+        showcaseView.setButtonText("I changed");
+        showcaseView.setShowcase(Target.NONE, true);
+        showcaseView.show();
+
+    }
+
+    @Override
+    public void onClick(View v) {
+        Log.v(LOGTAG, "onClick");
+        if (viewTarget[demoNumber] != null && demoContent[demoNumber] != null && demoTitle[demoNumber] != null) {
+            Log.v(LOGTAG, "Current demo number is " + demoNumber);
+            showcaseView.setShowcase(viewTarget[demoNumber], true);
+            showcaseView.setContentTitle(demoContent[demoNumber]);
+            showcaseView.setContentText(demoContent[demoNumber]);
+            demoNumber++;
+        } else {
+            showcaseView.hide();
+        }
+
+
+    }
 
 
 }

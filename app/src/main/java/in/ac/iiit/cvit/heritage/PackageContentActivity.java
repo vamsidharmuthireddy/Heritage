@@ -20,6 +20,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.github.amlcurran.showcaseview.ShowcaseView;
+import com.github.amlcurran.showcaseview.targets.Target;
+import com.github.amlcurran.showcaseview.targets.ViewTarget;
+
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -30,7 +34,7 @@ import java.util.Locale;
  * Created by HOME on 07-03-2017.
  */
 
-public class PackageContentActivity extends AppCompatActivity {
+public class PackageContentActivity extends AppCompatActivity implements View.OnClickListener {
     /**
      * This activity hosts contents of a package and is called when you click on one from MainActivity
      */
@@ -60,6 +64,12 @@ public class PackageContentActivity extends AppCompatActivity {
     private int totalPermissions = 0;
     private boolean storageRequested = false;
     private boolean locationRequested = false;
+
+    private ShowcaseView showcaseView;
+    private Target viewTarget[];
+    private String demoContent[];
+    private String demoTitle[];
+    private int demoNumber = 0;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -372,6 +382,7 @@ public class PackageContentActivity extends AppCompatActivity {
             storageRequested = true;
             Log.v(LOGTAG, "PackageContentActivity has storage permission");
             new loadActivityContent().execute();
+            setShowCaseViews();
         } else {
             Log.v(LOGTAG, "PackageContentActivity Requesting storage permission");
             requestStoragePermission();
@@ -488,6 +499,7 @@ public class PackageContentActivity extends AppCompatActivity {
                     Log.v(LOGTAG, "PackageContentActivity has READ storage permissions");
                     totalPermissions = totalPermissions + 1;
                     new loadActivityContent().execute();
+                    setShowCaseViews();
 
                 } else {
                     //openApplicationPermissions();
@@ -549,6 +561,67 @@ public class PackageContentActivity extends AppCompatActivity {
 
         Log.v(LOGTAG, "returned back from other activity " + requestCode + " " + resultCode);
         checkAllPermissions();
+    }
+
+
+    private void setShowCaseViews() {
+
+        Log.v(LOGTAG, "Current demo number is initial");
+        viewTarget = new ViewTarget[10];
+        viewTarget[0] = new ViewTarget(findViewById(R.id.overview_card));
+        viewTarget[1] = new ViewTarget(findViewById(R.id.monuments_card));
+        viewTarget[2] = new ViewTarget(findViewById(R.id.maps_card));
+        viewTarget[3] = new ViewTarget(findViewById(R.id.gallery_card));
+
+        demoContent = new String[10];
+        demoContent[0] = getString(R.string.showcase_overview_card_content);
+        demoContent[1] = getString(R.string.showcase_monuments_card_content);
+        demoContent[2] = getString(R.string.showcase_maps_card_content);
+        demoContent[3] = getString(R.string.showcase_gallery_card_content);
+
+        demoTitle = new String[10];
+        demoTitle[0] = getString(R.string.showcase_overview_card_title);
+        demoTitle[1] = getString(R.string.showcase_monuments_card_title);
+        demoTitle[2] = getString(R.string.showcase_maps_card_title);
+        demoTitle[3] = getString(R.string.showcase_gallery_card_title);
+        //viewTarget = new ViewTarget(activity.findViewById(R.id.drawer_layout));
+
+
+        String initialTitle = getString(R.string.showcase_main_activity_title);
+        String initialContent = getString(R.string.showcase_main_activity_content);
+
+        showcaseView = new ShowcaseView.Builder(PackageContentActivity.this)
+                .blockAllTouches()
+                .setContentTitle(initialTitle)
+                .setContentText(initialContent)
+                .setTarget(Target.NONE)
+                .withNewStyleShowcase()
+                .setOnClickListener(this)
+                .setStyle(R.style.CustomShowcaseTheme3)
+                .build();
+
+        showcaseView.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
+        showcaseView.setButtonText("I changed");
+        showcaseView.setShowcase(Target.NONE, true);
+        showcaseView.show();
+    }
+
+    @Override
+    public void onClick(View v) {
+        Log.v(LOGTAG, "onClick");
+        if (viewTarget[demoNumber] != null && demoContent[demoNumber] != null && demoTitle[demoNumber] != null) {
+            Log.v(LOGTAG, "Current demo number is " + demoNumber);
+            showcaseView.setShowcase(viewTarget[demoNumber], true);
+            showcaseView.setContentTitle(demoContent[demoNumber]);
+            showcaseView.setContentText(demoContent[demoNumber]);
+            demoNumber++;
+        } else {
+            showcaseView.hide();
+        }
+
+
+
+
     }
 
 

@@ -15,7 +15,13 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
+
+import com.github.amlcurran.showcaseview.ShowcaseView;
+import com.github.amlcurran.showcaseview.targets.Target;
+import com.github.amlcurran.showcaseview.targets.ViewTarget;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -24,7 +30,7 @@ import java.util.Locale;
  * Created by HOME on 09-03-2017.
  */
 
-public class MonumentActivity extends AppCompatActivity {
+public class MonumentActivity extends AppCompatActivity implements View.OnClickListener {
 
     private SessionManager sessionManager;
     private String packageName;
@@ -47,6 +53,12 @@ public class MonumentActivity extends AppCompatActivity {
     private boolean locationRequested = false;
 
     private final static String LOGTAG = "MonumentActivity";
+
+    private ShowcaseView showcaseView;
+    private Target viewTarget[];
+    private String demoContent[];
+    private String demoTitle[];
+    private int demoNumber = 0;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -201,6 +213,7 @@ public class MonumentActivity extends AppCompatActivity {
             storageRequested = true;
             Log.v(LOGTAG, "MonumentActivity has storage permission");
             setViews();
+            setShowCaseViews();
         } else {
             Log.v(LOGTAG, "MonumentActivity Requesting storage permission");
             requestStoragePermission();
@@ -317,6 +330,7 @@ public class MonumentActivity extends AppCompatActivity {
                     Log.v(LOGTAG, "PackageContentActivity has READ storage permissions");
                     totalPermissions = totalPermissions + 1;
                     setViews();
+                    setShowCaseViews();
 
                 } else {
                     //openApplicationPermissions();
@@ -378,6 +392,57 @@ public class MonumentActivity extends AppCompatActivity {
 
         Log.v(LOGTAG, "returned back from other activity " + requestCode + " " + resultCode);
         checkAllPermissions();
+    }
+
+
+    private void setShowCaseViews() {
+
+        Log.v(LOGTAG, "Current demo number is initial");
+        viewTarget = new ViewTarget[10];
+        viewTarget[0] = new ViewTarget(((ViewGroup) tabLayout.getChildAt(0)).getChildAt(0));
+        viewTarget[1] = new ViewTarget(((ViewGroup) tabLayout.getChildAt(0)).getChildAt(1));
+
+        demoContent = new String[10];
+        demoContent[0] = getString(R.string.showcase_overview_card_content);
+        demoContent[1] = getString(R.string.showcase_monuments_card_content);
+
+        demoTitle = new String[10];
+        demoTitle[0] = getString(R.string.showcase_overview_card_title);
+        demoTitle[1] = getString(R.string.showcase_monuments_card_title);
+        //viewTarget = new ViewTarget(activity.findViewById(R.id.drawer_layout));
+
+
+        String initialTitle = getString(R.string.showcase_main_activity_title);
+        String initialContent = getString(R.string.showcase_main_activity_content);
+
+        showcaseView = new ShowcaseView.Builder(MonumentActivity.this)
+                .blockAllTouches()
+                .setContentTitle(initialTitle)
+                .setContentText(initialContent)
+                .setTarget(Target.NONE)
+                .withNewStyleShowcase()
+                .setOnClickListener(this)
+                .setStyle(R.style.CustomShowcaseTheme3)
+                .build();
+
+        showcaseView.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
+        showcaseView.setButtonText("I changed");
+        showcaseView.setShowcase(Target.NONE, true);
+        showcaseView.show();
+    }
+
+    @Override
+    public void onClick(View v) {
+        Log.v(LOGTAG, "onClick");
+        if (viewTarget[demoNumber] != null && demoContent[demoNumber] != null && demoTitle[demoNumber] != null) {
+            Log.v(LOGTAG, "Current demo number is " + demoNumber);
+            showcaseView.setShowcase(viewTarget[demoNumber], true);
+            showcaseView.setContentTitle(demoContent[demoNumber]);
+            showcaseView.setContentText(demoContent[demoNumber]);
+            demoNumber++;
+        } else {
+            showcaseView.hide();
+        }
     }
 
 

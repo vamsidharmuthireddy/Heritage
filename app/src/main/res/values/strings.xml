@@ -189,4 +189,33 @@
     <string name="image_type" translatable="false">.JPG</string>
     <string name="title_activity_maps">Map</string>
 
+
+    <!--ShowCase MainActivityAdapter-->
+    <string name="showcase_main_activity_title">This is where magic happens!</string>
+    <string name="showcase_title_image_title">This is where magic happens!</string>
+    <string name="showcase_short_info_button_title">This is where magic happens!</string>
+    <string name="showcase_download_button_title">This is where magic happens!</string>
+
+    <string name="showcase_main_activity_content">This is where magic happens!</string>
+    <string name="showcase_title_image_content">This is where magic happens!</string>
+    <string name="showcase_short_info_button_content">This is where magic happens!</string>
+    <string name="showcase_download_button_content">This is where magic happens!</string>
+
+    <string name="showcase_overview_card_title">This is where magic happens!</string>
+    <string name="showcase_monuments_card_title">This is where magic happens!</string>
+    <string name="showcase_maps_card_title">This is where magic happens!</string>
+    <string name="showcase_gallery_card_title">This is where magic happens!</string>
+
+    <string name="showcase_overview_card_content">This is where magic happens!</string>
+    <string name="showcase_monuments_card_content">This is where magic happens!</string>
+    <string name="showcase_maps_card_content">This is where magic happens!</string>
+    <string name="showcase_gallery_card_content">This is where magic happens!</string>
+
+    <string name="showcase_interest_activity_title">This is where magic happens!</string>
+    <string name="showcase_reveal_button_title">This is where magic happens!</string>
+
+    <string name="showcase_interest_activity_content">This is where magic happens!</string>
+    <string name="showcase_reveal_button_content">This is where magic happens!</string>
+
+
 </resources>
