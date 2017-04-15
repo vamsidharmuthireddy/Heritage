@@ -19,6 +19,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -73,35 +74,14 @@ public class MonumentNearbyFragment extends Fragment implements GoogleApiClient.
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_nearby_monuments, container, false);
+
+        final LayoutInflater _inflater = inflater;
+        final ViewGroup _container = container;
+
+        final View root = inflater.inflate(R.layout.fragment_nearby_monuments, container, false);
         context = getActivity();
         mGoogleApiClient = null;
         createLocationClients();
-
-
-//The following will listen for change in gps status when activity is running
-        gpsBroadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                LocationManager broadcastLocationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-                if (!broadcastLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
-                        && !broadcastLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-                    locationEnabled = false;
-                    Toast.makeText(getActivity(), getString(R.string.turnon_gps), Toast.LENGTH_LONG).show();
-                }
-                Log.v(LOGTAG, "Broadcast Manager ");
-            }
-        };
-
-//The following will detect gps status when activity starts
-        locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
-                && !locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-            locationEnabled = false;
-            Toast.makeText(getActivity(), getString(R.string.turnon_gps), Toast.LENGTH_LONG).show();
-        } else {
-            locationEnabled = true;
-        }
 
 
         Calendar calendar = Calendar.getInstance();
@@ -110,28 +90,80 @@ public class MonumentNearbyFragment extends Fragment implements GoogleApiClient.
 
 //        Log.d(LOGTAG,"sensors in onCreate got created");
 
-
         //interestPoints = new PackageContentActivity().giveMonumentList(context);
         //interestPoints = new MonumentActivity().monumentList;
 
         interestPoints = ((MonumentActivity) this.getActivity()).monumentList;
         //Log.v(LOGTAG, "interestPoints size is " + interestPoints.size());
 
-        //initializing the array
+//initializing the array
         sortedInterestPoints = new ArrayList<InterestPoint>();
         for (int i = 0; i < Math.min(TRUNCATION_LIMIT, interestPoints.size()); i++) {
             //sortedInterestPoints.add(interestPoints.get(i));
         }
 
-        //Initializing the recyclerView and calling the refreshRecyclerView
+        final TextView textView = (TextView) root.findViewById(R.id.cardview_text);
         recyclerView = (RecyclerView) root.findViewById(R.id.recyclerview_nearby_monuments);
-        recyclerView.setHasFixedSize(true);
-        //recyclerViewLayoutManager = new LinearLayoutManager(getActivity());
-        recyclerViewLayoutManager = new MainActivity.PreLoadingLinearLayoutManager(getContext());
-        new MainActivity.PreLoadingLinearLayoutManager(getContext()).setPages(1);
 
-        recyclerView.setLayoutManager(recyclerViewLayoutManager);
-        refreshRecyclerView();
+        //The following will listen for change in gps status when activity is running
+        gpsBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                LocationManager broadcastLocationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+                if (!broadcastLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+                        && !broadcastLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                    locationEnabled = false;
+                    textView.setVisibility(View.VISIBLE);
+                    textView.setText(R.string.turnon_gps);
+                    recyclerView.setVisibility(View.GONE);
+                    Toast.makeText(getActivity(), getString(R.string.turnon_gps), Toast.LENGTH_LONG).show();
+                } else {
+                    //Initializing the recyclerView and calling the refreshRecyclerView
+
+                    textView.setVisibility(View.GONE);
+                    recyclerView.setVisibility(View.VISIBLE);
+                    recyclerView.setHasFixedSize(true);
+                    //recyclerViewLayoutManager = new LinearLayoutManager(getActivity());
+                    recyclerViewLayoutManager = new MainActivity.PreLoadingLinearLayoutManager(getContext());
+                    new MainActivity.PreLoadingLinearLayoutManager(getContext()).setPages(1);
+
+                    recyclerView.setLayoutManager(recyclerViewLayoutManager);
+                    refreshRecyclerView();
+
+                }
+                Log.v(LOGTAG, "Broadcast Manager ");
+            }
+        };
+
+
+//The following will detect gps status when activity starts
+        locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+                && !locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+            locationEnabled = false;
+
+            //inflating a text view to tell about turning on gps
+
+            textView.setVisibility(View.VISIBLE);
+            textView.setText(R.string.turnon_gps);
+            recyclerView.setVisibility(View.GONE);
+            Toast.makeText(getActivity(), getString(R.string.turnon_gps), Toast.LENGTH_LONG).show();
+        } else {
+            locationEnabled = true;
+
+            //Initializing the recyclerView and calling the refreshRecyclerView
+            textView.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
+            recyclerView.setHasFixedSize(true);
+            //recyclerViewLayoutManager = new LinearLayoutManager(getActivity());
+            recyclerViewLayoutManager = new MainActivity.PreLoadingLinearLayoutManager(getContext());
+            new MainActivity.PreLoadingLinearLayoutManager(getContext()).setPages(1);
+
+            recyclerView.setLayoutManager(recyclerViewLayoutManager);
+            refreshRecyclerView();
+
+
+        }
 
         return root;
     }

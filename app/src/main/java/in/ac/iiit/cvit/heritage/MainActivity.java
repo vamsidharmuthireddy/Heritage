@@ -234,11 +234,17 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
         }
 
         if (id == R.id.nav_feedback) {
+
+            Intent openFeedback = new Intent(MainActivity.this, FeedbackActivity.class);
+            startActivity(openFeedback);
+
+/*
             String url = "https://drive.google.com/open?id=1DgPNOHtPZmU-YpNPHhEfj5j-VYSZXwTrPgO6y12JJZ8";
 
             Intent i = new Intent(Intent.ACTION_VIEW);
             i.setData(Uri.parse(url));
             startActivity(i);
+*/
 
         }
 

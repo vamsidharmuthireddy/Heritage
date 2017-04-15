@@ -17,9 +17,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
+import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
 import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.targets.Target;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
@@ -34,7 +36,7 @@ import java.util.Locale;
  * Created by HOME on 07-03-2017.
  */
 
-public class PackageContentActivity extends AppCompatActivity implements View.OnClickListener {
+public class PackageContentActivity extends AppCompatActivity implements View.OnClickListener, OnShowcaseEventListener {
     /**
      * This activity hosts contents of a package and is called when you click on one from MainActivity
      */
@@ -354,7 +356,7 @@ public class PackageContentActivity extends AppCompatActivity implements View.On
 
             ImageNamesList.set(i, imagepath);
 
-            Log.v(LOGTAG, "ip is " + i + " and is " + ImageNamesList.get(i));
+            //Log.v(LOGTAG, "ip is " + i + " and is " + ImageNamesList.get(i));
         }
 
     }
@@ -566,44 +568,55 @@ public class PackageContentActivity extends AppCompatActivity implements View.On
 
     private void setShowCaseViews() {
 
-        Log.v(LOGTAG, "Current demo number is initial");
-        viewTarget = new ViewTarget[10];
-        viewTarget[0] = new ViewTarget(findViewById(R.id.overview_card));
-        viewTarget[1] = new ViewTarget(findViewById(R.id.monuments_card));
-        viewTarget[2] = new ViewTarget(findViewById(R.id.maps_card));
-        viewTarget[3] = new ViewTarget(findViewById(R.id.gallery_card));
+        SessionManager sessionManager = new SessionManager();
+        boolean showDemo = sessionManager.getBooleanSessionPreferences(PackageContentActivity.this
+                , getString(R.string.demo_package_content_activity), false);
 
-        demoContent = new String[10];
-        demoContent[0] = getString(R.string.showcase_overview_card_content);
-        demoContent[1] = getString(R.string.showcase_monuments_card_content);
-        demoContent[2] = getString(R.string.showcase_maps_card_content);
-        demoContent[3] = getString(R.string.showcase_gallery_card_content);
+        if (!showDemo) {
+            Log.v(LOGTAG, "Current demo number is initial");
+            viewTarget = new ViewTarget[10];
+            viewTarget[0] = new ViewTarget(findViewById(R.id.overview_card));
+            viewTarget[1] = new ViewTarget(findViewById(R.id.monuments_card));
+            viewTarget[2] = new ViewTarget(findViewById(R.id.maps_card));
+            viewTarget[3] = new ViewTarget(findViewById(R.id.gallery_card));
 
-        demoTitle = new String[10];
-        demoTitle[0] = getString(R.string.showcase_overview_card_title);
-        demoTitle[1] = getString(R.string.showcase_monuments_card_title);
-        demoTitle[2] = getString(R.string.showcase_maps_card_title);
-        demoTitle[3] = getString(R.string.showcase_gallery_card_title);
-        //viewTarget = new ViewTarget(activity.findViewById(R.id.drawer_layout));
+            demoContent = new String[10];
+            demoContent[0] = getString(R.string.showcase_overview_card_content);
+            demoContent[1] = getString(R.string.showcase_monuments_card_content);
+            demoContent[2] = getString(R.string.showcase_maps_card_content);
+            demoContent[3] = getString(R.string.showcase_gallery_card_content);
+
+            demoTitle = new String[10];
+            demoTitle[0] = getString(R.string.showcase_overview_card_title);
+            demoTitle[1] = getString(R.string.showcase_monuments_card_title);
+            demoTitle[2] = getString(R.string.showcase_maps_card_title);
+            demoTitle[3] = getString(R.string.showcase_gallery_card_title);
+            //viewTarget = new ViewTarget(activity.findViewById(R.id.drawer_layout));
 
 
-        String initialTitle = getString(R.string.showcase_main_activity_title);
-        String initialContent = getString(R.string.showcase_main_activity_content);
+            String initialTitle = getString(R.string.showcase_package_activity_title);
+            String initialContent = getString(R.string.showcase_package_activity_content);
 
-        showcaseView = new ShowcaseView.Builder(PackageContentActivity.this)
-                .blockAllTouches()
-                .setContentTitle(initialTitle)
-                .setContentText(initialContent)
-                .setTarget(Target.NONE)
-                .withNewStyleShowcase()
-                .setOnClickListener(this)
-                .setStyle(R.style.CustomShowcaseTheme3)
-                .build();
+            showcaseView = new ShowcaseView.Builder(PackageContentActivity.this)
+                    .blockAllTouches()
+                    .setContentTitle(initialTitle)
+                    .setContentText(initialContent)
+                    .setTarget(Target.NONE)
+                    .withNewStyleShowcase()
+                    .setOnClickListener(this)
+                    .setShowcaseEventListener(this)
+                    .setStyle(R.style.CustomShowcaseTheme3)
+                    .build();
 
-        showcaseView.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
-        showcaseView.setButtonText("I changed");
-        showcaseView.setShowcase(Target.NONE, true);
-        showcaseView.show();
+            showcaseView.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
+            showcaseView.setButtonText(getString(R.string.next));
+            showcaseView.setShowcase(Target.NONE, true);
+            showcaseView.show();
+        } else {
+            Log.v(LOGTAG, "Demo already shown");
+
+        }
+
     }
 
     @Override
@@ -612,18 +625,58 @@ public class PackageContentActivity extends AppCompatActivity implements View.On
         if (viewTarget[demoNumber] != null && demoContent[demoNumber] != null && demoTitle[demoNumber] != null) {
             Log.v(LOGTAG, "Current demo number is " + demoNumber);
             showcaseView.setShowcase(viewTarget[demoNumber], true);
-            showcaseView.setContentTitle(demoContent[demoNumber]);
+            showcaseView.show();
+            showcaseView.setContentTitle(demoTitle[demoNumber]);
             showcaseView.setContentText(demoContent[demoNumber]);
+            if (viewTarget[demoNumber + 1] == null) {
+                showcaseView.setButtonText(getString(R.string.got_it));
+            }
+
+            if (demoNumber < 2) {
+                //showcaseView.forceTextPosition(ShowcaseView.BELOW_SHOWCASE);
+            } else {
+                //showcaseView.forceTextPosition(ShowcaseView.ABOVE_SHOWCASE);
+            }
+            //showcaseView.show();
             demoNumber++;
         } else {
             showcaseView.hide();
+            SessionManager sessionManager = new SessionManager();
+            sessionManager.setSessionPreferences(PackageContentActivity.this, getString(R.string.demo_package_content_activity), true);
+
         }
+    }
 
-
-
+    @Override
+    public void onShowcaseViewHide(ShowcaseView _showcaseView) {
 
     }
 
+    @Override
+    public void onShowcaseViewDidHide(ShowcaseView _showcaseView) {
 
+    }
 
+    @Override
+    public void onShowcaseViewShow(ShowcaseView _showcaseView) {
+        Log.v(LOGTAG, "onShow");
+        if (_showcaseView != null) {
+            Log.v(LOGTAG, "Local is not null");
+        } else {
+            Log.v(LOGTAG, "Local is null");
+        }
+        if (showcaseView != null) {
+            //showcaseView.setContentTitle(demoTitle[demoNumber]);
+            //showcaseView.setContentText(demoContent[demoNumber]);
+            Log.v(LOGTAG, "global is not null");
+        } else {
+            Log.v(LOGTAG, "global is null");
+        }
+
+    }
+
+    @Override
+    public void onShowcaseViewTouchBlocked(MotionEvent _motionEvent) {
+
+    }
 }

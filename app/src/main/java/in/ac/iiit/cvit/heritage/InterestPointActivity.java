@@ -24,7 +24,9 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -879,35 +881,42 @@ public class InterestPointActivity extends AppCompatActivity implements View.OnC
 
 
     private void setShowCaseViews() {
+        SessionManager sessionManager = new SessionManager();
+        boolean showDemo = sessionManager.getBooleanSessionPreferences(InterestPointActivity.this
+                , getString(R.string.demo_interest_point_activity), false);
 
-        Log.v(LOGTAG, "Current demo number is initial");
-        viewTarget = new ViewTarget[10];
-        viewTarget[0] = new ViewTarget(revealButton);
+        if (!showDemo) {
+            Log.v(LOGTAG, "Current demo number is initial");
+            viewTarget = new ViewTarget[10];
+            viewTarget[0] = new ViewTarget(revealButton);
 
-        demoContent = new String[10];
-        demoContent[0] = getString(R.string.showcase_reveal_button_content);
+            demoContent = new String[10];
+            demoContent[0] = getString(R.string.showcase_reveal_button_content);
 
-        demoTitle = new String[10];
-        demoTitle[0] = getString(R.string.showcase_reveal_button_title);
+            demoTitle = new String[10];
+            demoTitle[0] = getString(R.string.showcase_reveal_button_title);
 
-        String initialTitle = getString(R.string.showcase_interest_activity_title);
-        String initialContent = getString(R.string.showcase_interest_activity_content);
+            String initialTitle = getString(R.string.showcase_interest_activity_title);
+            String initialContent = getString(R.string.showcase_interest_activity_content);
 
-        showcaseView = new ShowcaseView.Builder(InterestPointActivity.this)
-                .blockAllTouches()
-                .setContentTitle(initialTitle)
-                .setContentText(initialContent)
-                .setTarget(Target.NONE)
-                .withNewStyleShowcase()
-                .setOnClickListener(this)
-                .setStyle(R.style.CustomShowcaseTheme3)
-                .build();
+            showcaseView = new ShowcaseView.Builder(InterestPointActivity.this)
+                    .blockAllTouches()
+                    .setContentTitle(initialTitle)
+                    .setContentText(initialContent)
+                    .setTarget(Target.NONE)
+                    .withNewStyleShowcase()
+                    .setOnClickListener(this)
+                    .setStyle(R.style.CustomShowcaseTheme3)
+                    .build();
 
 
-        showcaseView.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
-        showcaseView.setButtonText("I changed");
-        showcaseView.setShowcase(Target.NONE, true);
-        showcaseView.show();
+            showcaseView.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
+            showcaseView.setButtonText(getString(R.string.next));
+            showcaseView.setShowcase(Target.NONE, true);
+            showcaseView.show();
+        } else {
+            Log.v(LOGTAG, "Demo already shown");
+        }
 
     }
 
@@ -917,11 +926,30 @@ public class InterestPointActivity extends AppCompatActivity implements View.OnC
         if (viewTarget[demoNumber] != null && demoContent[demoNumber] != null && demoTitle[demoNumber] != null) {
             Log.v(LOGTAG, "Current demo number is " + demoNumber);
             showcaseView.setShowcase(viewTarget[demoNumber], true);
-            showcaseView.setContentTitle(demoContent[demoNumber]);
+            showcaseView.show();
+            showcaseView.setContentTitle(demoTitle[demoNumber]);
             showcaseView.setContentText(demoContent[demoNumber]);
+            if (demoNumber == 0) {
+                RelativeLayout.LayoutParams lps = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+// This aligns button to the bottom left side of screen
+                lps.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+                lps.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+// Set margins to the button, we add 16dp margins here
+                int margin = ((Number) (getResources().getDisplayMetrics().density * 16)).intValue();
+                lps.setMargins(margin, margin, margin, margin);
+
+                showcaseView.setButtonPosition(lps);
+            }
+            if (viewTarget[demoNumber + 1] == null) {
+                showcaseView.setButtonText(getString(R.string.got_it));
+            }
+
+            //showcaseView.show();
             demoNumber++;
         } else {
             showcaseView.hide();
+            SessionManager sessionManager = new SessionManager();
+            sessionManager.setSessionPreferences(InterestPointActivity.this, getString(R.string.demo_interest_point_activity), true);
         }
 
 

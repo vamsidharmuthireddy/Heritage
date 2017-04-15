@@ -15,10 +15,12 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
 import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.targets.Target;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
@@ -30,10 +32,10 @@ import java.util.Locale;
  * Created by HOME on 09-03-2017.
  */
 
-public class MonumentActivity extends AppCompatActivity implements View.OnClickListener {
+public class MonumentActivity extends AppCompatActivity implements View.OnClickListener, OnShowcaseEventListener {
 
     private SessionManager sessionManager;
-    private String packageName;
+    public String packageName;
     public String packageName_en;
     private Toolbar toolbar;
     private TabLayout tabLayout;
@@ -396,39 +398,46 @@ public class MonumentActivity extends AppCompatActivity implements View.OnClickL
 
 
     private void setShowCaseViews() {
+        SessionManager sessionManager = new SessionManager();
+        boolean showDemo = sessionManager.getBooleanSessionPreferences(MonumentActivity.this, "demo_2", false);
 
-        Log.v(LOGTAG, "Current demo number is initial");
-        viewTarget = new ViewTarget[10];
-        viewTarget[0] = new ViewTarget(((ViewGroup) tabLayout.getChildAt(0)).getChildAt(0));
-        viewTarget[1] = new ViewTarget(((ViewGroup) tabLayout.getChildAt(0)).getChildAt(1));
+        if (!showDemo) {
+            Log.v(LOGTAG, "Current demo number is initial");
+            viewTarget = new ViewTarget[10];
+            viewTarget[0] = new ViewTarget(((ViewGroup) tabLayout.getChildAt(0)).getChildAt(0));
+            viewTarget[1] = new ViewTarget(((ViewGroup) tabLayout.getChildAt(0)).getChildAt(1));
 
-        demoContent = new String[10];
-        demoContent[0] = getString(R.string.showcase_overview_card_content);
-        demoContent[1] = getString(R.string.showcase_monuments_card_content);
+            demoContent = new String[10];
+            demoContent[0] = getString(R.string.showcase_nearby_places_content);
+            demoContent[1] = getString(R.string.showcase_all_places_content);
 
-        demoTitle = new String[10];
-        demoTitle[0] = getString(R.string.showcase_overview_card_title);
-        demoTitle[1] = getString(R.string.showcase_monuments_card_title);
-        //viewTarget = new ViewTarget(activity.findViewById(R.id.drawer_layout));
+            demoTitle = new String[10];
+            demoTitle[0] = getString(R.string.showcase_nearby_places_title);
+            demoTitle[1] = getString(R.string.showcase_all_places_title);
+            //viewTarget = new ViewTarget(activity.findViewById(R.id.drawer_layout));
 
 
-        String initialTitle = getString(R.string.showcase_main_activity_title);
-        String initialContent = getString(R.string.showcase_main_activity_content);
+            String initialTitle = getString(R.string.showcase_monument_activity_title);
+            String initialContent = getString(R.string.showcase_monument_activity_content);
 
-        showcaseView = new ShowcaseView.Builder(MonumentActivity.this)
-                .blockAllTouches()
-                .setContentTitle(initialTitle)
-                .setContentText(initialContent)
-                .setTarget(Target.NONE)
-                .withNewStyleShowcase()
-                .setOnClickListener(this)
-                .setStyle(R.style.CustomShowcaseTheme3)
-                .build();
+            showcaseView = new ShowcaseView.Builder(MonumentActivity.this)
+                    .blockAllTouches()
+                    .setContentTitle(initialTitle)
+                    .setContentText(initialContent)
+                    .setTarget(Target.NONE)
+                    .withNewStyleShowcase()
+                    .setOnClickListener(this)
+                    .setShowcaseEventListener(this)
+                    .setStyle(R.style.CustomShowcaseTheme3)
+                    .build();
 
-        showcaseView.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
-        showcaseView.setButtonText("I changed");
-        showcaseView.setShowcase(Target.NONE, true);
-        showcaseView.show();
+            showcaseView.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
+            showcaseView.setButtonText(getString(R.string.next));
+            showcaseView.setShowcase(Target.NONE, true);
+            showcaseView.show();
+        } else {
+            Log.v(LOGTAG, "Demo already shown");
+        }
     }
 
     @Override
@@ -437,13 +446,49 @@ public class MonumentActivity extends AppCompatActivity implements View.OnClickL
         if (viewTarget[demoNumber] != null && demoContent[demoNumber] != null && demoTitle[demoNumber] != null) {
             Log.v(LOGTAG, "Current demo number is " + demoNumber);
             showcaseView.setShowcase(viewTarget[demoNumber], true);
-            showcaseView.setContentTitle(demoContent[demoNumber]);
+            showcaseView.show();
+            showcaseView.setContentTitle(demoTitle[demoNumber]);
             showcaseView.setContentText(demoContent[demoNumber]);
+            if (viewTarget[demoNumber + 1] == null) {
+                showcaseView.setButtonText(getString(R.string.got_it));
+            }
+            //showcaseView.show();
+
             demoNumber++;
         } else {
             showcaseView.hide();
+            SessionManager sessionManager = new SessionManager();
+            sessionManager.setSessionPreferences(MonumentActivity.this, "demo_2", true);
         }
     }
 
+    @Override
+    public void onShowcaseViewHide(ShowcaseView _showcaseView) {
 
+    }
+
+    @Override
+    public void onShowcaseViewDidHide(ShowcaseView _showcaseView) {
+
+    }
+
+    @Override
+    public void onShowcaseViewShow(ShowcaseView _showcaseView) {
+        Log.v(LOGTAG, "onShow");
+        if (_showcaseView != null) {
+            Log.v(LOGTAG, "Local is not null");
+        } else {
+            Log.v(LOGTAG, "Local is null");
+        }
+        if (showcaseView != null) {
+            Log.v(LOGTAG, "global is not null");
+        } else {
+            Log.v(LOGTAG, "Local is null");
+        }
+    }
+
+    @Override
+    public void onShowcaseViewTouchBlocked(MotionEvent _motionEvent) {
+
+    }
 }

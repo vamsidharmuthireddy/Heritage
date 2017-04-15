@@ -123,6 +123,10 @@
     <string name="kingList_bundle" translatable="false">kingList_bundle</string>
     <string name="imageNamesList" translatable="false">imagesNamesList</string>
     <string name="location_count" translatable="false">locationList</string>
+    <string name="demo_interest_point_activity" translatable="false">demo_interest_point_activity</string>
+    <string name="demo_monument_activity" translatable="false">demo_monument_activity</string>
+    <string name="demo_main_activity" translatable="false">demo_main_activity</string>
+    <string name="demo_package_content_activity" translatable="false">demo_package_content_activity</string>
 
 
     <!--MonumentActivity-->
@@ -184,6 +188,10 @@
     <string name="king_info" translatable="false">info</string>
 
 
+    <!--feedback-->
+    <string name="feedback_rationale">We have worked hard to collect data and present it to you through this app. We welcome your valuable feedback in improving our Heritage app.</string>
+    <string name="give_feedback">Give Feedback</string>
+
     <!--Others-->
     <string name="images_name_splitter" translatable="false">,</string>
     <string name="image_type" translatable="false">.JPG</string>
@@ -191,31 +199,43 @@
 
 
     <!--ShowCase MainActivityAdapter-->
-    <string name="showcase_main_activity_title">This is where magic happens!</string>
-    <string name="showcase_title_image_title">This is where magic happens!</string>
-    <string name="showcase_short_info_button_title">This is where magic happens!</string>
-    <string name="showcase_download_button_title">This is where magic happens!</string>
+    <string name="showcase_main_activity_title">Heritage Sites List</string>
+    <string name="showcase_title_image_title">Heritage Site</string>
+    <string name="showcase_short_info_button_title">Information Button</string>
+    <string name="showcase_download_button_title">Download Button</string>
+    <string name="showcase_other_options_title">Other Options</string>
 
-    <string name="showcase_main_activity_content">This is where magic happens!</string>
-    <string name="showcase_title_image_content">This is where magic happens!</string>
-    <string name="showcase_short_info_button_content">This is where magic happens!</string>
-    <string name="showcase_download_button_content">This is where magic happens!</string>
+    <string name="showcase_main_activity_content">Welcome to the world of Heritage. On the screen, you can see the list of Heritage sites available for download.</string>
+    <string name="showcase_title_image_content">This is a cover image of a Heritage site. After downloading the heritage site, you can access it\'s contents.</string>
+    <string name="showcase_short_info_button_content">Clicking it will provide brief introduction about the Heritage site.</string>
+    <string name="showcase_download_button_content">If you want to know more about the heritage site, you can download it using this button. You can even locate the package in your storage, if you already have the package instead of downloading.</string>
+    <string name="showcase_other_options_content">Other options can be accessed from here. From here, you can share your feedback about the app with us.</string>
 
-    <string name="showcase_overview_card_title">This is where magic happens!</string>
-    <string name="showcase_monuments_card_title">This is where magic happens!</string>
-    <string name="showcase_maps_card_title">This is where magic happens!</string>
-    <string name="showcase_gallery_card_title">This is where magic happens!</string>
+    <string name="showcase_package_activity_title">Heritage Site</string>
+    <string name="showcase_overview_card_title">Overview</string>
+    <string name="showcase_monuments_card_title">Monuments</string>
+    <string name="showcase_maps_card_title">Maps</string>
+    <string name="showcase_gallery_card_title">Gallery</string>
 
-    <string name="showcase_overview_card_content">This is where magic happens!</string>
-    <string name="showcase_monuments_card_content">This is where magic happens!</string>
-    <string name="showcase_maps_card_content">This is where magic happens!</string>
-    <string name="showcase_gallery_card_content">This is where magic happens!</string>
+    <string name="showcase_package_activity_content">Here you can access the content of the Heritage site that you have downloaded.</string>
+    <string name="showcase_overview_card_content">Overview contains the history of the Heritage site as a whole.</string>
+    <string name="showcase_monuments_card_content">All the Important places in the Heritage site are listed here.</string>
+    <string name="showcase_maps_card_content">The locations of all the Important places in the Heritage site can be seen in the map here. Using maps might consume internet though!</string>
+    <string name="showcase_gallery_card_content">The Gallery contains pictures of the Important places in the Heritage site.</string>
 
-    <string name="showcase_interest_activity_title">This is where magic happens!</string>
-    <string name="showcase_reveal_button_title">This is where magic happens!</string>
+    <string name="showcase_monument_activity_title">Monuments</string>
+    <string name="showcase_nearby_places_title">Nearby Places</string>
+    <string name="showcase_all_places_title">All Places</string>
 
-    <string name="showcase_interest_activity_content">This is where magic happens!</string>
-    <string name="showcase_reveal_button_content">This is where magic happens!</string>
+    <string name="showcase_monument_activity_content">Here you can see all the Important places in a Heritage site.</string>
+    <string name="showcase_nearby_places_content">"Nearby" Tab will show the nearest three Important places in the Heritage site. Be sure to turn your GPS ON to get live updates on what is nearby.</string>
+    <string name="showcase_all_places_content">"Places" Tab will show the complete list of Important places in the Heritage site.</string>
+
+    <string name="showcase_interest_activity_title">Monument</string>
+    <string name="showcase_reveal_button_title">Other Features</string>
+
+    <string name="showcase_interest_activity_content">Information about a Monument in a Heritage site can be read here.</string>
+    <string name="showcase_reveal_button_content">This button will provide access to other features, Gallery and Maps. You can access our Image Gallery on the particular monument and see it\'s location in the maps. Using Map may consume internet though!</string>
 
 
 </resources>

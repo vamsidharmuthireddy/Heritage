@@ -57,17 +57,17 @@
                 android:orientation="horizontal">
 
                 <include
-                layout="@layout/card_kings_header"
-                    android:id="@+id/kings_card"
+                    layout="@layout/card_maps_header"
+                    android:id="@+id/maps_card"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/activity_half_std_margin"
                     android:layout_marginEnd="@dimen/activity_half_std_margin"
                     android:layout_marginStart="@dimen/activity_std_margin"
                     android:layout_marginTop="@dimen/activity_half_std_margin"
-                android:layout_weight="0.5" />
+                    android:layout_weight="0.5" />
 
-            <include
+                <include
                 layout="@layout/card_gallery_header"
                 android:id="@+id/gallery_card"
                 android:layout_width="wrap_content"
@@ -87,16 +87,18 @@
                 android:layout_weight="0.5"
                 android:orientation="horizontal">
 
+
                 <include
-                    layout="@layout/card_maps_header"
-                    android:id="@+id/maps_card"
+                    android:id="@+id/kings_card"
+                    layout="@layout/card_kings_header"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/activity_half_std_margin"
                     android:layout_marginEnd="@dimen/activity_half_std_margin"
                     android:layout_marginStart="@dimen/activity_std_margin"
                     android:layout_marginTop="@dimen/activity_half_std_margin"
-                    android:layout_weight="0.5" />
+                    android:layout_weight="0.5"
+                    android:visibility="gone" />
 
                 <include
                     layout="@layout/card_gallery_header"
@@ -107,7 +109,7 @@
                     android:layout_marginStart="@dimen/activity_half_std_margin"
                     android:layout_marginTop="@dimen/activity_half_std_margin"
                     android:clickable="false"
-                    android:visibility="invisible"
+                    android:visibility="gone"
                     android:layout_weight="0.5" />
 
             </LinearLayout>

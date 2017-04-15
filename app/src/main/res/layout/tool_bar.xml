@@ -17,6 +17,7 @@
             android:layout_height="?attr/actionBarSize"
             android:elevation="@dimen/activity_elevation"
             android:outlineProvider="bounds"
+            android:gravity="center"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
             app:theme="@style/ToolbarColoredBackArrow" />
 

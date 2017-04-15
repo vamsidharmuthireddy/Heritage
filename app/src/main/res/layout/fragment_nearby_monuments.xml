@@ -10,4 +10,21 @@
         android:layout_height="match_parent"
         android:scrollbars="vertical" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/cardview_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/activity_half_std_margin"
+            android:fadingEdge="horizontal"
+            android:textColor="@color/colorBlack"
+            android:textSize="@dimen/activity_small_text"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
 </RelativeLayout>

@@ -14,6 +14,8 @@ import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -27,6 +29,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
 import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.targets.Target;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
@@ -39,7 +42,7 @@ import java.util.ArrayList;
  */
 
 public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainActivityRecyclerViewAdapter.DataObjectHolder>
-        implements View.OnClickListener {
+        implements View.OnClickListener, OnShowcaseEventListener {
     /**
      * This is the Recycler view Adapter for the contents in MainActivity
      */
@@ -565,43 +568,57 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
 
 
     private void setShowCaseViews(DataObjectHolder _holder, int _position) {
-        final DataObjectHolder holder = _holder;
-        final int position = _position;
-        Log.v(LOGTAG, "Current demo number is initial");
-        viewTarget = new ViewTarget[10];
-        viewTarget[0] = new ViewTarget(holder.titleImage);
-        viewTarget[1] = new ViewTarget(holder.shortInfoButton);
-        viewTarget[2] = new ViewTarget(holder.downloadSwitch);
 
-        demoContent = new String[10];
-        demoContent[0] = context.getString(R.string.showcase_title_image_content);
-        demoContent[1] = context.getString(R.string.showcase_short_info_button_content);
-        demoContent[2] = context.getString(R.string.showcase_download_button_content);
+        SessionManager sessionManager = new SessionManager();
+        boolean showDemo = sessionManager.getBooleanSessionPreferences(context
+                , context.getString(R.string.demo_main_activity), false);
+        //showDemo = false;
+        if (!showDemo) {
 
-        demoTitle = new String[10];
-        demoTitle[0] = context.getString(R.string.showcase_title_image_title);
-        demoTitle[1] = context.getString(R.string.showcase_short_info_button_title);
-        demoTitle[2] = context.getString(R.string.showcase_download_button_title);
-        //viewTarget = new ViewTarget(activity.findViewById(R.id.drawer_layout));
+            final DataObjectHolder holder = _holder;
+            final int position = _position;
+            Log.v(LOGTAG, "Current demo number is initial");
+            viewTarget = new ViewTarget[10];
+            viewTarget[0] = new ViewTarget(holder.titleImage);
+            viewTarget[1] = new ViewTarget(holder.shortInfoButton);
+            viewTarget[2] = new ViewTarget(holder.downloadSwitch);
+            viewTarget[3] = new ViewTarget(getToolbarNavigationIcon((Toolbar) activity.findViewById(R.id.toolbar)));
+
+            demoContent = new String[10];
+            demoContent[0] = context.getString(R.string.showcase_title_image_content);
+            demoContent[1] = context.getString(R.string.showcase_short_info_button_content);
+            demoContent[2] = context.getString(R.string.showcase_download_button_content);
+            demoContent[3] = context.getString(R.string.showcase_other_options_content);
+
+            demoTitle = new String[10];
+            demoTitle[0] = context.getString(R.string.showcase_title_image_title);
+            demoTitle[1] = context.getString(R.string.showcase_short_info_button_title);
+            demoTitle[2] = context.getString(R.string.showcase_download_button_title);
+            demoTitle[3] = context.getString(R.string.showcase_other_options_title);
+            //viewTarget = new ViewTarget(activity.findViewById(R.id.drawer_layout));
 
 
-        String initialTitle = context.getString(R.string.showcase_main_activity_title);
-        String initialContent = context.getString(R.string.showcase_main_activity_content);
+            String initialTitle = context.getString(R.string.showcase_main_activity_title);
+            String initialContent = context.getString(R.string.showcase_main_activity_content);
 
-        showcaseView = new ShowcaseView.Builder(activity)
-                .blockAllTouches()
-                .setContentTitle(initialTitle)
-                .setContentText(initialContent)
-                .setTarget(Target.NONE)
-                .withNewStyleShowcase()
-                .setOnClickListener(this)
-                .setStyle(R.style.CustomShowcaseTheme3)
-                .build();
+            showcaseView = new ShowcaseView.Builder(activity)
+                    .blockAllTouches()
+                    .setContentTitle(initialTitle)
+                    .setContentText(initialContent)
+                    .setTarget(Target.NONE)
+                    .withNewStyleShowcase()
+                    .setOnClickListener(this)
+                    .setShowcaseEventListener(this)
+                    .setStyle(R.style.CustomShowcaseTheme3)
+                    .build();
 
-        showcaseView.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
-        showcaseView.setButtonText("I changed");
-        showcaseView.setShowcase(Target.NONE, true);
-        showcaseView.show();
+            showcaseView.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
+            showcaseView.setButtonText(context.getString(R.string.next));
+            showcaseView.setShowcase(Target.NONE, true);
+            showcaseView.show();
+        } else {
+            Log.v(LOGTAG, "Demo already shown");
+        }
     }
 
     @Override
@@ -610,12 +627,69 @@ public class MainActivityRecyclerViewAdapter extends RecyclerView.Adapter<MainAc
         if (viewTarget[demoNumber] != null && demoContent[demoNumber] != null && demoTitle[demoNumber] != null) {
             Log.v(LOGTAG, "Current demo number is " + demoNumber);
             showcaseView.setShowcase(viewTarget[demoNumber], true);
-            showcaseView.setContentTitle(demoContent[demoNumber]);
+            showcaseView.show();
+            showcaseView.setContentTitle(demoTitle[demoNumber]);
             showcaseView.setContentText(demoContent[demoNumber]);
+            if (viewTarget[demoNumber + 1] == null) {
+                showcaseView.setButtonText(context.getString(R.string.got_it));
+            }
+            //showcaseView.show();
+
             demoNumber++;
         } else {
             showcaseView.hide();
+            SessionManager sessionManager = new SessionManager();
+            sessionManager.setSessionPreferences(context, context.getString(R.string.demo_main_activity), true);
         }
+
+    }
+
+    public View getToolbarNavigationIcon(Toolbar toolbar) {
+        //check if contentDescription previously was set
+        boolean hadContentDescription = TextUtils.isEmpty(toolbar.getNavigationContentDescription());
+        String contentDescription = !hadContentDescription ? toolbar.getNavigationContentDescription().toString() : "navigationIcon";
+        toolbar.setNavigationContentDescription(contentDescription);
+        ArrayList<View> potentialViews = new ArrayList<View>();
+        //find the view based on it's content description, set programatically or with android:contentDescription
+        toolbar.findViewsWithText(potentialViews, contentDescription, View.FIND_VIEWS_WITH_CONTENT_DESCRIPTION);
+        //Nav icon is always instantiated at this point because calling setNavigationContentDescription ensures its existence
+        View navIcon = null;
+        if (potentialViews.size() > 0) {
+            navIcon = potentialViews.get(0); //navigation icon is ImageButton
+        }
+        //Clear content description if not previously present
+        if (hadContentDescription)
+            toolbar.setNavigationContentDescription(null);
+        return navIcon;
+    }
+
+    @Override
+    public void onShowcaseViewHide(ShowcaseView _showcaseView) {
+
+    }
+
+    @Override
+    public void onShowcaseViewDidHide(ShowcaseView _showcaseView) {
+
+    }
+
+    @Override
+    public void onShowcaseViewShow(ShowcaseView _showcaseView) {
+        Log.v(LOGTAG, "onShow");
+        if (_showcaseView != null) {
+            Log.v(LOGTAG, "Local is not null");
+        } else {
+            Log.v(LOGTAG, "Local is null");
+        }
+        if (showcaseView != null) {
+            Log.v(LOGTAG, "global is not null");
+        } else {
+            Log.v(LOGTAG, "Local is null");
+        }
+    }
+
+    @Override
+    public void onShowcaseViewTouchBlocked(MotionEvent _motionEvent) {
 
     }
 
